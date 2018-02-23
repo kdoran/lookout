@@ -1,0 +1,38 @@
+{
+  "name": "thcodes",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server"
+  },
+  "author": "kev.doran@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "babel-core": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.0.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "css-loader": "^0.28.0",
+    "extract-text-webpack-plugin": "^2.1.2",
+    "isomorphic-fetch": "^2.2.1",
+    "less": "^2.7.2",
+    "less-loader": "^4.0.5",
+    "moment": "^2.20.1",
+    "pouchdb": "^6.4.3",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-router-dom": "^4.2.2",
+    "style-loader": "^0.17.0",
+    "styled-components": "^3.1.6",
+    "tlvince-react-offline-hoc": "0.0.3",
+    "webpack": "^2.4.1",
+    "webpack-dev-server": "^2.4.2"
+  },
+  "devDependencies": {
+    "standard": "^10.0.2",
+    "standard-loader": "^6.0.1"
+  },
+  "description": ""
+}
