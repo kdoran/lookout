@@ -1,12 +1,12 @@
 /* global localStorage */
 
-const alohaPrefix = 'aloha::'
+const splashboardPrefix = 'splashboard::'
 
 export default {
   getRecent (id) {
     let recent
     try {
-      recent = JSON.parse(localStorage.getItem(alohaPrefix + id)) || []
+      recent = JSON.parse(localStorage.getItem(splashboardPrefix + id)) || []
     } catch (e) {
       recent = []
     }
@@ -19,13 +19,13 @@ export default {
       recent.unshift(item)
       recent = recent.slice(0, 9)
     }
-    return localStorage.setItem(alohaPrefix + id, JSON.stringify(recent))
+    return localStorage.setItem(splashboardPrefix + id, JSON.stringify(recent))
   },
 
   get (id) {
     let item
     try {
-      item = JSON.parse(localStorage.getItem(alohaPrefix + id))
+      item = JSON.parse(localStorage.getItem(splashboardPrefix + id))
     } catch (e) {
       item = null
     }
@@ -33,10 +33,10 @@ export default {
   },
 
   set (id, item) {
-    return localStorage.setItem(alohaPrefix + id, JSON.stringify(item))
+    return localStorage.setItem(splashboardPrefix + id, JSON.stringify(item))
   },
 
   destroy (id) {
-    localStorage.removeItem(alohaPrefix + id)
+    localStorage.removeItem(splashboardPrefix + id)
   }
 }

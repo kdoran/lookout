@@ -97,19 +97,15 @@ export default {
   }
 }
 
-function parseJSON (httpResponse) {
-  const { status } = httpResponse
-  return httpResponse.json().then(response => {
-    if (status >= 400) {
-      return Promise.reject(JSON.stringify({ ...response, status }, null, 2))
-    } else {
-      return response
-    }
-  })
+function parseJSON (resp) {
+  let json = resp.json()
+  if (resp.status >= 200 && resp.status < 400) {
+    return json
+  } else {
+    return json.then(Promise.reject.bind(Promise))
+  }
 }
 
-// Pretty sure only called if network connection refused,
-// 400+ responses are not errors for fetch.
 function fetchError (fetchError) {
   let error
   if (Object.keys(fetchError).length) {

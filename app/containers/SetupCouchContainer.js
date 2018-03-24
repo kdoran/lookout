@@ -10,6 +10,7 @@ export default class extends React.Component {
     this.state = {
       error: null,
       inputUrl: '',
+      loading: false,
       recentCouches
     }
   }
@@ -17,11 +18,12 @@ export default class extends React.Component {
   tryACouch () {
     let { inputUrl } = this.state
     inputUrl = parseUrlFromInput(inputUrl)
-    this.setState({ inputUrl })
-    fetcher.init(inputUrl).then(response => {
-      localStorager.saveRecent('couchurls', inputUrl)
-      window.location.href = '/' + inputUrl.split('//')[1]
-    }).catch(error => this.setState({ error }))
+    this.setState({ inputUrl, loading: true }, () => {
+      fetcher.init(inputUrl).then(response => {
+        localStorager.saveRecent('couchurls', inputUrl)
+        window.location.href = '/' + inputUrl.split('//')[1]
+      }).catch(error => this.setState({ error, loading: false }))
+    })
   }
 
   onSubmit = event => {
@@ -30,9 +32,10 @@ export default class extends React.Component {
   }
 
   render () {
-    const { inputUrl, recentCouches, error } = this.state
+    const { inputUrl, recentCouches, error, loading } = this.state
     return (
       <form onSubmit={this.onSubmit}>
+        <h1>splashboard.</h1>
         <section>
           <label>
             Couch Url:
@@ -44,7 +47,7 @@ export default class extends React.Component {
             />
             {error && <div className='error'>
               Couch error: {error} {error.includes('Failed to fetch') && (<span>
-                is the couch server reachable? is CORS enabled? <a target='_blank' href={inputUrl}>{inputUrl}</a>  <a target='_blank' href={inputUrl + '_utils'}>{inputUrl}_utils</a>
+                is the couch server reachable? <a target='_blank' href={inputUrl}>{inputUrl}</a> is CORS enabled?  <a target='_blank' href={inputUrl + '_utils'}>{inputUrl}_utils</a>
               </span>)}
             </div>}
           </label>
@@ -59,7 +62,12 @@ export default class extends React.Component {
             ))}
           </div>
         </section>
-        <button type='submit'>Submit</button>
+        <button
+          disabled={loading}
+          type='submit'
+        >
+          {loading ? ' Loading...' : 'Submit'}
+        </button>
       </form>
     )
   }

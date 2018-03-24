@@ -47,7 +47,7 @@ export default class extends React.Component {
     return (
       <div style={styles}>
         <div>
-          Aloha |&nbsp;
+          splashboard |&nbsp;
           <Link to='/'>{couchUrl}</Link> |&nbsp;
           <a href='#' onClick={() => this.logout()}>
             logout
