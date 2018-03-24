@@ -2,16 +2,17 @@ const path = require('path')
 const webpack = require('webpack')
 
 module.exports = {
-  entry: './javascript/app.js',
+  entry: './app/app.js',
   output: {
     filename: 'app.js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: "/"
+    publicPath: '/'
   },
+  mode: 'development',
   devtool: 'source-map',
   resolve: {
     modules: [
-      path.resolve(__dirname, 'javascript'),
+      path.resolve(__dirname, 'app'),
       path.resolve(__dirname, 'node_modules')
     ]
   },
@@ -23,31 +24,29 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['env', 'stage-0', 'react']
+            presets: ['stage-0', 'react'],
+            plugins: ['transform-async-to-generator']
           }
         }
       },
       {
-        test: /\.less$/,
-        exclude: /node_modules/,
+        test: /\.css/,
         use: [
-          { loader: "style-loader" },
-          { loader: "css-loader", options: { sourceMap: true } },
-          { loader: "less-loader", options: { sourceMap: true } }
+          { loader: 'style-loader' },
+          { loader: 'css-loader', options: { sourceMap: true } }
         ]
-      },
+      }
     ]
   },
   devServer: {
-   compress: true,
-   hot: true,
-  //  noInfo: true,
-   historyApiFallback: true,
-   port: 7000,
-  //  quiet: true,
-   clientLogLevel: 'none'
- },
- plugins: [
-   new webpack.HotModuleReplacementPlugin()
- ]
+    compress: true,
+    hot: true,
+    historyApiFallback: true,
+    port: 7000,
+    clientLogLevel: 'none',
+    disableHostCheck: true
+  },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin()
+  ]
 }
