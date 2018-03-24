@@ -1,6 +1,7 @@
 import React from 'react'
 import fetcher from 'utils/fetcher'
 import localStorager from 'utils/localstorager'
+import {parseUrl} from 'utils/utils'
 
 export default class extends React.Component {
   constructor () {
@@ -17,7 +18,7 @@ export default class extends React.Component {
 
   tryACouch () {
     let { inputUrl } = this.state
-    inputUrl = parseUrlFromInput(inputUrl)
+    inputUrl = parseUrl(inputUrl)
     this.setState({ inputUrl, loading: true }, () => {
       fetcher.init(inputUrl).then(response => {
         localStorager.saveRecent('couchurls', inputUrl)
@@ -71,14 +72,4 @@ export default class extends React.Component {
       </form>
     )
   }
-}
-
-function parseUrlFromInput (url) {
-  if (!url.includes('http')) {
-    url = 'https://' + url
-  }
-  if (url[url.length - 1] !== '/') {
-    url += '/'
-  }
-  return url
 }

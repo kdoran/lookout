@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 import SetupCouchContainer from './containers/SetupCouchContainer'
 import DatabasesContainer from './containers/DatabasesContainer'
+import DocsContainer from './containers/DocsContainer'
 import Header from './components/Header'
 import withCouch from './utils/withCouch'
 
@@ -16,8 +17,9 @@ class App extends Component {
         <div>
           <Route path='/:couchUrl/' render={({ match: {params} }) => (<Header {...params} />)} />
           <Switch>
-            <Route exact path='/' component={SetupCouchContainer} />
+            <Route path='/:couchUrl/:dbName' component={withCouch(DocsContainer)} />
             <Route path='/:couchUrl/' component={withCouch(DatabasesContainer)} />
+            <Route path='/' component={SetupCouchContainer} />
           </Switch>
         </div>
       </Router>

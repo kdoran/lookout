@@ -1,14 +1,22 @@
 body {
   font-family: monospace;
+  color: black;
+  font-size: .8em;
+  letter-spacing: .1em;
 }
 
 h1 {
   margin: 5px 0;
+  text-align: center;
 }
 
 form {
   width: 80%;
   margin: 0 auto;
+}
+
+form button {
+  width: 100%;
 }
 
 input {
@@ -24,10 +32,16 @@ input:focus {
 }
 
 button {
-  padding: 5px 25px;
+  padding: 10px 25px;
   font-family: monospace;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 7px;
+}
+
+button:hover {
+  /* background-color: #eee; */
+  border: 1px solid black;
+  cursor: pointer;
 }
 
 section {
@@ -40,4 +54,8 @@ div {
 
 .error {
   color: red;
+}
+
+table {
+  width: 100%;
 }

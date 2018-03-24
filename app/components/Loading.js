@@ -1,11 +1,15 @@
 import React from 'react'
 
+const styles = {
+  textAlign: 'center'
+}
+
 class Loading extends React.Component {
   render () {
     return (
-      <div>
-        Loading...
-      </div>
+      <h3 style={styles}>
+        loading...
+      </h3>
     )
   }
 }

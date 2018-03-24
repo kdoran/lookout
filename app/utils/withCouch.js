@@ -15,17 +15,19 @@ export default function withCouch (Wrapped) {
         localStorager.set('userCtx', response.userCtx)
       }).catch(couchError => {
         console.log(url, couchError)
-        window.location.href = '/'
+        // window.location.href = '/'
       })
     }
 
     render () {
       const {loaded} = this.state
+      const { match: { params: { couchUrl } } } = this.props
       if (!loaded) {
         return <Loading />
       }
       return (
         <Wrapped
+          couchUrl={couchUrl}
           {...this.props}
         />
       )

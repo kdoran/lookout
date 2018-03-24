@@ -7,14 +7,14 @@ export default class LoginContainer extends React.Component {
   }
 
   render () {
-    const {error} = this.props
+    const {error, loading} = this.props
     return (
       <form onSubmit={this.tryLogin}>
-        <h1>Login</h1>
+        <h1>login</h1>
         <input autoFocus type='text' ref='username' /> <br />
         <input type='password' ref='password' />
         {error && <pre className='error'>{JSON.stringify(error, null, 2)}</pre>} <br />
-        <button type='submit'>Submit</button> <br />
+        <button disabled={loading} type='submit'>{loading ? 'Loading...' : 'Submit'}</button> <br />
       </form>
     )
   }
