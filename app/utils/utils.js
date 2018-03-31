@@ -14,6 +14,7 @@ export function parseUrl (url) {
 }
 
 export function showMBSize (num) {
+  if (!num) return ''
   if (num < MB) {
     return '< 1 MB'
   } else {
@@ -22,6 +23,7 @@ export function showMBSize (num) {
 }
 
 export function showSize (num) {
+  if (!num) return ''
   if (num < KB) {
     return num + ' B'
   } else if (num < MB) {

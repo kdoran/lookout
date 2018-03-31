@@ -36,6 +36,7 @@ export default class extends React.Component {
           infos[db].update_seq = infos[db].update_seq.split('-')[0]
         }
       }).catch(dbError => {
+        infos[db] = {}
         console.error(dbError)
       })
     })
@@ -54,9 +55,9 @@ export default class extends React.Component {
             <thead>
               <tr>
                 <th style={alignLeft}>name</th>
+                <th>docs</th>
                 <th>data size</th>
                 <th>disk space</th>
-                <th>docs</th>
                 <th>deleted</th>
                 <th>seq no. (as int)</th>
               </tr>
@@ -66,9 +67,9 @@ export default class extends React.Component {
                 return (
                   <tr key={db}>
                     <td style={alignLeft}><Link to={db}>{db}</Link></td>
+                    <td>{infosLoaded ? withCommas(infos[db].doc_count) : 'loading...'}</td>
                     <td>{infosLoaded ? showSize(infos[db].data_size) : 'loading...'}</td>
                     <td>{infosLoaded ? showMBSize(infos[db].disk_size) : 'loading...'}</td>
-                    <td>{infosLoaded ? withCommas(infos[db].doc_count) : 'loading...'}</td>
                     <td>{infosLoaded ? withCommas(infos[db].doc_del_count) : 'loading...'}</td>
                     <td>{infosLoaded ? infos[db].update_seq : 'loading...'}</td>
                   </tr>

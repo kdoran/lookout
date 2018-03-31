@@ -1,8 +1,12 @@
 body {
-  font-family: monospace;
+  font-family: helvetica;
   color: black;
   font-size: .8em;
   letter-spacing: .1em;
+}
+
+table {
+  font-size: .9em;
 }
 
 h1 {
@@ -27,6 +31,10 @@ input {
   margin: 10px 0;
 }
 
+textarea {
+  font-family: monospace;
+}
+
 input:focus {
   outline: black auto 1px;
 }
@@ -39,7 +47,6 @@ button {
 }
 
 button:hover {
-  /* background-color: #eee; */
   border: 1px solid black;
   cursor: pointer;
 }
@@ -48,14 +55,18 @@ section {
   margin: 20px 0;
 }
 
-div {
-  margin: 0 0 15px 0;
-}
-
 .error {
   color: red;
 }
 
 table {
   width: 100%;
+}
+
+th {
+  text-align: left;
+}
+
+:focus {
+  outline: black auto 4px;
 }

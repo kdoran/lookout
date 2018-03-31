@@ -1,7 +1,6 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
 import fetcher from 'utils/fetcher'
-import localStorager from 'utils/localstorager'
 import Login from 'components/Login'
 import {parseUrl} from 'utils/utils'
 
@@ -10,36 +9,35 @@ const styles = {
   overflowX: 'scroll'
 }
 
-const defaultState = {
-  error: null,
-  loading: false,
-  userCtx: localStorager.get('userCtx') || {}
+function getDefaultState (userCtx = {}) {
+  return {
+    error: null,
+    loading: false,
+    userCtx
+  }
 }
 
 export default class extends React.Component {
   constructor (props) {
     super(props)
-    this.state = defaultState
+    this.state = getDefaultState(props.userCtx)
   }
 
   componentWillReceiveProps (newProps) {
     if (newProps.couchUrl) {
-      this.setState(defaultState)
+      this.setState(getDefaultState(newProps.userCtx))
     }
   }
 
   logout = () => {
-    localStorager.destroy('userCtx')
-    this.setState(defaultState)
+    this.setState(getDefaultState)
     fetcher.destroySession().then(() => window.location.reload())
   }
 
   login = (name, password) => {
     this.setState({loading: true}, () => {
       fetcher.login(name, password).then(userCtx => {
-        delete userCtx.ok
-        localStorager.set('userCtx', userCtx)
-        this.setState({ userCtx, loading: false })
+        window.location.reload()
       }).catch(error => this.setState({error, loading: false}))
     })
   }
@@ -52,7 +50,7 @@ export default class extends React.Component {
     return (
       <div style={styles}>
         <div>
-          {couchUrl ? (<Link to={'/' + couchUrl}>splashboard</Link>) : 'splashboard'} |&nbsp;
+          {couchUrl ? (<Link to={`/${couchUrl}/`}>splashboard</Link>) : 'splashboard'} |&nbsp;
           {couchUrl} (<Link to='/'>switch couch</Link>) (<a target='_blank' href={parseUrl(couchUrl) + '_utils/'}>fauxton</a>) |
           name: {`${userCtx.name}`}&nbsp;
           {authenticated && (<span>(<a href='#' onClick={() => this.logout()}>

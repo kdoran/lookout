@@ -63,7 +63,7 @@ export default class extends React.Component {
                 {response.rows.map(row => {
                   return (
                     <tr key={row.id}>
-                      <td><Link to={dbName + '/' + row.id}>{row.id}</Link></td>
+                      <td><Link to={dbName + '/' + encodeURIComponent(row.id) + '/'}>{row.id}</Link></td>
                       <td>{row.value.rev}</td>
                     </tr>
                   )
