@@ -9,7 +9,7 @@ const options = {
   credentials: 'include'
 }
 
-let couchDbUrl = ''
+let couchDbUrl = '/'
 
 export default {
 
@@ -35,8 +35,8 @@ export default {
     }).then(parseJSON).catch(fetchError)
   },
 
-  put (url, data = {}) {
-    return this.post(url, data, 'PUT')
+  put (resource, data = {}) {
+    return this.post(resource, data, 'PUT')
   },
 
   login (username, password) {

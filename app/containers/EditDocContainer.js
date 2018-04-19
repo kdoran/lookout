@@ -34,10 +34,13 @@ export default class extends React.Component {
 
   onSubmit = () => {
     const {input} = this.state
+    const {dbName, doc} = this.props
     const jsonInput = JSON.parse(input)
     // if (jsonInput._id) {}
     this.setState({ saving: true }, () => {
-      fetcher.put()
+      fetcher.put(dbName + '/' + doc._id, jsonInput).then(() => {
+        window.location.reload()
+      }).catch(error => this.setState({ error, saving: false }))
     })
   }
 

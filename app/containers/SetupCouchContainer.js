@@ -54,12 +54,14 @@ export default class extends React.Component {
           </label>
           <div>
             Recent Couches:
+            <br /><br />
             {recentCouches.map(inputUrl => (
-              <span key={inputUrl}>
+              <div key={inputUrl}>
                 &nbsp; <a href='javascript:void(0)' onClick={() => this.setState({ inputUrl }, () => this.tryACouch())}>
                   {inputUrl}
                 </a>
-              </span>
+                <br /><br />
+              </div>
             ))}
           </div>
         </section>

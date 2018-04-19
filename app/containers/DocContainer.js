@@ -27,7 +27,7 @@ export default class extends React.Component {
   }
 
   render () {
-    const { loaded, error, doc, docId, editing } = this.state
+    const { loaded, error, doc, docId, editing, dbName } = this.state
     return (
       <div>
         <h1>{docId}</h1>
@@ -41,7 +41,7 @@ export default class extends React.Component {
             >{editing ? 'cancel' : 'edit'}</button>
             {editing && (
             <div>
-              <EditDocContainer doc={doc} />
+              <EditDocContainer dbName={dbName} doc={doc} />
             </div>
             )}
           </div>
