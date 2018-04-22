@@ -3,7 +3,7 @@ import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
 import Error from 'components/Error'
 import {Link} from 'react-router-dom'
-import {showMBSize, showSize, withCommas} from 'utils/utils'
+import { showMBSize, showSize, withCommas, getCouchUrl } from 'utils/utils'
 
 const LIMIT = 100
 
@@ -18,38 +18,52 @@ const alignLeft = {
 }
 
 export default class extends React.Component {
-  state = { loaded: false, infosLoaded: false, dbs: null, error: null, infos: null }
-
-  componentDidMount () {
-    fetcher.get('_all_dbs', { limit: LIMIT }).then(dbs => {
-      this.setState({ dbs, loaded: true })
-      this.fetchInfos(dbs)
-    }).catch(error => this.setState({ error, loaded: true }))
+  constructor (props) {
+    super(props)
+    const { couchUrl } = getCouchUrl(props.match)
+    this.state = {
+      couchUrl,
+      loaded: false,
+      infosLoaded: false,
+      dbs: null,
+      error: null,
+      infos: null
+    }
   }
 
-  fetchInfos = dbs => {
+  async componentDidMount () {
+    const { couchUrl } = this.state
+    try {
+      const dbs = await fetcher.get(`${couchUrl}_all_dbs`, { limit: LIMIT })
+      this.setState({ dbs, loaded: true })
+      this.fetchInfos(couchUrl, dbs)
+    } catch (error) {
+      this.setState({ error, loaded: true })
+      console.error(error)
+    }
+  }
+
+  fetchInfos = async (couchUrl, dbs) => {
     const infos = {}
-    const promises = dbs.map((db, i) => {
-      return fetcher.get(db).then(info => {
+    for (let db of dbs) {
+      try {
+        const info = await fetcher.get(couchUrl + db)
         infos[db] = info
         if (typeof infos[db].update_seq === 'string') {
           infos[db].update_seq = infos[db].update_seq.split('-')[0]
         }
-      }).catch(dbError => {
+      } catch (error) {
         infos[db] = {}
-        console.error(dbError)
-      })
-    })
-    Promise.all(promises).then(() => {
-      this.setState({ infos, infosLoaded: true })
-    })
+        console.error(error)
+      }
+    }
+    this.setState({ infos, infosLoaded: true })
   }
 
   render () {
     const { loaded, error, dbs, infosLoaded, infos } = this.state
     return (
       <div>
-        <h1>databases</h1>
         {loaded ? error ? <Error error={error} /> : (
           <table style={tableStyles}>
             <thead>

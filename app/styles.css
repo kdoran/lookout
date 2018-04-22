@@ -1,8 +1,14 @@
 body {
   font-family: helvetica;
   color: black;
-  font-size: .8em;
+  font-size: 1em;
   letter-spacing: .1em;
+  margin: 0;
+}
+
+#app {
+  margin: 0 auto;
+  width: 95%;
 }
 
 table {

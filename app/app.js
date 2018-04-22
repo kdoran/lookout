@@ -7,24 +7,52 @@ import DatabasesContainer from './containers/DatabasesContainer'
 import DocsContainer from './containers/DocsContainer'
 import DocContainer from './containers/DocContainer'
 import Header from './components/Header'
-import withCouch from './utils/withCouch'
+import Login from './components/Login'
+import cache from './cache'
+import {getCouchUrl} from './utils/utils'
 
 import 'styles.css'
 
-const HeaderWithCouch = withCouch(Header)
+class UserRoutes extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      authenticated: !!cache.userCtx.name,
+      couchUrl: getCouchUrl(props.match).couchUrl
+    }
+  }
+
+  onAuthenticated = (userCtx) => {
+    Object.assign(cache.userCtx, userCtx)
+    this.setState({ authenticated: true })
+  }
+
+  render () {
+    const { authenticated, couchUrl } = this.state
+    if (!authenticated) {
+      return <Login couchUrl={couchUrl} onAuthenticated={this.onAuthenticated} />
+    } else {
+      return (
+        <div>
+          <Route path='/:couch/:dbName?/:docId?' render={props => (<Header {...props} userCtx={cache.userCtx} />)} />
+          <Switch>
+            <Route path='/:couch/:dbName/:docId' component={DocContainer} />
+            <Route path='/:couch/:dbName' component={DocsContainer} />
+            <Route path='/:couch/' component={DatabasesContainer} />
+          </Switch>
+        </div>
+      )
+    }
+  }
+}
 
 class App extends Component {
   render () {
     return (
       <Router>
         <div>
-          <Route path='/:couchUrl/' render={(props) => (<HeaderWithCouch {...props} />)} />
-          <Switch>
-            <Route path='/:couchUrl/:dbName/:docId' component={withCouch(DocContainer)} />
-            <Route path='/:couchUrl/:dbName' component={withCouch(DocsContainer)} />
-            <Route path='/:couchUrl/' component={withCouch(DatabasesContainer)} />
-            <Route path='/' component={SetupCouchContainer} />
-          </Switch>
+          <Route exact path='/' component={SetupCouchContainer} />
+          <Route path='/:couch/' component={UserRoutes} />
         </div>
       </Router>
     )

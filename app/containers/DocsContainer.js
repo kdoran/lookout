@@ -3,35 +3,45 @@ import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
 import Error from 'components/Error'
 import Pagination from 'components/Pagination'
-import {Link} from 'react-router-dom'
-import {getParams} from 'utils/utils'
+import { Link } from 'react-router-dom'
+import { getParams, getCouchUrl } from 'utils/utils'
 
 const LIMIT = 500
 
 export default class extends React.Component {
   constructor (props) {
     super(props)
-    const { match: { params: { dbName } } } = this.props
-    this.state = { dbName, loaded: false, rows: null, error: null }
+    const { dbName, couchUrl }  = getCouchUrl(props.match)
+    this.state = {
+      dbName,
+      couchUrl,
+      loaded: false,
+      rows: null,
+      error: null
+    }
   }
 
   componentDidMount () {
-    this.fetch(this.props)
+    this.fetchIds(this.props)
   }
 
   componentWillReceiveProps (newProps) {
-    this.fetch(newProps)
+    this.fetchIds(newProps)
   }
 
-  fetch = (props) => {
+  fetchIds = async props => {
     const { location: { search } } = props
     const offset = getParams(search).offset || 0
-    const {dbName} = this.state
-    this.setState({ loaded: false }, () => {
-      fetcher.get(dbName + '/_all_docs', { skip: offset, limit: LIMIT }).then(response => {
-        this.setState({ response, loaded: true })
-      }).catch(error => this.setState({ error, loaded: true }))
-    })
+    const { dbName, couchUrl } = this.state
+    this.setState({ loaded: false })
+    try {
+      const options = { skip: offset, limit: LIMIT }
+      const response = await fetcher.dbGet(couchUrl, dbName, '_all_docs', options)
+      this.setState({ response, loaded: true })
+    } catch (error) {
+      this.setState({ error, loaded: true })
+      console.error(error)
+    }
   }
 
   render () {

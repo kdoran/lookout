@@ -1,51 +1,53 @@
-/* global fetch, TextDecoder */
+/* global TextDecoder */
 
-const noCredentialsOptions = {
-  headers: { 'Content-Type': 'application/json' }
-}
+const fetch = window.fetch
 
-const options = {
-  ...noCredentialsOptions,
+const defaultOptions = {
+  headers: { 'Content-Type': 'application/json' },
   credentials: 'include'
 }
 
-let couchDbUrl = '/'
-
 export default {
-
-  init (url) {
-    return fetch(url + '_session', { ...options, method: 'GET' }).then(parseJSON).then(user => {
-      couchDbUrl = url
-      return user
-    }).catch(fetchError)
+  get (url, params) {
+    const urlMaybeWithParams = (params) ? `${url}?${getParams(params)}` : url
+    return fetch(urlMaybeWithParams, defaultOptions)
+      .then(parseJSON)
+      .catch(throwParsedError)
   },
 
-  get (resource, params) {
-    let url = couchDbUrl + resource
-    if (params) url = `${url}?${getParams(params)}`
-    return fetch(url, options)
-      .then(parseJSON).catch(fetchError)
+  dbGet (couchUrl, dbName, resource, params) {
+    const url = `${couchUrl}${dbName}/${resource}`
+    return this.get(url, params)
   },
 
-  post (resource, data = {}, method = 'POST') {
-    return fetch(couchDbUrl + resource, {
-      ...options,
+  post (url, data = {}, method = 'POST') {
+    const options = {
+      ...defaultOptions,
       method,
       body: JSON.stringify(data)
-    }).then(parseJSON).catch(fetchError)
+    }
+    return fetch(url, options)
+      .then(parseJSON)
+      .catch(throwParsedError)
   },
 
   put (resource, data = {}) {
     return this.post(resource, data, 'PUT')
   },
 
-  login (username, password) {
-    return this.post('_session', {username, password})
+  checkSession (url) {
+    return fetch(url + '_session', { ...defaultOptions, method: 'GET' })
+      .then(parseJSON)
+      .catch(throwParsedError)
+  },
+
+  login (coucuUrl, username, password) {
+    return this.post(coucuUrl + '_session', {username, password})
   },
 
   destroy (url) {
     return fetch(couchDbUrl + url, {
-      ...options,
+      ...defaultOptions,
       method: 'DELETE'
     }).then(parseJSON)
   },
@@ -65,7 +67,7 @@ export default {
   getMultipart (resource, params) {
     let url = couchDbUrl + resource
     if (params) url = `${url}?${getParams(params)}`
-    return fetch(url, options).then(response => {
+    return fetch(url, defaultOptions).then(response => {
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
       let text = ''
@@ -93,27 +95,26 @@ export default {
           }
         })
       }
-    }).catch(fetchError)
+    }).catch(throwParsedError)
   }
 }
 
-function parseJSON (resp) {
-  let json = resp.json()
+async function parseJSON (resp) {
+  let json = await resp.json()
   if (resp.status >= 200 && resp.status < 400) {
     return json
   } else {
-    return json.then(Promise.reject.bind(Promise))
+    return Promise.reject(json)
   }
 }
 
-function fetchError (fetchError) {
+function throwParsedError (throwParsedError) {
   let error
-  if (Object.keys(fetchError).length) {
-    error = Object.keys(fetchError).map(key => (` ${key}: ${fetchError[key]}`)).join(' ')
+  if (Object.keys(throwParsedError).length) {
+    error = Object.keys(throwParsedError).map(key => (` ${key}: ${throwParsedError[key]}`)).join(' ')
   } else {
-    error = fetchError.toString()
+    error = throwParsedError.toString()
   }
-  // error += ' Database server most likely could not be reached. If running locally please try to start CouchDB.'
   return Promise.reject(error)
 }
 

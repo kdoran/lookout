@@ -4,6 +4,7 @@ const GB = Math.pow(KB, 3)
 const TB = Math.pow(KB, 4)
 
 export function parseUrl (url) {
+  if (!url) return
   if (!url.includes('http')) {
     url = url.includes('localhost') ? 'http://' + url : 'https://' + url
   }
@@ -61,4 +62,12 @@ export function getParams (searchParams) {
     }
   })
   return result
+}
+
+export function getCouchUrl (match) {
+  const { params: { dbName, couch } } = match
+  return {
+    dbName,
+    couchUrl: parseUrl(couch)
+  }
 }

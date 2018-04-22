@@ -2,6 +2,7 @@ import React from 'react'
 import fetcher from 'utils/fetcher'
 import localStorager from 'utils/localstorager'
 import {parseUrl} from 'utils/utils'
+import cache from '../cache'
 
 export default class extends React.Component {
   constructor () {
@@ -16,27 +17,36 @@ export default class extends React.Component {
     }
   }
 
-  tryACouch () {
-    let { inputUrl } = this.state
+  async tryACouch (inputUrl) {
     inputUrl = parseUrl(inputUrl)
-    this.setState({ inputUrl, loading: true }, () => {
-      fetcher.init(inputUrl).then(response => {
-        localStorager.saveRecent('couchurls', inputUrl)
-        window.location.href = '/' + inputUrl.split('//')[1]
-      }).catch(error => this.setState({ error, loading: false }))
-    })
+    this.setState({inputUrl})
+    this.setState({ loading: true })
+    try {
+      const { userCtx } = await fetcher.checkSession(inputUrl)
+      localStorager.saveRecent('couchurls', inputUrl)
+      Object.assign(cache.userCtx, userCtx)
+      this.props.history.push('/' + inputUrl.split('//')[1])
+    } catch (error) {
+      this.setState({ error, loading: false })
+      console.error(error)
+    }
   }
 
   onSubmit = event => {
     event.preventDefault()
-    this.tryACouch()
+    let { inputUrl } = this.state
+    this.tryACouch(inputUrl)
+  }
+
+  onCouchClick = inputUrl => {
+    this.tryACouch(inputUrl)
   }
 
   render () {
     const { inputUrl, recentCouches, error, loading } = this.state
     return (
       <form onSubmit={this.onSubmit}>
-        <h1>couchviews.</h1>
+        <h1>Couch Views: Select CouchDB</h1>
         <section>
           <label>
             Couch Url:
@@ -55,10 +65,10 @@ export default class extends React.Component {
           <div>
             Recent Couches:
             <br /><br />
-            {recentCouches.map(inputUrl => (
-              <div key={inputUrl}>
-                &nbsp; <a href='javascript:void(0)' onClick={() => this.setState({ inputUrl }, () => this.tryACouch())}>
-                  {inputUrl}
+            {recentCouches.map(url => (
+              <div key={url}>
+                &nbsp; <a href='javascript:void(0)' onClick={() => this.onCouchClick(url)}>
+                  {url}
                 </a>
                 <br /><br />
               </div>
