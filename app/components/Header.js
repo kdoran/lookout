@@ -50,7 +50,7 @@ export default class extends React.Component {
     return (
       <div style={styles}>
         <div>
-          {couchUrl ? (<Link to={`/${couchUrl}/`}>splashboard</Link>) : 'splashboard'} |&nbsp;
+          {couchUrl ? (<Link to={`/${couchUrl}/`}>couchviews</Link>) : 'couchviews'} |&nbsp;
           {couchUrl} (<Link to='/'>switch couch</Link>) (<a target='_blank' href={parseUrl(couchUrl) + '_utils/'}>fauxton</a>) |
           name: {`${userCtx.name}`}&nbsp;
           {authenticated && (<span>(<a href='#' onClick={() => this.logout()}>

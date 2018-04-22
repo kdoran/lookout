@@ -36,7 +36,7 @@ export default class extends React.Component {
     const { inputUrl, recentCouches, error, loading } = this.state
     return (
       <form onSubmit={this.onSubmit}>
-        <h1>splashboard.</h1>
+        <h1>couchviews.</h1>
         <section>
           <label>
             Couch Url:
