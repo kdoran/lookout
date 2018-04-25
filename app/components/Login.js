@@ -1,16 +1,9 @@
 import React from 'react'
 import fetcher from 'utils/fetcher'
+import {Link} from 'react-router-dom'
 
 export default class LoginContainer extends React.Component {
   state = { loading: false }
-
-  async componentDidMount () {
-    const { couchUrl } = this.props
-    const { userCtx } = await fetcher.checkSession(couchUrl)
-    if (userCtx.name) {
-      this.props.onAuthenticated(userCtx)
-    }
-  }
 
   tryLogin = async event => {
     event.preventDefault()
@@ -29,8 +22,8 @@ export default class LoginContainer extends React.Component {
     const { couchUrl } = this.props
     return (
       <form onSubmit={this.tryLogin}>
-        <h1>Couch View: Login</h1>
-        <div>{couchUrl}</div>
+        <h1>couchdash: login</h1>
+        <div>{couchUrl} <Link to='/'>change couch</Link></div>
         <input autoFocus type='text' ref='username' /> <br />
         <input type='password' ref='password' />
         {error && <pre className='error'>{JSON.stringify(error, null, 2)}</pre>} <br />

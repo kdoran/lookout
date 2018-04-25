@@ -46,7 +46,7 @@ export default class extends React.Component {
     const { inputUrl, recentCouches, error, loading } = this.state
     return (
       <form onSubmit={this.onSubmit}>
-        <h1>Couch Views: Select CouchDB</h1>
+        <h1>couchdash: select couch</h1>
         <section>
           <label>
             Couch Url:

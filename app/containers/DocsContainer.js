@@ -11,7 +11,7 @@ const LIMIT = 500
 export default class extends React.Component {
   constructor (props) {
     super(props)
-    const { dbName, couchUrl }  = getCouchUrl(props.match)
+    const { dbName, couchUrl } = getCouchUrl(props.match)
     this.state = {
       dbName,
       couchUrl,

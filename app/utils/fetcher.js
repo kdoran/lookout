@@ -46,14 +46,16 @@ export default {
   },
 
   destroy (url) {
-    return fetch(couchDbUrl + url, {
+    return fetch(url, {
       ...defaultOptions,
       method: 'DELETE'
     }).then(parseJSON)
   },
 
-  destroySession () {
-    return this.destroy('_session')
+  destroySession (couchUrl) {
+    return this.destroy(couchUrl + '_session').then(() => {
+      window.location.reload()
+    })
   },
 
   getDesignDoc (dbName, designDocName) {
@@ -64,8 +66,7 @@ export default {
     return this.get(`${dbName}/_design/${designDocName}/_view/${designDocName}?${searchParams}`)
   },
 
-  getMultipart (resource, params) {
-    let url = couchDbUrl + resource
+  getMultipart (url, params) {
     if (params) url = `${url}?${getParams(params)}`
     return fetch(url, defaultOptions).then(response => {
       const reader = response.body.getReader()

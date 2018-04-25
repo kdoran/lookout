@@ -46,9 +46,9 @@ export default class extends React.Component {
               onClick={() => this.setState({ editing: !this.state.editing })}
             >{editing ? 'cancel' : 'edit'}</button>
             {editing && (
-            <div>
-              <EditDocContainer dbName={dbName} doc={doc} />
-            </div>
+              <div>
+                <EditDocContainer dbName={dbName} doc={doc} />
+              </div>
             )}
           </div>
         ) : (<Loading />)}
