@@ -24,10 +24,9 @@ export default class extends React.Component {
     this.state = {
       couchUrl,
       loaded: false,
-      infosLoaded: false,
       dbs: null,
       error: null,
-      infos: null
+      infos: {}
     }
   }
 
@@ -56,12 +55,12 @@ export default class extends React.Component {
         infos[db] = {}
         console.error(error)
       }
+      this.setState({ infos })
     }
-    this.setState({ infos, infosLoaded: true })
   }
 
   render () {
-    const { loaded, error, dbs, infosLoaded, infos } = this.state
+    const { loaded, error, dbs, infos } = this.state
     return (
       <div>
         {loaded ? error ? <Error error={error} /> : (
@@ -81,11 +80,11 @@ export default class extends React.Component {
                 return (
                   <tr key={db}>
                     <td style={alignLeft}><Link to={db}>{db}</Link></td>
-                    <td>{infosLoaded ? withCommas(infos[db].doc_count) : 'loading...'}</td>
-                    <td>{infosLoaded ? showSize(infos[db].data_size) : 'loading...'}</td>
-                    <td>{infosLoaded ? showMBSize(infos[db].disk_size) : 'loading...'}</td>
-                    <td>{infosLoaded ? withCommas(infos[db].doc_del_count) : 'loading...'}</td>
-                    <td>{infosLoaded ? infos[db].update_seq : 'loading...'}</td>
+                    <td>{infos[db] ? withCommas(infos[db].doc_count) : 'loading...'}</td>
+                    <td>{infos[db] ? showSize(infos[db].data_size) : 'loading...'}</td>
+                    <td>{infos[db] ? showMBSize(infos[db].disk_size) : 'loading...'}</td>
+                    <td>{infos[db] ? withCommas(infos[db].doc_del_count) : 'loading...'}</td>
+                    <td>{infos[db] ? infos[db].update_seq : 'loading...'}</td>
                   </tr>
                 )
               })}
