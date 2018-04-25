@@ -76,3 +76,9 @@ th {
 :focus {
   outline: black auto 4px;
 }
+
+.footer {
+  text-align: right;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}

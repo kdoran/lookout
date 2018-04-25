@@ -35,6 +35,11 @@ export default {
     return this.post(resource, data, 'PUT')
   },
 
+  dbPut (couchUrl, dbName, resource, doc) {
+    const url = `${couchUrl}${dbName}/${resource}`
+    return this.put(url, doc)
+  },
+
   checkSession (url) {
     return fetch(url + '_session', { ...defaultOptions, method: 'GET' })
       .then(parseJSON)

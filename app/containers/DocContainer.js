@@ -1,7 +1,9 @@
 import React from 'react'
+import {Link} from 'react-router-dom'
 import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
 import Error from 'components/Error'
+import AllowEditButton from 'components/AllowEditButton'
 import EditDocContainer from 'containers/EditDocContainer'
 import { getCouchUrl } from 'utils/utils'
 
@@ -17,7 +19,8 @@ export default class extends React.Component {
       doc: null,
       loaded: false,
       error: null,
-      editing: false
+      editing: false,
+      docEditsSaved: false
     }
   }
 
@@ -32,26 +35,55 @@ export default class extends React.Component {
     }
   }
 
+  docSaved = (_rev, updatedDoc) => {
+    const doc = { ...updatedDoc, _rev }
+    this.setState({ doc, docEditsSaved: true })
+  }
+
   render () {
-    const { loaded, error, doc, docId, editing, dbName } = this.state
+    const { loaded, error, doc, docId, editing, dbName, couchUrl, docEditsSaved } = this.state
+    const { params: { couch } } = this.props.match
     return (
       <div>
         <h1>{docId}</h1>
-        {loaded ? error ? <Error error={error} /> : (
+        {error && <Error error={error} />}
+        {!error && !loaded && (<Loading />)}
+        {!error && loaded && (
           <div>
             <pre>
               {JSON.stringify(doc, null, 2)}
             </pre>
-            <button
-              onClick={() => this.setState({ editing: !this.state.editing })}
-            >{editing ? 'cancel' : 'edit'}</button>
+            {
+              editing ? (
+                <button onClick={() => this.setState({ editing: false })} >cancel</button>
+              )
+                : (
+                  <AllowEditButton
+                    dbName={dbName}
+                    couchUrl={couchUrl}
+                    onConfirm={() => this.setState({ editing: true })}
+                  >
+                  edit
+                  </AllowEditButton>
+                )
+            }
             {editing && (
               <div>
-                <EditDocContainer dbName={dbName} doc={doc} />
+                <EditDocContainer
+                  key={doc._rev}
+                  couchUrl={couchUrl}
+                  dbName={dbName}
+                  doc={doc}
+                  docSaved={this.docSaved}
+                  saved={docEditsSaved}
+                />
               </div>
             )}
+            <div className='footer'>
+              <Link to={`/${couch}/${dbName}`}>docs</Link>
+            </div>
           </div>
-        ) : (<Loading />)}
+        )}
       </div>
     )
   }

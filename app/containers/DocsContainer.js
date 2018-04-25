@@ -3,6 +3,7 @@ import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
 import Error from 'components/Error'
 import Pagination from 'components/Pagination'
+// import AllowEditButton from 'components/AllowEditButton'
 import { Link } from 'react-router-dom'
 import { getParams, getCouchUrl } from 'utils/utils'
 
@@ -17,7 +18,8 @@ export default class extends React.Component {
       couchUrl,
       loaded: false,
       rows: null,
-      error: null
+      error: null,
+      newDoc: false
     }
   }
 
@@ -47,11 +49,14 @@ export default class extends React.Component {
   render () {
     const { loaded, error, response, dbName } = this.state
     const { location: { pathname, search } } = this.props
+    const { params: { couch } } = this.props.match
     const offset = getParams(search).offset || 0
     return (
       <div>
         <h1>{dbName}</h1>
-        {loaded ? error ? <Error error={error} /> : (
+        {error && <Error error={error} />}
+        {!error && !loaded && (<Loading />)}
+        {!error && loaded && (
           <div>
             <div>
               <Pagination
@@ -62,6 +67,15 @@ export default class extends React.Component {
                 offset={offset}
               />
             </div>
+            <section>
+              {/* <AllowEditButton
+                dbName={dbName}
+                couchUrl={couchUrl}
+                onConfirm={() => this.setState({ newDoc: true })}
+              >
+                create doc
+              </AllowEditButton> */}
+            </section>
             <table>
               <thead>
                 <tr>
@@ -80,8 +94,11 @@ export default class extends React.Component {
                 })}
               </tbody>
             </table>
+            <div className='footer'>
+              <Link to={`/${couch}/`}>dbs</Link>
+            </div>
           </div>
-        ) : (<Loading />)}
+        )}
       </div>
     )
   }

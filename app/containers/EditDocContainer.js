@@ -33,19 +33,20 @@ export default class extends React.Component {
   }
 
   onSubmit = () => {
-    const {input} = this.state
-    const {dbName, doc} = this.props
+    const { input } = this.state
+    const { doc, couchUrl, dbName } = this.props
     const jsonInput = JSON.parse(input)
-    // if (jsonInput._id) {}
     this.setState({ saving: true }, () => {
-      fetcher.put(dbName + '/' + doc._id, jsonInput).then(() => {
-        window.location.reload()
+      fetcher.dbPut(couchUrl, dbName, doc._id, jsonInput).then(({rev}) => {
+        this.setState({ saving: false })
+        this.props.docSaved(rev, jsonInput)
       }).catch(error => this.setState({ error, saving: false }))
     })
   }
 
   render () {
     const { valid, input, changesMade, error, saving } = this.state
+    const { saved } = this.props
     let submitButton
     if (!valid) {
       submitButton = (<button disabled>invalid json</button>)
@@ -55,6 +56,8 @@ export default class extends React.Component {
       } else {
         submitButton = (<button onClick={this.onSubmit}> save </button>)
       }
+    } else if (saved) {
+      submitButton = (<button disabled> doc saved. </button>)
     } else {
       submitButton = (<button disabled> no changes made </button>)
     }

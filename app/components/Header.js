@@ -18,13 +18,13 @@ export default class extends React.Component {
             {dbName && <span> | db: {dbName} </span>}
           </div>
           <div style={{ float: 'right' }}>
-            {docId && <span><Link to={`/${couch}/${dbName}`}>all docs</Link> | </span>}
-            {dbName && <span><Link to={`/${couch}/`}>all dbs</Link> | </span>}
+            {docId && <span><Link to={`/${couch}/${dbName}`}>docs</Link> | </span>}
+            {dbName && <span><Link to={`/${couch}/`}>dbs</Link> | </span>}
             <a href='#' onClick={() => fetcher.destroySession(couchUrl)}>logout</a> |&nbsp;
             <Link to='/'>change couch</Link>
           </div>
         </div>
-        <br /><br /><br />
+        <br /><br /><br /><br />
       </div>
     )
   }
