@@ -12,7 +12,7 @@ export default class extends React.Component {
     <div>
       <div className='header'>
         <div style={{ float: 'left' }}>
-          couchviews | {couch} |
+          couchdash | {couch} |
           user: {`${userCtx.name}`}
           {dbName && <span> | db: {dbName} </span>}
         </div>

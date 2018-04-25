@@ -1,12 +1,12 @@
 /* global localStorage */
 
-const couchviewsPrefix = 'couchviews::'
+const couchdashPrefix = 'couchdash::'
 
 export default {
   getRecent (id) {
     let recent
     try {
-      recent = JSON.parse(localStorage.getItem(couchviewsPrefix + id)) || []
+      recent = JSON.parse(localStorage.getItem(couchdashPrefix + id)) || []
     } catch (e) {
       recent = []
     }
@@ -19,13 +19,13 @@ export default {
       recent.unshift(item)
       recent = recent.slice(0, 9)
     }
-    return localStorage.setItem(couchviewsPrefix + id, JSON.stringify(recent))
+    return localStorage.setItem(couchdashPrefix + id, JSON.stringify(recent))
   },
 
   get (id) {
     let item
     try {
-      item = JSON.parse(localStorage.getItem(couchviewsPrefix + id))
+      item = JSON.parse(localStorage.getItem(couchdashPrefix + id))
     } catch (e) {
       item = null
     }
@@ -33,10 +33,10 @@ export default {
   },
 
   set (id, item) {
-    return localStorage.setItem(couchviewsPrefix + id, JSON.stringify(item))
+    return localStorage.setItem(couchdashPrefix + id, JSON.stringify(item))
   },
 
   destroy (id) {
-    localStorage.removeItem(couchviewsPrefix + id)
+    localStorage.removeItem(couchdashPrefix + id)
   }
 }
