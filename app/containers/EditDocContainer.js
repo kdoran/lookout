@@ -3,7 +3,7 @@ import fetcher from 'utils/fetcher'
 import DeleteDocModal from 'components/DeleteDocModal'
 import Loading from 'components/Loading'
 import { getCouchUrl } from 'utils/utils'
-import AceEditor, {diff as DiffEditor} from 'react-ace'
+import AceEditor from 'react-ace'
 import brace from 'brace'
 
 import 'brace/mode/json'
@@ -52,6 +52,8 @@ export default class extends React.Component {
       this.setState({ error, loaded: true })
       console.error(error)
     }
+    const editor = this.refs.aceEditor.editor
+    editor.commands.removeCommands(['gotoline', 'find'])
   }
 
   onEdit = change => {
@@ -114,8 +116,6 @@ export default class extends React.Component {
     } = this.state
     const buttonText = getSubmitButtonText(valid, changesMade, saving)
     const canSave = (valid && changesMade && !saving)
-    const EditorComponent = isDesktop ? DiffEditor : AceEditor
-    const inputValue = isDesktop ? [input, original] : input
 
     return (
       <div>
@@ -147,15 +147,16 @@ export default class extends React.Component {
               </button>
             </div>
             {error && (<div className='error'>{error}</div>)}
-            <EditorComponent
+            <AceEditor
               mode='json'
               theme='github'
+              ref='aceEditor'
               width={aceWidth}
-              highlightActiveLine={false}
               height={aceHeight}
               onChange={this.onEdit}
+              showPrintMargin={false}
               editorProps={{$blockScrolling: true}}
-              value={inputValue}
+              value={input}
             />
             <DeleteDocModal
               show={showDeleteModal}

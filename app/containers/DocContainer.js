@@ -33,16 +33,8 @@ export default class extends React.Component {
       const search = this.props.location.search
       const resource = search ? docId + search : docId
       const doc = await fetcher.dbGet(couchUrl, dbName, resource)
-      const metaResponse = await fetcher.dbGet(couchUrl, dbName, docId, { meta: true })
-      const meta = {}
-      for (let key in metaResponse) {
-        if (!doc[key]) {
-          meta[key] = metaResponse[key]
-        }
-      }
-      const revs_info = meta._revs_info
-      delete meta._revs_info
-      this.setState({ doc, meta, revs_info, loaded: true })
+      const meta = await fetcher.dbGet(couchUrl, dbName, docId, { meta: true })
+      this.setState({ doc, meta, loaded: true })
     } catch (error) {
       this.setState({ error, loaded: true })
       console.error(error)
@@ -61,7 +53,7 @@ export default class extends React.Component {
   }
 
   render () {
-    const { loaded, error, doc, meta, docId, dbName, couchUrl, revs_info } = this.state
+    const { loaded, error, doc, meta, docId, dbName, couchUrl } = this.state
     const { params: { couch } } = this.props.match
     return (
       <div>
@@ -84,10 +76,10 @@ export default class extends React.Component {
               {JSON.stringify(doc, null, 2)}
             </pre>
             <h5>Rev Links</h5>
-            {revs_info.map(row => (
+            {meta._revs_info.map(row => (
               <div key={row.rev}>
                 <span>
-                  {(row.status === 'available' && row.rev !== doc._rev)
+                  {(row.status === 'available')
                     ? (
                       <a href='#' onClick={e => {e.preventDefault(); this.selectRev(row.rev)}}>
                         {row.rev}
@@ -101,12 +93,10 @@ export default class extends React.Component {
                 </span>
               </div>
             ))}
-            {Object.keys(meta).length ? (
+            {meta._conflicts ? (
               <div>
-                <h5>Other Meta Info</h5>
-                <pre>
-                  {JSON.stringify(meta, null, 2)}
-                </pre>
+                <h5>Conflicts</h5>
+                {JSON.stringify(meta._conflicts, null, 2)}
               </div>
             ) : <h5>No Conflicts Found.</h5>}
           </div>
