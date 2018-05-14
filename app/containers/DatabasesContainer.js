@@ -1,21 +1,15 @@
 import React from 'react'
 import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
+import NewDatabaseContainer from 'containers/NewDatabaseContainer'
 import Error from 'components/Error'
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import AllowEditButton from 'components/AllowEditButton'
 import { showMBSize, showSize, withCommas, getCouchUrl } from 'utils/utils'
 
 const LIMIT = 100
 
-const tableStyles = {
-  width: '80%',
-  margin: '0 auto',
-  textAlign: 'right'
-}
-
-const alignLeft = {
-  textAlign: 'left'
-}
+import './databases-container.css'
 
 export default class extends React.Component {
   constructor (props) {
@@ -26,7 +20,8 @@ export default class extends React.Component {
       loaded: false,
       dbs: null,
       error: null,
-      infos: {}
+      infos: {},
+      showNewDBModal: false
     }
   }
 
@@ -60,36 +55,52 @@ export default class extends React.Component {
   }
 
   render () {
-    const { loaded, error, dbs, infos } = this.state
+    const { loaded, error, dbs, infos, couchUrl, showNewDBModal } = this.state
+    const { history, match: { params: { couch } } } = this.props
     return (
       <div>
         {loaded ? error ? <Error error={error} /> : (
-          <table style={tableStyles}>
-            <thead>
-              <tr>
-                <th style={alignLeft}>name</th>
-                <th>docs</th>
-                <th>data size</th>
-                <th>disk space</th>
-                <th>deleted</th>
-                <th>seq no. (as int)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dbs.map(db => {
-                return (
-                  <tr key={db}>
-                    <td style={alignLeft}><Link to={db}>{db}</Link></td>
-                    <td>{infos[db] ? withCommas(infos[db].doc_count) : 'loading...'}</td>
-                    <td>{infos[db] ? showSize(infos[db].data_size) : 'loading...'}</td>
-                    <td>{infos[db] ? showMBSize(infos[db].disk_size) : 'loading...'}</td>
-                    <td>{infos[db] ? withCommas(infos[db].doc_del_count) : 'loading...'}</td>
-                    <td>{infos[db] ? infos[db].update_seq : 'loading...'}</td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+          <div>
+            <table>
+              <thead>
+                <tr>
+                  <th>name</th>
+                  <th>docs</th>
+                  <th>data size</th>
+                  <th>disk space</th>
+                  <th>deleted</th>
+                  <th>seq no. (as int)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dbs.map(db => {
+                  return (
+                    <tr key={db}>
+                      <td><Link to={`/${couch}/${db}/`}>{db}</Link></td>
+                      <td>{infos[db] ? withCommas(infos[db].doc_count) : 'loading...'}</td>
+                      <td>{infos[db] ? showSize(infos[db].data_size) : 'loading...'}</td>
+                      <td>{infos[db] ? showMBSize(infos[db].disk_size) : 'loading...'}</td>
+                      <td>{infos[db] ? withCommas(infos[db].doc_del_count) : 'loading...'}</td>
+                      <td>{infos[db] ? infos[db].update_seq : 'loading...'}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          <br /><br />
+          <AllowEditButton
+            couchUrl={couchUrl}
+            onConfirm={() => this.setState({ showNewDBModal: true })}
+            >
+            New Database
+          </AllowEditButton>
+          <NewDatabaseContainer
+            couchUrl={couchUrl}
+            history={history}
+            onClose={() => this.setState({ showNewDBModal: false })}
+            show={showNewDBModal}
+          />
+        </div>
         ) : (<Loading />)}
       </div>
     )

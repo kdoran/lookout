@@ -1,0 +1,31 @@
+#app {
+  font-family: monospace;
+  color: black;
+  font-size: 1em;
+  margin: 0;
+}
+
+.page {
+  margin: 0 auto;
+  width: 95%;
+}
+
+.error {
+  color: red;
+}
+
+.action-button {
+  background-image: linear-gradient(-180deg, #fbf2f2 0%, #fbf1f1 90%);
+}
+
+.action-button:disabled {
+  background-image: none;
+}
+
+.warning {
+  background-color: #fbf2f2;
+}
+
+.align-right {
+  text-align: right;
+}

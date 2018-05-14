@@ -33,16 +33,16 @@ export default class extends React.Component {
     const { children, dbName, couchUrl } = this.props
     return (
       <span>
-        <button onClick={this.toggleModal}>
+        <button className='action-button edit-button' onClick={this.toggleModal}>
           {children}
         </button>
         <Modal
           show={showModal}
           onClose={this.toggleModal}
         >
-          <h2>Warning! Allow edits to database?</h2>
+          <h2>Warning! Allow edits to this CouchDB?</h2>
           <div>
-          Please take a moment to confirm your CouchDB and database:
+          Please take a moment to confirm your environment:
             <div>
               <br />
               <strong>{couchUrl}{dbName}</strong>
@@ -61,7 +61,7 @@ export default class extends React.Component {
                 onKeyUp={this.maybeEscape}
               />
             </label>
-            <button disabled={!allowEdit} type='submit'>Submit</button>
+            <button className='action-button' disabled={!allowEdit} type='submit'>Submit</button>
             <button onClick={this.toggleModal}>cancel</button>
           </form>
         </Modal>

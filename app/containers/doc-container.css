@@ -1,0 +1,10 @@
+.controls {
+  text-align: right;
+}
+
+pre {
+  /* background-color: #eeeeee7a; */
+  border: 1px solid #eee;
+  padding: 35px;
+  border-radius: 4px;
+}

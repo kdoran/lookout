@@ -6,14 +6,16 @@ import SetupCouchContainer from './containers/SetupCouchContainer'
 import DatabasesContainer from './containers/DatabasesContainer'
 import DocsContainer from './containers/DocsContainer'
 import DocContainer from './containers/DocContainer'
-import Header from './components/Header'
+import EditDocContainer from './containers/EditDocContainer'
+import Nav from './components/Nav'
 import Login from './components/Login'
 import Loading from './components/Loading'
-import cache from './cache'
+import cache from './utils/cache'
 import {getCouchUrl} from './utils/utils'
 import fetcher from 'utils/fetcher'
 
-import 'styles.css'
+import 'app-classes.css'
+import 'app-tags.css'
 
 class UserRoutes extends Component {
   constructor (props) {
@@ -49,12 +51,15 @@ class UserRoutes extends Component {
     } else {
       return (
         <div>
-          <Route path='/:couch/:dbName?/:docId?' render={props => (<Header {...props} userCtx={cache.userCtx} />)} />
-          <Switch>
-            <Route path='/:couch/:dbName/:docId' component={DocContainer} />
-            <Route path='/:couch/:dbName' component={DocsContainer} />
-            <Route path='/:couch/' component={DatabasesContainer} />
-          </Switch>
+          <div className='page'>
+            <Switch>
+              <Route path='/:couch/:dbName/editing/:docId' component={EditDocContainer} />
+              <Route path='/:couch/:dbName/:docId' component={DocContainer} />
+              <Route path='/:couch/:dbName' component={DocsContainer} />
+              <Route path='/:couch/' component={DatabasesContainer} />
+            </Switch>
+          </div>
+          <Route path='/:couch/:dbName?/:docId?' render={props => (<Nav {...props} userCtx={cache.userCtx} />)} />
         </div>
       )
     }

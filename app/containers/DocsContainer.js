@@ -3,9 +3,12 @@ import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
 import Error from 'components/Error'
 import Pagination from 'components/Pagination'
-// import AllowEditButton from 'components/AllowEditButton'
+import AllowEditButton from 'components/AllowEditButton'
+import DeleteDatabaseContainer from 'containers/DeleteDatabaseContainer'
 import { Link } from 'react-router-dom'
 import { getParams, getCouchUrl } from 'utils/utils'
+
+import './docs-container.css'
 
 const LIMIT = 500
 
@@ -19,7 +22,7 @@ export default class extends React.Component {
       loaded: false,
       rows: null,
       error: null,
-      newDoc: false
+      showDeleteModal: false
     }
   }
 
@@ -47,10 +50,19 @@ export default class extends React.Component {
   }
 
   render () {
-    const { loaded, error, response, dbName } = this.state
-    const { location: { pathname, search } } = this.props
+    const { loaded, error, response, dbName, couchUrl, showDeleteModal } = this.state
+    const { location: { pathname, search }, history } = this.props
     const { params: { couch } } = this.props.match
     const offset = getParams(search).offset || 0
+    const PaginationComponent = () => (
+      <Pagination
+        total={response.total_rows}
+        displayed={response.rows.length}
+        path={pathname}
+        limit={LIMIT}
+        offset={offset}
+      />
+    )
     return (
       <div>
         <h1>{dbName}</h1>
@@ -58,24 +70,17 @@ export default class extends React.Component {
         {!error && !loaded && (<Loading />)}
         {!error && loaded && (
           <div>
-            <div>
-              <Pagination
-                total={response.total_rows}
-                displayed={response.rows.length}
-                path={pathname}
-                limit={LIMIT}
-                offset={offset}
-              />
-            </div>
-            <section>
-              {/* <AllowEditButton
+            <section className='docs-controls'>
+              <PaginationComponent />
+              <AllowEditButton
                 dbName={dbName}
                 couchUrl={couchUrl}
-                onConfirm={() => this.setState({ newDoc: true })}
+                onConfirm={() => history.push(`/${couch}/${dbName}/editing/new`)}
               >
-                create doc
-              </AllowEditButton> */}
+                new document
+              </AllowEditButton>
             </section>
+            {offset === 0 && (<span><Link to={dbName + '/_security'}>_security</Link><br /><br /></span>)}
             <table>
               <thead>
                 <tr>
@@ -87,16 +92,33 @@ export default class extends React.Component {
                 {response.rows.map(row => {
                   return (
                     <tr key={row.id}>
-                      <td><Link to={dbName + '/' + encodeURIComponent(row.id) + '/'}>{row.id}</Link></td>
+                      <td><Link to={`/${couch}/${dbName}/${row.id}`}>{row.id}</Link></td>
                       <td>{row.value.rev}</td>
                     </tr>
                   )
                 })}
               </tbody>
             </table>
-            <div className='footer'>
-              <Link to={`/${couch}/`}>dbs</Link>
-            </div>
+            <section className='docs-controls'>
+              {response.rows.length > 20 && (
+                <PaginationComponent />
+              )}
+              <AllowEditButton
+                couchUrl={couchUrl}
+                dbName={dbName}
+                onConfirm={() => this.setState({ showDeleteModal: true })}
+                >
+                Delete Database
+              </AllowEditButton>
+              <DeleteDatabaseContainer
+                couchUrl={couchUrl}
+                dbName={dbName}
+                history={history}
+                couch={this.props.match.params.couch}
+                onClose={() => this.setState({ showDeleteModal: false })}
+                show={showDeleteModal}
+              />
+            </section>
           </div>
         )}
       </div>

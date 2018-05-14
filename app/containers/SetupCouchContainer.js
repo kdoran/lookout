@@ -2,7 +2,7 @@ import React from 'react'
 import fetcher from 'utils/fetcher'
 import localStorager from 'utils/localstorager'
 import {parseUrl} from 'utils/utils'
-import cache from '../cache'
+import cache from '../utils/cache'
 
 export default class extends React.Component {
   constructor () {

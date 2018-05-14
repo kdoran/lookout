@@ -12,19 +12,20 @@ export default class Pagination extends React.Component {
       <div>
 
         {withCommas(startingNumber)} - {withCommas(offset + displayed)} of {withCommas(total)}
-        <br />
-        {previousNumber > 0 && (
-          <Link to={path + '?offset=' + previousNumber}>previous</Link>
-        )}
-        {previousNumber === 0 && (
-          <Link to={path}>previous</Link>
-        )}
-        {previousNumber < 0 && 'previous'}
-        &nbsp;
-        {offset + displayed < total && (
-          <Link to={path + '?offset=' + nextNumber}>next</Link>
-        )}
-        {offset + displayed >= total && 'next'}
+        <div>
+          {previousNumber > 0 && (
+            <Link to={path + '?offset=' + previousNumber}>previous</Link>
+          )}
+          {previousNumber === 0 && (
+            <Link to={path}>previous</Link>
+          )}
+          {previousNumber < 0 && 'previous'}
+          &nbsp;
+          {offset + displayed < total && (
+            <Link to={path + '?offset=' + nextNumber}>next</Link>
+          )}
+          {offset + displayed >= total && 'next'}
+        </div>
       </div>
     )
   }

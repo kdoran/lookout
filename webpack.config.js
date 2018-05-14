@@ -41,10 +41,11 @@ module.exports = {
   devServer: {
     compress: true,
     hot: true,
-    historyApiFallback: true,
+    historyApiFallback: {
+      disableDotRule: true
+    },
     port: 7000,
-    clientLogLevel: 'none',
-    disableHostCheck: true
+    clientLogLevel: 'none'
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin()
