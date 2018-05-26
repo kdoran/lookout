@@ -3,15 +3,9 @@ import fetcher from 'utils/fetcher'
 import DeleteDocModal from 'components/DeleteDocModal'
 import Loading from 'components/Loading'
 import { getCouchUrl } from 'utils/utils'
-import AceEditor from 'react-ace'
-import brace from 'brace'
+import Editor from 'components/Editor'
 
-import 'brace/mode/json'
-import 'brace/theme/github'
 import './edit-doc-container.css'
-
-const aceHeight = '80%'
-const aceWidth = '100%'
 
 export default class extends React.Component {
   constructor (props) {
@@ -29,7 +23,6 @@ export default class extends React.Component {
       changesMade: false,
       error: null,
       saving: false,
-      isDesktop: (window.innerWidth > 1100),
       showDeleteModal: false,
       loaded: false,
       isNew: docId === 'new'
@@ -42,7 +35,6 @@ export default class extends React.Component {
       this.setState({ loaded: true, original: '{}', input: neat({ _id: '' }) })
       return
     }
-
     try {
       const doc = await fetcher.dbGet(couchUrl, dbName, docId)
       const original = neat(doc)
@@ -52,31 +44,27 @@ export default class extends React.Component {
       this.setState({ error, loaded: true })
       console.error(error)
     }
-    const editor = this.refs.aceEditor.editor
-    editor.commands.removeCommands(['gotoline', 'find'])
   }
 
-  onEdit = change => {
-    const { isDesktop, original } = this.state
-    const input = isDesktop ? change[0] : change
+  onEdit = input => {
+    const { original } = this.state
     let valid = true
     try {
       JSON.parse(input)
     } catch (e) {
       valid = false
     }
-    const changesMade = (original !== input)
-    this.setState({ valid, input, changesMade })
+    this.setState({ valid, input, changesMade: (original !== input) })
   }
 
   onSubmit = () => {
-    const { input, doc, docId, isNew, couchUrl, dbName } = this.state
+    const { input, doc, isNew, couchUrl, dbName } = this.state
     const jsObjectInput = JSON.parse(input)
     this.setState({ saving: true }, () => {
       // New documents will get ID from input
-      const _id = isNew ? jsObjectInput._id : docId
-      fetcher.dbPut(couchUrl, dbName, _id, jsObjectInput).then(() => {
-        this.back(_id)
+      const docId = isNew ? jsObjectInput._id : this.state.docId
+      fetcher.dbPut(couchUrl, dbName, docId, jsObjectInput).then(() => {
+        this.setState({ docId }, () => this.back())
       }).catch(error => this.setState({ error, saving: false }))
     })
   }
@@ -92,10 +80,13 @@ export default class extends React.Component {
     }
   }
 
-  back = (_id) => {
+  back = () => {
     const { docId, couch, dbName } = this.state
-    const id = _id || docId
-    this.props.history.push(`/${couch}/${dbName}/${id}`)
+    if (docId === 'new') {
+      this.props.history.push(`/${couch}/${dbName}/`)
+    } else {
+      this.props.history.push(`/${couch}/${dbName}/${docId}`)
+    }
   }
 
   render () {
@@ -141,21 +132,14 @@ export default class extends React.Component {
               )}
               <button
                 className='cancel-button'
-                onClick={this.back}
+                onClick={() => this.back(this.state.docId)}
               >
                 {changesMade ? 'cancel' : 'back'}
               </button>
             </div>
             {error && (<div className='error'>{error}</div>)}
-            <AceEditor
-              mode='json'
-              theme='github'
-              ref='aceEditor'
-              width={aceWidth}
-              height={aceHeight}
+            <Editor
               onChange={this.onEdit}
-              showPrintMargin={false}
-              editorProps={{$blockScrolling: true}}
               value={input}
             />
             <DeleteDocModal

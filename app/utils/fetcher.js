@@ -8,6 +8,19 @@ const defaultOptions = {
 }
 
 export default {
+  fetch (options) {
+    if (options.method && options.method.toLowerCase() === 'get') {
+      return this.get(options.url, options.params)
+    }
+    return fetch(options.url, {
+      ...defaultOptions,
+      ...options,
+      body: JSON.stringify(options.body)
+    })
+      .then(parseJSON)
+      .catch(throwParsedError)
+  },
+
   get (url, params) {
     const urlMaybeWithParams = (params) ? `${url}?${getParams(params)}` : url
     return fetch(urlMaybeWithParams, defaultOptions)
@@ -115,13 +128,13 @@ async function parseJSON (resp) {
 }
 
 function throwParsedError (throwParsedError) {
-  let error
+  let errorString
   if (Object.keys(throwParsedError).length) {
-    error = Object.keys(throwParsedError).map(key => (` ${key}: ${throwParsedError[key]}`)).join(' ')
+    errorString = Object.keys(throwParsedError).map(key => (` ${key}: ${throwParsedError[key]}`)).join(' ')
   } else {
-    error = throwParsedError.toString()
+    errorString = throwParsedError.toString()
   }
-  return Promise.reject(error)
+  return Promise.reject(new Error(errorString))
 }
 
 function getParams (data) {

@@ -4,7 +4,7 @@ const webpack = require('webpack')
 module.exports = {
   entry: './app/app.js',
   output: {
-    filename: 'app.js',
+    filename: 'lookout.js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/'
   },
@@ -42,6 +42,7 @@ module.exports = {
     compress: true,
     hot: true,
     historyApiFallback: {
+      index: 'dev-index.html',
       disableDotRule: true
     },
     port: 7000,

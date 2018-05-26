@@ -22,7 +22,7 @@ export default class LoginContainer extends React.Component {
     const { couchUrl } = this.props
     return (
       <form onSubmit={this.tryLogin}>
-        <h1>couchdash: login</h1>
+        <h1>couchdb lookout: login</h1>
         <div>{couchUrl} <Link to='/'>change couch</Link></div>
         <input autoFocus type='text' ref='username' /> <br />
         <input type='password' ref='password' />

@@ -68,6 +68,7 @@ export function getCouchUrl (match) {
   const { params: { dbName, couch } } = match
   return {
     dbName,
+    couch,
     couchUrl: parseUrl(couch)
   }
 }

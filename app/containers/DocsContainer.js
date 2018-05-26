@@ -72,15 +72,18 @@ export default class extends React.Component {
           <div>
             <section className='docs-controls'>
               <PaginationComponent />
-              <AllowEditButton
-                dbName={dbName}
-                couchUrl={couchUrl}
-                onConfirm={() => history.push(`/${couch}/${dbName}/editing/new`)}
-              >
-                new document
-              </AllowEditButton>
+              <div>
+                <Link to={`/${couch}/${dbName}/query/`}>new query</Link> &nbsp;
+                <AllowEditButton
+                  dbName={dbName}
+                  couchUrl={couchUrl}
+                  onConfirm={() => history.push(`/${couch}/${dbName}/editing/new`)}
+                >
+                  new document
+                </AllowEditButton>
+              </div>
             </section>
-            {offset === 0 && (<span><Link to={dbName + '/_security'}>_security</Link><br /><br /></span>)}
+            {offset === 0 && (<span><Link to={`/${couch}/${dbName}/_security`}>_security</Link><br /><br /></span>)}
             <table>
               <thead>
                 <tr>

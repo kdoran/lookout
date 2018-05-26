@@ -22,7 +22,7 @@ export default class extends React.Component {
             {!docId && dbName && 'docs'}
           </span>
           <span className='nav-right'>
-            couchdash | <span className={couchClass}>{couch}</span> |
+            couchdb lookout | <span className={couchClass}>{couch}</span> |
             user: {`${userCtx.name}`}
           </span>
         </div>

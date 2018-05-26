@@ -5,7 +5,7 @@ import NewDatabaseContainer from 'containers/NewDatabaseContainer'
 import Error from 'components/Error'
 import { Link } from 'react-router-dom'
 import AllowEditButton from 'components/AllowEditButton'
-import { showMBSize, showSize, withCommas, getCouchUrl } from 'utils/utils'
+import { showMBSize, showKBSize, withCommas, getCouchUrl } from 'utils/utils'
 
 const LIMIT = 100
 
@@ -78,7 +78,7 @@ export default class extends React.Component {
                     <tr key={db}>
                       <td><Link to={`/${couch}/${db}/`}>{db}</Link></td>
                       <td>{infos[db] ? withCommas(infos[db].doc_count) : 'loading...'}</td>
-                      <td>{infos[db] ? showSize(infos[db].data_size) : 'loading...'}</td>
+                      <td>{infos[db] ? showMBSize(infos[db].data_size) : 'loading...'}</td>
                       <td>{infos[db] ? showMBSize(infos[db].disk_size) : 'loading...'}</td>
                       <td>{infos[db] ? withCommas(infos[db].doc_del_count) : 'loading...'}</td>
                       <td>{infos[db] ? infos[db].update_seq : 'loading...'}</td>

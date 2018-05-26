@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { HashRouter as Router, Route, Switch } from 'react-router-dom'
 
 import SetupCouchContainer from './containers/SetupCouchContainer'
 import DatabasesContainer from './containers/DatabasesContainer'
 import DocsContainer from './containers/DocsContainer'
 import DocContainer from './containers/DocContainer'
 import EditDocContainer from './containers/EditDocContainer'
+import QueryContainer from './containers/QueryContainer'
 import Nav from './components/Nav'
 import Login from './components/Login'
 import Loading from './components/Loading'
@@ -54,6 +55,8 @@ class UserRoutes extends Component {
           <div className='page'>
             <Switch>
               <Route path='/:couch/:dbName/editing/:docId' component={EditDocContainer} />
+              <Route path='/:couch/:dbName/query/:queryId/' component={QueryContainer} />
+              <Route path='/:couch/:dbName/query/' component={QueryContainer} />
               <Route path='/:couch/:dbName/:docId' component={DocContainer} />
               <Route path='/:couch/:dbName' component={DocsContainer} />
               <Route path='/:couch/' component={DatabasesContainer} />
@@ -69,7 +72,7 @@ class UserRoutes extends Component {
 class App extends Component {
   render () {
     return (
-      <Router>
+      <Router basename='/lookout'>
         <div>
           <Route exact path='/' component={SetupCouchContainer} />
           <Route path='/:couch/' component={UserRoutes} />

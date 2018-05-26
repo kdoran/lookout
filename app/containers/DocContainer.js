@@ -8,9 +8,6 @@ import { Link } from 'react-router-dom'
 
 import './doc-container.css'
 
-const aceHeight = '80%'
-const aceWidth = '80%'
-
 export default class extends React.Component {
   constructor (props) {
     super(props)
@@ -41,17 +38,6 @@ export default class extends React.Component {
     }
   }
 
-  selectRev = (rev) => {
-    const { params: { couch } } = this.props.match
-    const { docId, dbName, couchUrl } = this.state
-    this.props.history.push({
-      pathname: `/${couch}/${dbName}/${encodeURIComponent(docId)}`,
-      search: `?rev=${rev}`
-    })
-    // React router dom does not change route on query search param change
-    window.location.reload()
-  }
-
   render () {
     const { loaded, error, doc, meta, docId, dbName, couchUrl } = this.state
     const { params: { couch } } = this.props.match
@@ -75,30 +61,34 @@ export default class extends React.Component {
             <pre>
               {JSON.stringify(doc, null, 2)}
             </pre>
-            <h5>Rev Links</h5>
-            {meta._revs_info.map(row => (
-              <div key={row.rev}>
-                <span>
-                  {(row.status === 'available')
-                    ? (
-                      <a href='#' onClick={e => {e.preventDefault(); this.selectRev(row.rev)}}>
-                        {row.rev}
-                      </a>
-                    )
-                    : row.rev
-                  }
-                </span>
-                <span>
-                  &nbsp; ({(row.rev === doc._rev) ? 'viewing' : row.status})
-                </span>
-              </div>
-            ))}
-            {meta._conflicts ? (
-              <div>
-                <h5>Conflicts</h5>
-                {JSON.stringify(meta._conflicts, null, 2)}
-              </div>
-            ) : <h5>No Conflicts Found.</h5>}
+            {meta && meta._revs_info && (
+              <span>
+                <h5>Rev Links</h5>
+                {meta._revs_info.map(row => (
+                  <div key={row.rev}>
+                    <span>
+                      {(row.status === 'available')
+                        ? (
+                          <a href={`/${couch}/${dbName}/${encodeURIComponent(docId)}?rev=${row.rev}`}>
+                            {row.rev}
+                          </a>
+                        )
+                        : row.rev
+                      }
+                    </span>
+                    <span>
+                      &nbsp; ({(row.rev === doc._rev) ? 'viewing' : row.status})
+                    </span>
+                  </div>
+                ))}
+                {meta._conflicts ? (
+                  <div>
+                    <h5>Conflicts</h5>
+                    {JSON.stringify(meta._conflicts, null, 2)}
+                  </div>
+                ) : <h5>No Conflicts Found.</h5>}
+              </span>
+            )}
           </div>
         )}
       </div>
