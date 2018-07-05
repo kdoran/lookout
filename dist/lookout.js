@@ -62,7 +62,7 @@
 /******/ 	}
 /******/
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "02a7f48a9f43aadd240f"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "bf65ebd3827540b9f1be"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -2964,6 +2964,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       };
     })(), this.run = (() => {
       var _ref2 = _asyncToGenerator(function* (event) {
+        if (event) event.preventDefault();
         const { valid, input } = _this.state;
 
         if (!valid) return;

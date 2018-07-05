@@ -28,6 +28,7 @@ export default class extends React.Component {
   }
 
   run = async event => {
+    if (event) event.preventDefault()
     const { valid, input } = this.state
 
     if (!valid) return
