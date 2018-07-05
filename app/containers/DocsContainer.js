@@ -4,6 +4,7 @@ import Loading from 'components/Loading'
 import Error from 'components/Error'
 import Pagination from 'components/Pagination'
 import AllowEditButton from 'components/AllowEditButton'
+import Breadcrumbs from 'components/Breadcrumbs'
 import DeleteDatabaseContainer from 'containers/DeleteDatabaseContainer'
 import { Link } from 'react-router-dom'
 
@@ -34,7 +35,7 @@ export default class extends React.Component {
   }
 
   render () {
-    const { location: { pathname, search }, history } = this.props
+    const { location: { pathname }, history } = this.props
     const { dbName, couchUrl, couch, searchParams: { offset = 0 } } = this.props
     const { loaded, error, response, showDeleteModal } = this.state
 
@@ -49,7 +50,7 @@ export default class extends React.Component {
     )
     return (
       <div>
-        <h1>{dbName}</h1>
+        <Breadcrumbs couch={couch} dbName={dbName} />
         {error && <Error error={error} />}
         {!error && !loaded && (<Loading />)}
         {!error && loaded && (
@@ -57,7 +58,7 @@ export default class extends React.Component {
             <section className='docs-controls'>
               <PaginationComponent />
               <div>
-                <Link to={`/${couch}/${dbName}/query/`}>new query</Link> &nbsp;
+                <Link to={`/${couch}/${dbName}/query/`}>query</Link> &nbsp;
                 <AllowEditButton
                   dbName={dbName}
                   couchUrl={couchUrl}
@@ -94,7 +95,7 @@ export default class extends React.Component {
                 couchUrl={couchUrl}
                 dbName={dbName}
                 onConfirm={() => this.setState({ showDeleteModal: true })}
-                >
+              >
                 Delete Database
               </AllowEditButton>
               <DeleteDatabaseContainer

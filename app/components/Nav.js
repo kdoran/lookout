@@ -7,23 +7,17 @@ import './nav.css'
 
 export default class extends React.Component {
   render () {
-    const { userCtx, match: { params: { couch, dbName, docId } } } = this.props
+    const { userCtx, match: { params: { couch } } } = this.props
     const couchUrl = parseUrl(couch)
-    const couchClass = couchUrl.includes('localhost') ? '' : 'error'
     return (
       <div className='nav-container'>
         <div className='nav'>
           <span className='nav-left'>
-            <Link to='/'>change couch</Link> |&nbsp;
-            <a href='#' onClick={() => fetcher.destroySession(couchUrl)}>logout</a> |&nbsp;
-            {!dbName && 'databases'}
-            {dbName && <span><Link to={`/${couch}/`}>databases</Link> | </span>}
-            {docId && <span><Link to={`/${couch}/${dbName}`}>docs</Link></span>}
-            {!docId && dbName && 'docs'}
+            CouchDB Lookout | <Link to='/'>change couch</Link>
           </span>
           <span className='nav-right'>
-            CouchDB Lookout | <span className={couchClass}>{couch}</span> |
-            user: {`${userCtx.name}`}
+            user: <Link to={`/${couch}/_users/org.couchdb.user:${encodeURIComponent(userCtx.name)}`}>{userCtx.name}</Link> |&nbsp;
+            <a href='#' onClick={() => fetcher.destroySession(couchUrl)}>logout</a>
           </span>
         </div>
       </div>

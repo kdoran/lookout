@@ -1,6 +1,6 @@
 import React from 'react'
 import AceEditor from 'react-ace'
-import brace from 'brace'
+import brace from 'brace' // eslint-disable-line
 
 import 'brace/mode/json'
 import 'brace/mode/javascript'
@@ -30,12 +30,12 @@ export default class extends React.Component {
         ref='aceEditor'
         width={ACE_WIDTH}
         height={ACE_HEIGHT}
-        focus={true}
+        focus
         commands={
-          [{   // commands is array of key bindings.
-            name: 'commandName', //name for the key binding.
-            bindKey: {win: 'Ctrl-Enter', mac: 'Command-Enter'}, //key combination used for the command.
-            exec: () => this.cmdEnter()  //function to execute when keys are pressed.
+          [{ // commands is array of key bindings.
+            name: 'commandName', // name for the key binding.
+            bindKey: {win: 'Ctrl-Enter', mac: 'Command-Enter'}, // key combination used for the command.
+            exec: () => this.cmdEnter() // function to execute when keys are pressed.
           }]
         }
         showPrintMargin={false}

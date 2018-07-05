@@ -26,7 +26,7 @@ export default class NewDatabaseContainer extends React.Component {
       this.setState({ loading: true })
       const data = { id, name: inputText }
       try {
-        const response = await fetcher.put(couchUrl + id, data)
+        await fetcher.put(couchUrl + id, data)
         history.push(id)
       } catch (error) {
         this.setState({ error, loading: false })

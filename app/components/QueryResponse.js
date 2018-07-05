@@ -1,11 +1,8 @@
 import React from 'react'
-import Pagination from 'components/Pagination'
-import { Link } from 'react-router-dom'
-import { withCommas } from 'utils/utils'
 
 export default class extends React.Component {
   render () {
-    const { result, couch, dbName, limit } = this.props
+    const { result } = this.props
     // if (docs.length === 0) return <h4>No docs found.</h4>
     // const atLeast = (limit === docs.length) ? 'at least' : ''
     return (

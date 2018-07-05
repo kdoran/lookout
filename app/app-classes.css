@@ -5,6 +5,10 @@
   margin: 0;
 }
 
+.breadcrumbs {
+  margin-bottom: 15px;
+}
+
 .page {
   margin: 0 auto;
   width: 95%;
@@ -15,7 +19,7 @@
 }
 
 .action-button:disabled {
-  background-image: none;
+  opacity: .8;
 }
 
 .warning {
@@ -24,4 +28,8 @@
 
 .align-right {
   text-align: right;
+}
+
+.warning-modal {
+  background-color: red;
 }

@@ -1,6 +1,7 @@
 import React from 'react'
 import fetcher from 'utils/fetcher'
 import DeleteDocModal from 'components/DeleteDocModal'
+import Breadcrumbs from 'components/Breadcrumbs'
 import Loading from 'components/Loading'
 import Editor from 'components/Editor'
 
@@ -56,7 +57,7 @@ export default class extends React.Component {
 
   onSubmit = () => {
     const { couchUrl, dbName } = this.props
-    const { input, doc, isNew } = this.state
+    const { input, isNew } = this.state
 
     const jsObjectInput = JSON.parse(input)
     this.setState({ saving: true }, () => {
@@ -91,19 +92,16 @@ export default class extends React.Component {
   }
 
   render () {
+    const { couch, couchUrl, dbName } = this.props
     const {
-      dbName,
       loaded,
       valid,
       input,
-      original,
       changesMade,
       error,
       saving,
-      isDesktop,
       isNew,
       docId,
-      couchUrl,
       showDeleteModal
     } = this.state
     const buttonText = getSubmitButtonText(valid, changesMade, saving)
@@ -111,8 +109,8 @@ export default class extends React.Component {
 
     return (
       <div>
-        <h4>{dbName}</h4>
-        <h2>{docId}</h2>
+        <Breadcrumbs couch={couch} dbName={dbName} docId={docId} final={'edit'} />
+
         {loaded ? (
           <div>
             <div className='controls'>

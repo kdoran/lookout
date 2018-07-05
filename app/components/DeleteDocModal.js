@@ -23,7 +23,7 @@ export default class DeteleDocModal extends React.Component {
       <Modal
         show={show}
         onClose={onClose}
-        className='warning'
+        className='warning-modal'
       >
         <form onSubmit={e => { e.preventDefault(); onSubmit() }}>
           <h1>Delete document?</h1>

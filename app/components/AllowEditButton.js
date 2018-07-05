@@ -39,6 +39,7 @@ export default class extends React.Component {
         <Modal
           show={showModal}
           onClose={this.toggleModal}
+          className='warning-modal'
         >
           <h2>Warning! Allow edits to this CouchDB?</h2>
           <div>
@@ -62,7 +63,7 @@ export default class extends React.Component {
               />
             </label>
             <button className='action-button' disabled={!allowEdit} type='submit'>Submit</button>
-            <button onClick={this.toggleModal}>cancel</button>
+            <button onClick={this.toggleModal}>Cancel</button>
           </form>
         </Modal>
       </span>

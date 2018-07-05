@@ -3,6 +3,7 @@ import Editor from 'components/Editor'
 import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
 import Error from 'components/Error'
+import Breadcrumbs from 'components/Breadcrumbs'
 import QueryResponse from 'components/QueryResponse'
 import { getQuery, getAllQueries } from 'utils/queries'
 import { Link } from 'react-router-dom'
@@ -27,7 +28,6 @@ export default class extends React.Component {
   }
 
   run = async event => {
-    const { couchUrl, dbName } = this.props
     const { valid, input } = this.state
 
     if (!valid) return
@@ -36,7 +36,7 @@ export default class extends React.Component {
 
     let parsedInput
     try {
-      parsedInput = new Function(input + '; return {fetchParams, parse}')()
+      parsedInput = new Function(input + '; return {fetchParams, parse}')() // eslint-disable-line
     } catch (error) {
       this.setState({ error: 'syntax error', loading: false })
       return
@@ -55,7 +55,7 @@ export default class extends React.Component {
 
   render () {
     const { dbName, couch } = this.props
-    const { query, queryId, queries, error, input, valid, loading, result, baseInput } = this.state
+    const { query, queryId, queries, error, input, valid, loading, result } = this.state
 
     const links = Object.keys(queries).map(query => (
       <span key={query}>
@@ -64,7 +64,8 @@ export default class extends React.Component {
     ))
     return (
       <div>
-        <h4>{dbName}: {queryId ? queryId : 'new query'}</h4>
+        <Breadcrumbs couch={couch} dbName={dbName} docId={'query'} final={queryId} />
+
         {valid
           ? <a href='#' onClick={this.run}>run (cmd + enter or ctrl + enter)</a>
           : 'waiting for valid json'
@@ -87,7 +88,7 @@ export default class extends React.Component {
               result={result}
               dbName={dbName}
               couch={couch}
-              />
+            />
         }
       </div>
     )

@@ -5,11 +5,12 @@ import NewDatabaseContainer from 'containers/NewDatabaseContainer'
 import Error from 'components/Error'
 import { Link } from 'react-router-dom'
 import AllowEditButton from 'components/AllowEditButton'
-import { showMBSize, showKBSize, withCommas } from 'utils/utils'
-
-const LIMIT = 100
+import Breadcrumbs from 'components/Breadcrumbs'
+import { showMBSize, withCommas } from 'utils/utils'
 
 import './databases-container.css'
+
+const LIMIT = 100
 
 export default class extends React.Component {
   state = {
@@ -56,6 +57,7 @@ export default class extends React.Component {
 
     return (
       <div>
+        <Breadcrumbs couch={couch} />
         {loaded ? error ? <Error error={error} /> : (
           <div>
             <table>
@@ -84,20 +86,20 @@ export default class extends React.Component {
                 })}
               </tbody>
             </table>
-          <br /><br />
-          <AllowEditButton
-            couchUrl={couchUrl}
-            onConfirm={() => this.setState({ showNewDBModal: true })}
+            <br /><br />
+            <AllowEditButton
+              couchUrl={couchUrl}
+              onConfirm={() => this.setState({ showNewDBModal: true })}
             >
             New Database
-          </AllowEditButton>
-          <NewDatabaseContainer
-            couchUrl={couchUrl}
-            history={history}
-            onClose={() => this.setState({ showNewDBModal: false })}
-            show={showNewDBModal}
-          />
-        </div>
+            </AllowEditButton>
+            <NewDatabaseContainer
+              couchUrl={couchUrl}
+              history={history}
+              onClose={() => this.setState({ showNewDBModal: false })}
+              show={showNewDBModal}
+            />
+          </div>
         ) : (<Loading />)}
       </div>
     )

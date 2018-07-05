@@ -25,9 +25,8 @@ export default class DeleteDatabaseContainer extends React.Component {
     const id = inputText
     if (dbNameConfirmed) {
       this.setState({ loading: true })
-      const data = { id, name: inputText }
       try {
-        const response = await fetcher.destroy(couchUrl + id)
+        await fetcher.destroy(couchUrl + id)
         history.push(`/${couch}/`)
       } catch (error) {
         this.setState({ error, loading: false })
@@ -42,7 +41,7 @@ export default class DeleteDatabaseContainer extends React.Component {
       <Modal
         show={show}
         onClose={onClose}
-        className='error warning'
+        className='warning-modal'
       >
         <form onSubmit={this.onSubmit}>
           <h1>Warning!! Delete database?</h1>
@@ -67,7 +66,7 @@ export default class DeleteDatabaseContainer extends React.Component {
           >
             Submit
           </button>
-          <button onClick={this.toggleModal}>cancel</button>
+          <button onClick={onClose}>cancel</button>
         </form>
       </Modal>
     )

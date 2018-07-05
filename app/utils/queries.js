@@ -57,7 +57,7 @@ export function getQuery (dbUrl, queryName) {
   }
   const string = `const fetchParams = ${JSON.stringify(queries[queryName].fetchParams, null, 2)}
 
-${queries[queryName].fn.toString().replace(/      /g, '')}
+${queries[queryName].fn.toString().replace(/ {6}/g, '')}
 `
   return {
     string,

@@ -3,6 +3,7 @@ import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
 import Error from 'components/Error'
 import AllowEditButton from 'components/AllowEditButton'
+import Breadcrumbs from 'components/Breadcrumbs'
 import { Link } from 'react-router-dom'
 
 import './doc-container.css'
@@ -22,11 +23,11 @@ export default class extends React.Component {
   }
 
   async componentDidMount () {
-    const { couchUrl, dbName, location } = this.props
+    const { couchUrl, dbName } = this.props
+    const { rev } = this.props.match.params
     const { docId } = this.state
+    const resource = rev ? `${docId}?rev=${rev}` : docId
     try {
-      const search = location.search
-      const resource = search ? docId + search : docId
       const doc = await fetcher.dbGet(couchUrl, dbName, resource)
       const meta = await fetcher.dbGet(couchUrl, dbName, docId, { meta: true })
       this.setState({ doc, meta, loaded: true })
@@ -37,13 +38,13 @@ export default class extends React.Component {
   }
 
   render () {
-    const { loaded, error, doc, meta, docId } = this.state
+    const { rev } = this.props.match.params
     const { couchUrl, dbName, couch } = this.props
+    const { loaded, error, doc, meta, docId } = this.state
 
     return (
       <div>
-        <h4>{dbName}</h4>
-        <h2>{docId}</h2>
+        <Breadcrumbs couch={couch} dbName={dbName} docId={docId} final={rev} />
         {error && <Error error={error} />}
         {!error && !loaded && (<Loading />)}
         {!error && loaded && (
@@ -66,7 +67,7 @@ export default class extends React.Component {
                 {meta._revs_info.map(row => (
                   <div key={row.rev}>
                     <span>
-                      {(row.status === 'available')
+                      {(row.status === 'available' && (row.rev !== doc._rev))
                         ? (
                           <Link to={`/${couch}/${dbName}/${docId}/${row.rev}/`}>
                             {row.rev}
