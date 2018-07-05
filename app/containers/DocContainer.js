@@ -3,31 +3,29 @@ import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
 import Error from 'components/Error'
 import AllowEditButton from 'components/AllowEditButton'
-import { getCouchUrl } from 'utils/utils'
 import { Link } from 'react-router-dom'
 
 import './doc-container.css'
 
 export default class extends React.Component {
-  constructor (props) {
-    super(props)
-    const { docId } = props.match.params
-    const { dbName, couchUrl } = getCouchUrl(props.match)
-    this.state = {
-      dbName,
-      couchUrl,
-      docId: decodeURIComponent(docId),
-      doc: null,
-      loaded: false,
-      error: null,
-      meta: null
-    }
+  state = {
+    doc: null,
+    loaded: false,
+    error: null,
+    meta: null,
+    docId: null
+  }
+
+  static getDerivedStateFromProps (nextProps, prevState) {
+    const docId = decodeURIComponent(nextProps.match.params.docId)
+    return { ...prevState, docId }
   }
 
   async componentDidMount () {
-    const { couchUrl, dbName, docId } = this.state
+    const { couchUrl, dbName, location } = this.props
+    const { docId } = this.state
     try {
-      const search = this.props.location.search
+      const search = location.search
       const resource = search ? docId + search : docId
       const doc = await fetcher.dbGet(couchUrl, dbName, resource)
       const meta = await fetcher.dbGet(couchUrl, dbName, docId, { meta: true })
@@ -39,8 +37,9 @@ export default class extends React.Component {
   }
 
   render () {
-    const { loaded, error, doc, meta, docId, dbName, couchUrl } = this.state
-    const { params: { couch } } = this.props.match
+    const { loaded, error, doc, meta, docId } = this.state
+    const { couchUrl, dbName, couch } = this.props
+
     return (
       <div>
         <h4>{dbName}</h4>
@@ -69,9 +68,9 @@ export default class extends React.Component {
                     <span>
                       {(row.status === 'available')
                         ? (
-                          <a href={`/${couch}/${dbName}/${encodeURIComponent(docId)}?rev=${row.rev}`}>
+                          <Link to={`/${couch}/${dbName}/${docId}/${row.rev}/`}>
                             {row.rev}
-                          </a>
+                          </Link>
                         )
                         : row.rev
                       }

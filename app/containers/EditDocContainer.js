@@ -2,39 +2,36 @@ import React from 'react'
 import fetcher from 'utils/fetcher'
 import DeleteDocModal from 'components/DeleteDocModal'
 import Loading from 'components/Loading'
-import { getCouchUrl } from 'utils/utils'
 import Editor from 'components/Editor'
 
 import './edit-doc-container.css'
 
 export default class extends React.Component {
-  constructor (props) {
-    super(props)
-    const { docId, couch } = props.match.params
-    const { dbName, couchUrl } = getCouchUrl(props.match)
-    this.state = {
-      dbName,
-      couchUrl,
-      couch,
-      docId: decodeURIComponent(docId),
-      valid: true,
-      original: '',
-      input: '',
-      changesMade: false,
-      error: null,
-      saving: false,
-      showDeleteModal: false,
-      loaded: false,
-      isNew: docId === 'new'
-    }
+  state = {
+    valid: true,
+    original: '',
+    input: '',
+    changesMade: false,
+    error: null,
+    saving: false,
+    showDeleteModal: false,
+    loaded: false
+  }
+
+  static getDerivedStateFromProps (nextProps, prevState) {
+    const docId = decodeURIComponent(nextProps.match.params.docId)
+    return { ...prevState, docId, isNew: docId === 'new' }
   }
 
   async componentDidMount () {
-    const { couchUrl, dbName, docId, isNew } = this.state
+    const { couchUrl, dbName } = this.props
+    const { docId, isNew } = this.state
+
     if (isNew) {
       this.setState({ loaded: true, original: '{}', input: neat({ _id: '' }) })
       return
     }
+
     try {
       const doc = await fetcher.dbGet(couchUrl, dbName, docId)
       const original = neat(doc)
@@ -58,7 +55,9 @@ export default class extends React.Component {
   }
 
   onSubmit = () => {
-    const { input, doc, isNew, couchUrl, dbName } = this.state
+    const { couchUrl, dbName } = this.props
+    const { input, doc, isNew } = this.state
+
     const jsObjectInput = JSON.parse(input)
     this.setState({ saving: true }, () => {
       // New documents will get ID from input
@@ -81,7 +80,9 @@ export default class extends React.Component {
   }
 
   back = () => {
-    const { docId, couch, dbName } = this.state
+    const { couch, dbName } = this.props
+    const { docId } = this.state
+
     if (docId === 'new') {
       this.props.history.push(`/${couch}/${dbName}/`)
     } else {

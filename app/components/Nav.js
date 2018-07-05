@@ -1,6 +1,6 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
-import {getCouchUrl} from 'utils/utils'
+import { parseUrl } from 'utils/utils'
 import fetcher from 'utils/fetcher'
 
 import './nav.css'
@@ -8,7 +8,7 @@ import './nav.css'
 export default class extends React.Component {
   render () {
     const { userCtx, match: { params: { couch, dbName, docId } } } = this.props
-    const { couchUrl } = getCouchUrl(this.props.match)
+    const couchUrl = parseUrl(couch)
     const couchClass = couchUrl.includes('localhost') ? '' : 'error'
     return (
       <div className='nav-container'>
@@ -22,7 +22,7 @@ export default class extends React.Component {
             {!docId && dbName && 'docs'}
           </span>
           <span className='nav-right'>
-            couchdb lookout | <span className={couchClass}>{couch}</span> |
+            CouchDB Lookout | <span className={couchClass}>{couch}</span> |
             user: {`${userCtx.name}`}
           </span>
         </div>

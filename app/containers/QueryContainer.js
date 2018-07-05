@@ -4,37 +4,22 @@ import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
 import Error from 'components/Error'
 import QueryResponse from 'components/QueryResponse'
-import { getCouchUrl } from 'utils/utils'
 import { getQuery, getAllQueries } from 'utils/queries'
-// import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 export default class extends React.Component {
-  constructor (props) {
-    super(props)
-    const { queryId } = props.match.params
-    const { dbName, couchUrl, couch } = getCouchUrl(props.match)
-    const baseUrl = `${couchUrl}${dbName}`
-    const queries = getAllQueries(baseUrl)
-    const query = getQuery(baseUrl, queryId)
-    this.state = {
-      dbName,
-      couchUrl,
-      couch,
-      queryId,
-      runOnStart: query.runOnStart,
-      input: query.string,
-      startRow: query.startRow,
-      startColumn: query.startColumn,
-      loading: false,
-      valid: true,
-      result: null,
-      error: null,
-      queries
-    }
+  state = {
+    loading: false,
+    valid: true,
+    result: null,
+    error: null
   }
 
-  componentDidMount () {
-    if (this.state.runOnStart) this.run()
+  static getDerivedStateFromProps (nextProps, prevState) {
+    const { queryId = 'id-regex' } = nextProps.match.params
+    const queries = getAllQueries(nextProps.dbUrl)
+    const query = getQuery(nextProps.dbUrl, queryId)
+    return { ...prevState, queries, queryId, query }
   }
 
   onEdit = async (input) => {
@@ -42,10 +27,13 @@ export default class extends React.Component {
   }
 
   run = async event => {
-    if (event) event.preventDefault()
-    const { valid, input, couchUrl, dbName } = this.state
+    const { couchUrl, dbName } = this.props
+    const { valid, input } = this.state
+
     if (!valid) return
+
     this.setState({ loading: true, result: null })
+
     let parsedInput
     try {
       parsedInput = new Function(input + '; return {fetchParams, parse}')()
@@ -53,6 +41,7 @@ export default class extends React.Component {
       this.setState({ error: 'syntax error', loading: false })
       return
     }
+
     const { fetchParams, parse } = parsedInput
     try {
       const response = await fetcher.fetch(fetchParams)
@@ -65,10 +54,12 @@ export default class extends React.Component {
   }
 
   render () {
-    const { dbName, queryId, queries, error, input, valid, loading, couch, result, startRow, startColumn } = this.state
+    const { dbName, couch } = this.props
+    const { query, queryId, queries, error, input, valid, loading, result, baseInput } = this.state
+
     const links = Object.keys(queries).map(query => (
       <span key={query}>
-        <a href={`/${couch}/${dbName}/query/${query}/`}>{query}</a>&nbsp;
+        <Link to={`/${couch}/${dbName}/query/${query}`}>{query}</Link>&nbsp;
       </span>
     ))
     return (
@@ -80,11 +71,11 @@ export default class extends React.Component {
         }
         <Editor
           onChange={this.onEdit}
-          value={input}
+          value={input || query.string}
           height='40%'
           onCmdEnter={this.run}
-          startRow={startRow}
-          startColumn={startColumn}
+          startRow={query.startRow}
+          startColumn={query.startColumn}
           mode={'javascript'}
         />
         {error && <Error error={error} />}

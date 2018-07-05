@@ -1,8 +1,8 @@
-export function getAllQueries (baseUrl) {
+export function getAllQueries (dbUrl) {
   return {
     'id-regex': {
       fetchParams: {
-        url: `${baseUrl}/_find`,
+        url: `${dbUrl}_find`,
         method: 'POST',
         body: {
           selector: { _id: { '$regex': '' } },
@@ -17,7 +17,7 @@ export function getAllQueries (baseUrl) {
     },
     'all-docs': {
       fetchParams: {
-        url: `${baseUrl}/_all_docs`,
+        url: `${dbUrl}_all_docs`,
         method: 'GET',
         params: {
           limit: 500,
@@ -27,13 +27,12 @@ export function getAllQueries (baseUrl) {
       fn: function parse (response) {
         return response
       },
-      runOnStart: true,
       startRow: 5,
       startColumn: 25
     },
     'conflicts': {
       fetchParams: {
-        url: `${baseUrl}/_all_docs`,
+        url: `${dbUrl}_all_docs`,
         method: 'GET',
         params: {
           include_docs: true,
@@ -45,15 +44,14 @@ export function getAllQueries (baseUrl) {
         console.log(docs)
         return docs.length
       },
-      runOnStart: true,
       startRow: 5,
       startColumn: 25
     }
   }
 }
 
-export function getQuery (baseUrl, queryName = 'id-regex') {
-  const queries = getAllQueries(baseUrl)
+export function getQuery (dbUrl, queryName) {
+  const queries = getAllQueries(dbUrl)
   if (!queries[queryName]) {
     return `${queryName} not found`
   }

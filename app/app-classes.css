@@ -14,10 +14,6 @@
   color: red;
 }
 
-.action-button {
-  background-image: linear-gradient(-180deg, #fbf2f2 0%, #fbf1f1 90%);
-}
-
 .action-button:disabled {
   background-image: none;
 }

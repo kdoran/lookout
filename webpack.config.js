@@ -39,12 +39,7 @@ module.exports = {
     ]
   },
   devServer: {
-    compress: true,
     hot: true,
-    historyApiFallback: {
-      index: 'dev-index.html',
-      disableDotRule: true
-    },
     port: 7000,
     clientLogLevel: 'none'
   },

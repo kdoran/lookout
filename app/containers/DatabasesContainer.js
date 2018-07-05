@@ -5,28 +5,23 @@ import NewDatabaseContainer from 'containers/NewDatabaseContainer'
 import Error from 'components/Error'
 import { Link } from 'react-router-dom'
 import AllowEditButton from 'components/AllowEditButton'
-import { showMBSize, showKBSize, withCommas, getCouchUrl } from 'utils/utils'
+import { showMBSize, showKBSize, withCommas } from 'utils/utils'
 
 const LIMIT = 100
 
 import './databases-container.css'
 
 export default class extends React.Component {
-  constructor (props) {
-    super(props)
-    const { couchUrl } = getCouchUrl(props.match)
-    this.state = {
-      couchUrl,
-      loaded: false,
-      dbs: null,
-      error: null,
-      infos: {},
-      showNewDBModal: false
-    }
+  state = {
+    loaded: false,
+    dbs: null,
+    error: null,
+    infos: {},
+    showNewDBModal: false
   }
 
   async componentDidMount () {
-    const { couchUrl } = this.state
+    const { couchUrl } = this.props
     try {
       const dbs = await fetcher.get(`${couchUrl}_all_dbs`, { limit: LIMIT })
       this.setState({ dbs, loaded: true })
@@ -55,8 +50,10 @@ export default class extends React.Component {
   }
 
   render () {
-    const { loaded, error, dbs, infos, couchUrl, showNewDBModal } = this.state
-    const { history, match: { params: { couch } } } = this.props
+    const { couchUrl, couch } = this.props
+    const { history } = this.props
+    const { loaded, error, dbs, infos, showNewDBModal } = this.state
+
     return (
       <div>
         {loaded ? error ? <Error error={error} /> : (

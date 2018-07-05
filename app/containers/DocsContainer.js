@@ -6,39 +6,23 @@ import Pagination from 'components/Pagination'
 import AllowEditButton from 'components/AllowEditButton'
 import DeleteDatabaseContainer from 'containers/DeleteDatabaseContainer'
 import { Link } from 'react-router-dom'
-import { getParams, getCouchUrl } from 'utils/utils'
 
 import './docs-container.css'
 
 const LIMIT = 500
 
 export default class extends React.Component {
-  constructor (props) {
-    super(props)
-    const { dbName, couchUrl } = getCouchUrl(props.match)
-    this.state = {
-      dbName,
-      couchUrl,
-      loaded: false,
-      rows: null,
-      error: null,
-      showDeleteModal: false
-    }
+  state = {
+    loaded: false,
+    rows: null,
+    error: null,
+    showDeleteModal: false
   }
 
-  componentDidMount () {
-    this.fetchIds(this.props)
-  }
-
-  componentWillReceiveProps (newProps) {
-    this.fetchIds(newProps)
-  }
-
-  fetchIds = async props => {
-    const { location: { search } } = props
-    const offset = getParams(search).offset || 0
-    const { dbName, couchUrl } = this.state
+  async componentDidMount () {
+    const { dbName, couchUrl, searchParams: { offset = 0 } } = this.props
     this.setState({ loaded: false })
+
     try {
       const options = { skip: offset, limit: LIMIT }
       const response = await fetcher.dbGet(couchUrl, dbName, '_all_docs', options)
@@ -50,10 +34,10 @@ export default class extends React.Component {
   }
 
   render () {
-    const { loaded, error, response, dbName, couchUrl, showDeleteModal } = this.state
     const { location: { pathname, search }, history } = this.props
-    const { params: { couch } } = this.props.match
-    const offset = getParams(search).offset || 0
+    const { dbName, couchUrl, couch, searchParams: { offset = 0 } } = this.props
+    const { loaded, error, response, showDeleteModal } = this.state
+
     const PaginationComponent = () => (
       <Pagination
         total={response.total_rows}
@@ -117,7 +101,7 @@ export default class extends React.Component {
                 couchUrl={couchUrl}
                 dbName={dbName}
                 history={history}
-                couch={this.props.match.params.couch}
+                couch={couch}
                 onClose={() => this.setState({ showDeleteModal: false })}
                 show={showDeleteModal}
               />

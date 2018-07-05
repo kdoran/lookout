@@ -11,8 +11,9 @@ import QueryContainer from './containers/QueryContainer'
 import Nav from './components/Nav'
 import Login from './components/Login'
 import Loading from './components/Loading'
+import withParams from './containers/withParams'
 import cache from './utils/cache'
-import {getCouchUrl} from './utils/utils'
+import { parseUrl } from './utils/utils'
 import fetcher from 'utils/fetcher'
 
 import 'app-classes.css'
@@ -24,7 +25,7 @@ class UserRoutes extends Component {
     this.state = {
       authenticated: !!cache.userCtx.name,
       loading: true,
-      couchUrl: getCouchUrl(props.match).couchUrl
+      couchUrl: parseUrl(props.match.params.couch)
     }
   }
 
@@ -54,12 +55,13 @@ class UserRoutes extends Component {
         <div>
           <div className='page'>
             <Switch>
-              <Route path='/:couch/:dbName/editing/:docId' component={EditDocContainer} />
-              <Route path='/:couch/:dbName/query/:queryId/' component={QueryContainer} />
-              <Route path='/:couch/:dbName/query/' component={QueryContainer} />
-              <Route path='/:couch/:dbName/:docId' component={DocContainer} />
-              <Route path='/:couch/:dbName' component={DocsContainer} />
-              <Route path='/:couch/' component={DatabasesContainer} />
+              <Route path='/:couch/:dbName/editing/:docId' component={withParams(EditDocContainer)} />
+              <Route exact path='/:couch/:dbName/query' component={withParams(QueryContainer)} />
+              <Route path='/:couch/:dbName/query/:queryId' component={withParams(QueryContainer)} />
+              <Route path='/:couch/:dbName/:docId/:rev/' component={withParams(DocContainer)} />
+              <Route path='/:couch/:dbName/:docId' component={withParams(DocContainer)} />
+              <Route path='/:couch/:dbName' component={withParams(DocsContainer)} />
+              <Route path='/:couch/' component={withParams(DatabasesContainer)} />
             </Switch>
           </div>
           <Route path='/:couch/:dbName?/:docId?' render={props => (<Nav {...props} userCtx={cache.userCtx} />)} />
@@ -72,7 +74,7 @@ class UserRoutes extends Component {
 class App extends Component {
   render () {
     return (
-      <Router basename='/lookout'>
+      <Router>
         <div>
           <Route exact path='/' component={SetupCouchContainer} />
           <Route path='/:couch/' component={UserRoutes} />

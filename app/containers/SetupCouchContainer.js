@@ -25,9 +25,9 @@ export default class extends React.Component {
       const { userCtx } = await fetcher.checkSession(inputUrl)
       localStorager.saveRecent('couchurls', inputUrl)
       Object.assign(cache.userCtx, userCtx)
-      this.props.history.push('/' + inputUrl.split('//')[1])
+      this.props.history.push(inputUrl.split('//')[1])
     } catch (error) {
-      this.setState({ error, loading: false })
+      this.setState({ error: error.toString(), loading: false })
       console.error(error)
     }
   }
@@ -46,7 +46,7 @@ export default class extends React.Component {
     const { inputUrl, recentCouches, error, loading } = this.state
     return (
       <form onSubmit={this.onSubmit}>
-        <h1>couchdb lookout: select couch</h1>
+        <h1>CouchDB Lookout: Select Couch Server</h1>
         <section>
           <label>
             Couch Url:
