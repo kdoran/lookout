@@ -43,6 +43,13 @@ export default class extends React.Component {
     downloadJSON(this.state.doc, this.state.doc._id + ' _rev ' + this.state.doc._rev)
   }
 
+  handleConfirmEdit = () => {
+    const {location} = this.props.history
+    const pathname = location.pathname.charAt(location.pathname.length - 1) === '/'
+      ? location.pathname.slice(0, -1) : location.pathname
+    this.props.history.replace(`${pathname}/editing`)
+  }
+
   render () {
     const { rev } = this.props.match.params
     const { couchUrl, dbName, couch } = this.props
@@ -60,7 +67,7 @@ export default class extends React.Component {
               <AllowEditButton
                 dbName={dbName}
                 couchUrl={couchUrl}
-                onConfirm={() => this.props.history.push(`editing/${docId}`)}
+                onConfirm={this.handleConfirmEdit}
               >
               edit
               </AllowEditButton>
