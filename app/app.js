@@ -55,7 +55,7 @@ class UserRoutes extends Component {
         <div>
           <div className='page'>
             <Switch>
-              <Route path='/:couch/:dbName/editing/:docId' component={withParams(EditDocContainer)} />
+              <Route path='/:couch/:dbName/:docId/editing' component={withParams(EditDocContainer)} />
               <Route exact path='/:couch/:dbName/query' component={withParams(QueryContainer)} />
               <Route path='/:couch/:dbName/query/:queryId' component={withParams(QueryContainer)} />
               <Route path='/:couch/:dbName/:docId/:rev/' component={withParams(DocContainer)} />
