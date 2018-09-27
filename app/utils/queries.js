@@ -31,7 +31,7 @@ export function getAllQueries (dbUrl) {
         // tip: chrome dev tools, right-click on logged object, store as global variable
         console.log(response)
         // limit doc length to display so we don't crash the browser
-        return Object.assign({}, response, { docs: response.docs.slice(0, 50) })
+        return Object.assign({}, response, { docs: response.rows.slice(0, 50) })
       },
       startRow: 5,
       startColumn: 25
