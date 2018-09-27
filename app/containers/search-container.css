@@ -1,0 +1,25 @@
+.search-drop-results {
+  position: relative;
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.search-drop-results a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #666;
+    border: 1px solid #eee;
+    border-bottom: none;
+    font-weight: 100;
+    text-align: left;
+}
+
+.search-drop-results .active {
+    background-color: #2196F3;
+    color: white;
+}
+
+
