@@ -69,6 +69,7 @@ export default class extends React.Component {
                   <th>disk space</th>
                   <th>deleted</th>
                   <th>seq no. (as int)</th>
+                  <th>query</th>
                 </tr>
               </thead>
               <tbody>
@@ -81,6 +82,7 @@ export default class extends React.Component {
                       <td>{infos[db] ? showMBSize(infos[db].disk_size) : 'loading...'}</td>
                       <td>{infos[db] ? withCommas(infos[db].doc_del_count) : 'loading...'}</td>
                       <td>{infos[db] ? infos[db].update_seq : 'loading...'}</td>
+                      <td><Link to={`/${couch}/${db}/query`}>query</Link></td>
                     </tr>
                   )
                 })}
