@@ -27,7 +27,13 @@ export default class extends React.Component {
     try {
       const options = { skip: offset, limit: LIMIT }
       const response = await fetcher.dbGet(couchUrl, dbName, '_all_docs', options)
-      this.setState({ response, loaded: true })
+      const rows = response.rows.map(row => {
+        const link = (row.id.indexOf('/') === -1)
+          ? row.id
+          : encodeURIComponent(row.id)
+        return { ...row, link }
+      })
+      this.setState({ response, rows, loaded: true })
     } catch (error) {
       this.setState({ error, loaded: true })
       console.error(error)
@@ -37,7 +43,7 @@ export default class extends React.Component {
   render () {
     const { location: { pathname }, history } = this.props
     const { dbName, couchUrl, couch, searchParams: { offset = 0 } } = this.props
-    const { loaded, error, response, showDeleteModal } = this.state
+    const { loaded, error, response, rows, showDeleteModal } = this.state
 
     const PaginationComponent = () => (
       <Pagination
@@ -77,10 +83,10 @@ export default class extends React.Component {
                 </tr>
               </thead>
               <tbody>
-                {response.rows.map(row => {
+                {rows.map(row => {
                   return (
                     <tr key={row.id}>
-                      <td><Link to={`/${couch}/${dbName}/${row.id}`}>{row.id}</Link></td>
+                      <td><Link to={`/${couch}/${dbName}/${row.link}`}>{row.id}</Link></td>
                       <td>{row.value.rev}</td>
                     </tr>
                   )
