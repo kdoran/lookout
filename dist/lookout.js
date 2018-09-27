@@ -62,7 +62,7 @@
 /******/ 	}
 /******/
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "bf65ebd3827540b9f1be"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "3a0763c0cff133b90ae2"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -892,22 +892,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _containers_DatabasesContainer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./containers/DatabasesContainer */ "./app/containers/DatabasesContainer.js");
 /* harmony import */ var _containers_DocsContainer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./containers/DocsContainer */ "./app/containers/DocsContainer.js");
 /* harmony import */ var _containers_DocContainer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./containers/DocContainer */ "./app/containers/DocContainer.js");
-/* harmony import */ var _containers_EditDocContainer__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./containers/EditDocContainer */ "./app/containers/EditDocContainer.js");
-/* harmony import */ var _containers_QueryContainer__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./containers/QueryContainer */ "./app/containers/QueryContainer.js");
-/* harmony import */ var _components_Nav__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/Nav */ "./app/components/Nav.js");
-/* harmony import */ var _components_Login__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/Login */ "./app/components/Login.js");
-/* harmony import */ var _components_Loading__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./components/Loading */ "./app/components/Loading.js");
-/* harmony import */ var _containers_withParams__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./containers/withParams */ "./app/containers/withParams.js");
-/* harmony import */ var _utils_cache__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./utils/cache */ "./app/utils/cache.js");
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./utils/utils */ "./app/utils/utils.js");
-/* harmony import */ var utils_fetcher__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! utils/fetcher */ "./app/utils/fetcher.js");
-/* harmony import */ var app_classes_css__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! app-classes.css */ "./app/app-classes.css");
-/* harmony import */ var app_classes_css__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(app_classes_css__WEBPACK_IMPORTED_MODULE_16__);
-/* harmony import */ var app_tags_css__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! app-tags.css */ "./app/app-tags.css");
-/* harmony import */ var app_tags_css__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(app_tags_css__WEBPACK_IMPORTED_MODULE_17__);
+/* harmony import */ var _containers_DatabaseDocContainer__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./containers/DatabaseDocContainer */ "./app/containers/DatabaseDocContainer.js");
+/* harmony import */ var _containers_EditDocContainer__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./containers/EditDocContainer */ "./app/containers/EditDocContainer.js");
+/* harmony import */ var _containers_QueryContainer__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./containers/QueryContainer */ "./app/containers/QueryContainer.js");
+/* harmony import */ var _components_Nav__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/Nav */ "./app/components/Nav.js");
+/* harmony import */ var _components_Login__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./components/Login */ "./app/components/Login.js");
+/* harmony import */ var _components_Loading__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./components/Loading */ "./app/components/Loading.js");
+/* harmony import */ var _containers_withParams__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./containers/withParams */ "./app/containers/withParams.js");
+/* harmony import */ var _utils_cache__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./utils/cache */ "./app/utils/cache.js");
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./utils/utils */ "./app/utils/utils.js");
+/* harmony import */ var utils_fetcher__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! utils/fetcher */ "./app/utils/fetcher.js");
+/* harmony import */ var app_classes_css__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! app-classes.css */ "./app/app-classes.css");
+/* harmony import */ var app_classes_css__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(app_classes_css__WEBPACK_IMPORTED_MODULE_17__);
+/* harmony import */ var app_tags_css__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! app-tags.css */ "./app/app-tags.css");
+/* harmony import */ var app_tags_css__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(app_tags_css__WEBPACK_IMPORTED_MODULE_18__);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 
 
 
@@ -935,14 +937,14 @@ class UserRoutes extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
     super(props);
 
     this.onAuthenticated = userCtx => {
-      Object.assign(_utils_cache__WEBPACK_IMPORTED_MODULE_13__["default"].userCtx, userCtx);
+      Object.assign(_utils_cache__WEBPACK_IMPORTED_MODULE_14__["default"].userCtx, userCtx);
       this.setState({ authenticated: true });
     };
 
     this.state = {
-      authenticated: !!_utils_cache__WEBPACK_IMPORTED_MODULE_13__["default"].userCtx.name,
+      authenticated: !!_utils_cache__WEBPACK_IMPORTED_MODULE_14__["default"].userCtx.name,
       loading: true,
-      couchUrl: Object(_utils_utils__WEBPACK_IMPORTED_MODULE_14__["parseUrl"])(props.match.params.couch)
+      couchUrl: Object(_utils_utils__WEBPACK_IMPORTED_MODULE_15__["parseUrl"])(props.match.params.couch)
     };
   }
 
@@ -951,7 +953,7 @@ class UserRoutes extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
 
     return _asyncToGenerator(function* () {
       const { couchUrl } = _this.state;
-      const { userCtx } = yield utils_fetcher__WEBPACK_IMPORTED_MODULE_15__["default"].checkSession(couchUrl);
+      const { userCtx } = yield utils_fetcher__WEBPACK_IMPORTED_MODULE_16__["default"].checkSession(couchUrl);
       if (userCtx.name || userCtx.roles.length) {
         _this.onAuthenticated(userCtx);
       }
@@ -962,10 +964,10 @@ class UserRoutes extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   render() {
     const { authenticated, loading, couchUrl } = this.state;
     if (loading) {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Loading__WEBPACK_IMPORTED_MODULE_11__["default"], null);
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Loading__WEBPACK_IMPORTED_MODULE_12__["default"], null);
     }
     if (!authenticated) {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Login__WEBPACK_IMPORTED_MODULE_10__["default"], { couchUrl: couchUrl, onAuthenticated: this.onAuthenticated });
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Login__WEBPACK_IMPORTED_MODULE_11__["default"], { couchUrl: couchUrl, onAuthenticated: this.onAuthenticated });
     } else {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
         'div',
@@ -976,16 +978,17 @@ class UserRoutes extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
           react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
             react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Switch"],
             null,
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/:dbName/editing/:docId', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_12__["default"])(_containers_EditDocContainer__WEBPACK_IMPORTED_MODULE_7__["default"]) }),
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { exact: true, path: '/:couch/:dbName/query', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_12__["default"])(_containers_QueryContainer__WEBPACK_IMPORTED_MODULE_8__["default"]) }),
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/:dbName/query/:queryId', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_12__["default"])(_containers_QueryContainer__WEBPACK_IMPORTED_MODULE_8__["default"]) }),
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/:dbName/:docId/:rev/', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_12__["default"])(_containers_DocContainer__WEBPACK_IMPORTED_MODULE_6__["default"]) }),
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/:dbName/:docId', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_12__["default"])(_containers_DocContainer__WEBPACK_IMPORTED_MODULE_6__["default"]) }),
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/:dbName', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_12__["default"])(_containers_DocsContainer__WEBPACK_IMPORTED_MODULE_5__["default"]) }),
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_12__["default"])(_containers_DatabasesContainer__WEBPACK_IMPORTED_MODULE_4__["default"]) })
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/:dbName/:docId/editing', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_13__["default"])(_containers_EditDocContainer__WEBPACK_IMPORTED_MODULE_8__["default"]) }),
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { exact: true, path: '/:couch/:dbName/query', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_13__["default"])(_containers_QueryContainer__WEBPACK_IMPORTED_MODULE_9__["default"]) }),
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { exact: true, path: '/:couch/_node/couchdb@localhost/_config', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_13__["default"])(_containers_DatabaseDocContainer__WEBPACK_IMPORTED_MODULE_7__["default"]) }),
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/:dbName/query/:queryId', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_13__["default"])(_containers_QueryContainer__WEBPACK_IMPORTED_MODULE_9__["default"]) }),
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/:dbName/:docId/:rev/', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_13__["default"])(_containers_DocContainer__WEBPACK_IMPORTED_MODULE_6__["default"]) }),
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/:dbName/:docId', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_13__["default"])(_containers_DocContainer__WEBPACK_IMPORTED_MODULE_6__["default"]) }),
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/:dbName', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_13__["default"])(_containers_DocsContainer__WEBPACK_IMPORTED_MODULE_5__["default"]) }),
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_13__["default"])(_containers_DatabasesContainer__WEBPACK_IMPORTED_MODULE_4__["default"]) })
           )
         ),
-        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/:dbName?/:docId?', render: props => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Nav__WEBPACK_IMPORTED_MODULE_9__["default"], _extends({}, props, { userCtx: _utils_cache__WEBPACK_IMPORTED_MODULE_13__["default"].userCtx })) })
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/:dbName?/:docId?', render: props => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Nav__WEBPACK_IMPORTED_MODULE_10__["default"], _extends({}, props, { userCtx: _utils_cache__WEBPACK_IMPORTED_MODULE_14__["default"].userCtx })) })
       );
     }
   }
@@ -1199,15 +1202,19 @@ __webpack_require__.r(__webpack_exports__);
           null,
           ' / '
         ),
-        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
-          react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"],
-          { to: `/${couch}/${dbName}/` },
-          dbName
-        ),
-        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+        dbName && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
           'span',
           null,
-          ' / '
+          react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+            react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"],
+            { to: `/${couch}/${dbName}/` },
+            dbName
+          ),
+          react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+            'span',
+            null,
+            ' / '
+          )
         ),
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
           'span',
@@ -1907,6 +1914,124 @@ if(true) {
 
 /***/ }),
 
+/***/ "./app/containers/DatabaseDocContainer.js":
+/*!************************************************!*\
+  !*** ./app/containers/DatabaseDocContainer.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var utils_fetcher__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! utils/fetcher */ "./app/utils/fetcher.js");
+/* harmony import */ var components_Loading__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! components/Loading */ "./app/components/Loading.js");
+/* harmony import */ var components_Error__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! components/Error */ "./app/components/Error.js");
+/* harmony import */ var components_AllowEditButton__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! components/AllowEditButton */ "./app/components/AllowEditButton.js");
+/* harmony import */ var components_Breadcrumbs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! components/Breadcrumbs */ "./app/components/Breadcrumbs.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/es/index.js");
+/* harmony import */ var utils_download__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! utils/download */ "./app/utils/download.js");
+/* harmony import */ var _doc_container_css__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./doc-container.css */ "./app/containers/doc-container.css");
+/* harmony import */ var _doc_container_css__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_doc_container_css__WEBPACK_IMPORTED_MODULE_8__);
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+
+
+
+
+
+
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = (class extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Component {
+  constructor(...args) {
+    var _temp;
+
+    return _temp = super(...args), this.state = {
+      sections: null,
+      loaded: false,
+      error: null,
+      docId: null
+    }, _temp;
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const docId = decodeURIComponent(nextProps.match.path.split('/:couch/')[1]);
+    return _extends({}, prevState, { docId });
+  }
+
+  componentDidMount() {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      const { couchUrl } = _this.props;
+      const { docId } = _this.state;
+      try {
+        const resp = yield utils_fetcher__WEBPACK_IMPORTED_MODULE_1__["default"].get(`${couchUrl}${docId}`);
+        const sections = [];
+        let rows;
+        for (let prop in resp) {
+          rows = [];
+          for (let key in resp[prop]) {
+            rows.push({ key, value: resp[prop][key] });
+          }
+          sections.push({ name: prop, rows });
+        }
+        _this.setState({ sections, loaded: true });
+      } catch (error) {
+        _this.setState({ error, loaded: true });
+        console.error(error);
+      }
+    })();
+  }
+
+  render() {
+    const { rev } = this.props.match.params;
+    const { couchUrl, couch } = this.props;
+    const { loaded, error, sections, docId } = this.state;
+
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+      'div',
+      { className: 'config-container' },
+      react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_Breadcrumbs__WEBPACK_IMPORTED_MODULE_5__["default"], { couch: couch, docId: '_config' }),
+      error && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_Error__WEBPACK_IMPORTED_MODULE_3__["default"], { error: error }),
+      !error && !loaded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_Loading__WEBPACK_IMPORTED_MODULE_2__["default"], null),
+      !error && loaded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+        'div',
+        null,
+        sections.map(section => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+          'section',
+          null,
+          react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+            'div',
+            { className: 'config-container--header' },
+            section.name
+          ),
+          react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+            'div',
+            { className: 'config-container--content' },
+            section.rows.map(({ key, value }) => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+              'div',
+              null,
+              key,
+              ': ',
+              value
+            ))
+          )
+        ))
+      )
+    );
+  }
+});
+
+/***/ }),
+
 /***/ "./app/containers/DatabasesContainer.js":
 /*!**********************************************!*\
   !*** ./app/containers/DatabasesContainer.js ***!
@@ -2044,6 +2169,11 @@ const LIMIT = 100;
                 'th',
                 null,
                 'seq no. (as int)'
+              ),
+              react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+                'th',
+                null,
+                'query'
               )
             )
           ),
@@ -2087,9 +2217,68 @@ const LIMIT = 100;
                   'td',
                   null,
                   infos[db] ? infos[db].update_seq : 'loading...'
+                ),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+                  'td',
+                  null,
+                  react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+                    react_router_dom__WEBPACK_IMPORTED_MODULE_5__["Link"],
+                    { to: `/${couch}/${db}/query` },
+                    'query'
+                  )
                 )
               );
             })
+          )
+        ),
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement('br', null),
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement('br', null),
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+          'table',
+          null,
+          react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+            'thead',
+            null,
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+              'tr',
+              null,
+              react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+                'th',
+                null,
+                'Couch Server Links'
+              )
+            )
+          ),
+          react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+            'tbody',
+            null,
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+              'tr',
+              null,
+              react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+                'td',
+                null,
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+                  react_router_dom__WEBPACK_IMPORTED_MODULE_5__["Link"],
+                  { to: `/${couch}/_node/couchdb@localhost/_config` },
+                  '_config'
+                )
+              )
+            ),
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+              'tr',
+              null,
+              react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+                'td',
+                null,
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+                  'a',
+                  { target: '_blank', href: `${couchUrl}_scheduler/jobs` },
+                  '_scheduler/jobs'
+                ),
+                ' (replication status) '
+              )
+            )
           )
         ),
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement('br', null),
@@ -2253,11 +2442,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var components_AllowEditButton__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! components/AllowEditButton */ "./app/components/AllowEditButton.js");
 /* harmony import */ var components_Breadcrumbs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! components/Breadcrumbs */ "./app/components/Breadcrumbs.js");
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/es/index.js");
-/* harmony import */ var _doc_container_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./doc-container.css */ "./app/containers/doc-container.css");
-/* harmony import */ var _doc_container_css__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_doc_container_css__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var utils_download__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! utils/download */ "./app/utils/download.js");
+/* harmony import */ var utils_utils__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! utils/utils */ "./app/utils/utils.js");
+/* harmony import */ var _doc_container_css__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./doc-container.css */ "./app/containers/doc-container.css");
+/* harmony import */ var _doc_container_css__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_doc_container_css__WEBPACK_IMPORTED_MODULE_9__);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+
 
 
 
@@ -2279,6 +2472,16 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       error: null,
       meta: null,
       docId: null
+    }, this.download = event => {
+      event.preventDefault();
+      Object(utils_download__WEBPACK_IMPORTED_MODULE_7__["downloadJSON"])(this.state.doc, this.state.doc._id + ' _rev ' + this.state.doc._rev);
+    }, this.copy = e => {
+      e.preventDefault();
+      Object(utils_utils__WEBPACK_IMPORTED_MODULE_8__["copyTextToClipboard"])(JSON.stringify(this.state.doc, null, 2));
+    }, this.handleConfirmEdit = () => {
+      const { location } = this.props.history;
+      const pathname = location.pathname.charAt(location.pathname.length - 1) === '/' ? location.pathname.slice(0, -1) : location.pathname;
+      this.props.history.replace(`${pathname}/editing`);
     }, _temp;
   }
 
@@ -2324,11 +2527,23 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
           'div',
           { className: 'controls' },
           react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+            'a',
+            { href: '#', onClick: this.download },
+            'download'
+          ),
+          ' \xA0',
+          react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+            'a',
+            { href: '#', onClick: this.copy },
+            'copy to clipboard'
+          ),
+          ' \xA0',
+          react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
             components_AllowEditButton__WEBPACK_IMPORTED_MODULE_4__["default"],
             {
               dbName: dbName,
               couchUrl: couchUrl,
-              onConfirm: () => this.props.history.push(`editing/${docId}`)
+              onConfirm: this.handleConfirmEdit
             },
             'edit'
           )
@@ -2930,10 +3145,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var components_Breadcrumbs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! components/Breadcrumbs */ "./app/components/Breadcrumbs.js");
 /* harmony import */ var components_QueryResponse__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! components/QueryResponse */ "./app/components/QueryResponse.js");
 /* harmony import */ var utils_queries__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! utils/queries */ "./app/utils/queries.js");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/es/index.js");
+/* harmony import */ var utils_utils__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! utils/utils */ "./app/utils/utils.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/es/index.js");
+/* harmony import */ var utils_download__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! utils/download */ "./app/utils/download.js");
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+
 
 
 
@@ -2953,7 +3172,8 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       loading: false,
       valid: true,
       result: null,
-      error: null
+      error: null,
+      response: null
     }, this.onEdit = (() => {
       var _ref = _asyncToGenerator(function* (input) {
         _this.setState({ input, error: '' });
@@ -2983,7 +3203,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         try {
           const response = yield utils_fetcher__WEBPACK_IMPORTED_MODULE_2__["default"].fetch(fetchParams);
           const result = parse(response);
-          _this.setState({ result, loading: false });
+          _this.setState({ response, result, loading: false });
         } catch (error) {
           _this.setState({ error, loading: false });
           console.error(error);
@@ -2993,7 +3213,15 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       return function (_x2) {
         return _ref2.apply(this, arguments);
       };
-    })(), _temp;
+    })(), this.copy = e => {
+      e.preventDefault();
+      Object(utils_utils__WEBPACK_IMPORTED_MODULE_8__["copyTextToClipboard"])(JSON.stringify(this.state.response, null, 2));
+    }, this.download = e => {
+      e.preventDefault();
+      const { dbName, couch } = this.props;
+      const { queryId } = this.state;
+      Object(utils_download__WEBPACK_IMPORTED_MODULE_10__["downloadJSON"])(this.state.response, `${couch} ${dbName} ${queryId}`);
+    }, _temp;
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -3011,7 +3239,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       'span',
       { key: query },
       react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
-        react_router_dom__WEBPACK_IMPORTED_MODULE_8__["Link"],
+        react_router_dom__WEBPACK_IMPORTED_MODULE_9__["Link"],
         { to: `/${couch}/${dbName}/query/${query}` },
         query
       ),
@@ -3029,7 +3257,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_Editor__WEBPACK_IMPORTED_MODULE_1__["default"], {
         onChange: this.onEdit,
         value: input || query.string,
-        height: '40%',
+        height: '50%',
         onCmdEnter: this.run,
         startRow: query.startRow,
         startColumn: query.startColumn,
@@ -3038,6 +3266,19 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       error && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_Error__WEBPACK_IMPORTED_MODULE_4__["default"], { error: error }),
       'queries: ',
       links,
+      react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement('br', null),
+      react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement('br', null),
+      react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+        'a',
+        { href: '', onClick: this.copy },
+        'copy response to clipboard'
+      ),
+      ' ',
+      react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+        'a',
+        { href: '', onClick: this.download },
+        'download response'
+      ),
       loading ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_Loading__WEBPACK_IMPORTED_MODULE_3__["default"], null) : result && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_QueryResponse__WEBPACK_IMPORTED_MODULE_6__["default"], {
         result: result,
         dbName: dbName,
@@ -3086,7 +3327,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       this.tryACouch(inputUrl);
     };
 
-    let recentCouches = utils_localstorager__WEBPACK_IMPORTED_MODULE_2__["default"].getRecent('couchurls');
+    let recentCouches = utils_localstorager__WEBPACK_IMPORTED_MODULE_2__["default"].getRecent('couchurls').sort();
     recentCouches = recentCouches.length ? recentCouches : ['http://localhost:5984/'];
     this.state = {
       error: null,
@@ -3487,6 +3728,30 @@ const cache = {
 
 /***/ }),
 
+/***/ "./app/utils/download.js":
+/*!*******************************!*\
+  !*** ./app/utils/download.js ***!
+  \*******************************/
+/*! exports provided: downloadJSON */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "downloadJSON", function() { return downloadJSON; });
+/* global URL, Blob */
+function downloadJSON(json, fileName) {
+  const a = document.createElement('a');
+  a.download = fileName.replace(/[\/:*?"<>|]/g, '') + '.json'; // eslint-disable-line no-useless-escape
+  const blob = new Blob([JSON.stringify(json, null, 2)], { type: 'text/plain' });
+  a.href = URL.createObjectURL(blob);
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+/***/ }),
+
 /***/ "./app/utils/fetcher.js":
 /*!******************************!*\
   !*** ./app/utils/fetcher.js ***!
@@ -3651,6 +3916,7 @@ __webpack_require__.r(__webpack_exports__);
 /* global localStorage */
 
 const lookoutPrefix = 'couchlookout::';
+const limit = 25;
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   getRecent(id) {
@@ -3667,7 +3933,7 @@ const lookoutPrefix = 'couchlookout::';
     let recent = this.getRecent(id);
     if (!recent.includes(item)) {
       recent.unshift(item);
-      recent = recent.slice(0, 9);
+      recent = recent.slice(0, limit);
     }
     return localStorage.setItem(lookoutPrefix + id, JSON.stringify(recent));
   },
@@ -3714,11 +3980,14 @@ function getAllQueries(dbUrl) {
         method: 'POST',
         body: {
           selector: { _id: { '$regex': '' } },
-          limit: 500
+          limit: 200
         }
       },
       fn: function parse(response) {
-        return response;
+        // tip: chrome dev tools, right-click on logged object, store as global variable
+        console.log(response);
+        // limit doc length to display so we don't crash the browser
+        return Object.assign({}, response, { docs: response.docs.slice(0, 50) });
       },
       startRow: 6,
       startColumn: 19
@@ -3733,7 +4002,29 @@ function getAllQueries(dbUrl) {
         }
       },
       fn: function parse(response) {
-        return response;
+        // tip: chrome dev tools, right-click on logged object, store as global variable
+        console.log(response);
+        // limit doc length to display so we don't crash the browser
+        return Object.assign({}, response, { docs: response.docs.slice(0, 50) });
+      },
+      startRow: 5,
+      startColumn: 25
+    },
+    '_changes': {
+      fetchParams: {
+        url: `${dbUrl}_changes`,
+        method: 'GET',
+        params: {
+          limit: 200,
+          include_docs: true,
+          descending: true
+        }
+      },
+      fn: function parse(response) {
+        // tip: chrome dev tools, right-click on logged object, store as global variable
+        console.log(response);
+        // limit doc length to display so we don't crash the browser
+        return Object.assign({}, response, { results: response.results.slice(0, 20) });
       },
       startRow: 5,
       startColumn: 25
@@ -3778,7 +4069,7 @@ ${queries[queryName].fn.toString().replace(/ {6}/g, '')}
 /*!****************************!*\
   !*** ./app/utils/utils.js ***!
   \****************************/
-/*! exports provided: parseUrl, showMBSize, showSize, withCommas, getParams */
+/*! exports provided: parseUrl, showMBSize, showSize, withCommas, getParams, copyTextToClipboard */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3788,6 +4079,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showSize", function() { return showSize; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "withCommas", function() { return withCommas; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getParams", function() { return getParams; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "copyTextToClipboard", function() { return copyTextToClipboard; });
 const KB = 1000;
 const MB = Math.pow(KB, 2);
 const GB = Math.pow(KB, 3);
@@ -3852,6 +4144,24 @@ function getParams(searchParams) {
     }
   });
   return result;
+}
+
+function copyTextToClipboard(text) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+
+  try {
+    const successful = document.execCommand('copy');
+    const msg = successful ? 'successful' : 'unsuccessful';
+    console.log('Fallback: Copying text command was ' + msg);
+  } catch (err) {
+    console.error('Fallback: Oops, unable to copy', err);
+  }
+
+  document.body.removeChild(textArea);
 }
 
 /***/ }),
@@ -25674,7 +25984,7 @@ exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/li
 
 
 // module
-exports.push([module.i, "#app {\n  font-family: monospace;\n  color: black;\n  font-size: 1em;\n  margin: 0;\n}\n\n.breadcrumbs {\n  margin-bottom: 15px;\n}\n\n.page {\n  margin: 0 auto;\n  width: 95%;\n}\n\n.error {\n  color: red;\n}\n\n.action-button:disabled {\n  opacity: .8;\n}\n\n.warning {\n  background-color: #fbf2f2;\n}\n\n.align-right {\n  text-align: right;\n}\n\n.warning-modal {\n  background-color: red;\n}\n", "", {"version":3,"sources":["/Users/kdoran/code/lookout/app/app-classes.css"],"names":[],"mappings":"AAAA;EACE,uBAAuB;EACvB,aAAa;EACb,eAAe;EACf,UAAU;CACX;;AAED;EACE,oBAAoB;CACrB;;AAED;EACE,eAAe;EACf,WAAW;CACZ;;AAED;EACE,WAAW;CACZ;;AAED;EACE,YAAY;CACb;;AAED;EACE,0BAA0B;CAC3B;;AAED;EACE,kBAAkB;CACnB;;AAED;EACE,sBAAsB;CACvB","file":"app-classes.css","sourcesContent":["#app {\n  font-family: monospace;\n  color: black;\n  font-size: 1em;\n  margin: 0;\n}\n\n.breadcrumbs {\n  margin-bottom: 15px;\n}\n\n.page {\n  margin: 0 auto;\n  width: 95%;\n}\n\n.error {\n  color: red;\n}\n\n.action-button:disabled {\n  opacity: .8;\n}\n\n.warning {\n  background-color: #fbf2f2;\n}\n\n.align-right {\n  text-align: right;\n}\n\n.warning-modal {\n  background-color: red;\n}\n"],"sourceRoot":""}]);
+exports.push([module.i, "#app {\n  font-family: monospace;\n  color: black;\n  font-size: 1em;\n  margin: 0;\n}\n\n.breadcrumbs {\n  margin-bottom: 15px;\n}\n\n.page {\n  margin: 0 auto;\n  width: 95%;\n}\n\n.error {\n  color: red;\n}\n\n.action-button:disabled {\n  opacity: .8;\n}\n\n.warning {\n  background-color: #fbf2f2;\n}\n\n.align-right {\n  text-align: right;\n}\n\n.warning-modal {\n  background-color: red;\n}\n\n.config-container {\n\n}\n.config-container section {\n  margin: 5px;\n  margin-left: 5%;\n}\n.config-container--header {\n  font-weight: bold;\n  margin: 15px 0 15px 0;\n  border-bottom: 1px solid #eee;\n}\n\n.config-container--content {\n  margin-left: 20px;\n}\n\n.config-container--content div {\n  margin-bottom: 5px;\n}\n", "", {"version":3,"sources":["/Users/kdoran/code/lookout/app/app-classes.css"],"names":[],"mappings":"AAAA;EACE,uBAAuB;EACvB,aAAa;EACb,eAAe;EACf,UAAU;CACX;;AAED;EACE,oBAAoB;CACrB;;AAED;EACE,eAAe;EACf,WAAW;CACZ;;AAED;EACE,WAAW;CACZ;;AAED;EACE,YAAY;CACb;;AAED;EACE,0BAA0B;CAC3B;;AAED;EACE,kBAAkB;CACnB;;AAED;EACE,sBAAsB;CACvB;;AAED;;CAEC;AACD;EACE,YAAY;EACZ,gBAAgB;CACjB;AACD;EACE,kBAAkB;EAClB,sBAAsB;EACtB,8BAA8B;CAC/B;;AAED;EACE,kBAAkB;CACnB;;AAED;EACE,mBAAmB;CACpB","file":"app-classes.css","sourcesContent":["#app {\n  font-family: monospace;\n  color: black;\n  font-size: 1em;\n  margin: 0;\n}\n\n.breadcrumbs {\n  margin-bottom: 15px;\n}\n\n.page {\n  margin: 0 auto;\n  width: 95%;\n}\n\n.error {\n  color: red;\n}\n\n.action-button:disabled {\n  opacity: .8;\n}\n\n.warning {\n  background-color: #fbf2f2;\n}\n\n.align-right {\n  text-align: right;\n}\n\n.warning-modal {\n  background-color: red;\n}\n\n.config-container {\n\n}\n.config-container section {\n  margin: 5px;\n  margin-left: 5%;\n}\n.config-container--header {\n  font-weight: bold;\n  margin: 15px 0 15px 0;\n  border-bottom: 1px solid #eee;\n}\n\n.config-container--content {\n  margin-left: 20px;\n}\n\n.config-container--content div {\n  margin-bottom: 5px;\n}\n"],"sourceRoot":""}]);
 
 // exports
 
