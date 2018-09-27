@@ -10,22 +10,18 @@ import { showMBSize, withCommas } from 'utils/utils'
 
 import './databases-container.css'
 
-const LIMIT = 100
-
 export default class extends React.Component {
   state = {
     loaded: false,
-    dbs: null,
     error: null,
     infos: {},
     showNewDBModal: false
   }
 
   async componentDidMount () {
-    const { couchUrl } = this.props
+    const { couchUrl, dbs } = this.props
     try {
-      const dbs = await fetcher.get(`${couchUrl}_all_dbs`, { limit: LIMIT })
-      this.setState({ dbs, loaded: true })
+      this.setState({ loaded: true })
       this.fetchInfos(couchUrl, dbs)
     } catch (error) {
       this.setState({ error, loaded: true })
@@ -51,9 +47,9 @@ export default class extends React.Component {
   }
 
   render () {
-    const { couchUrl, couch } = this.props
+    const { couchUrl, couch, dbs } = this.props
     const { history } = this.props
-    const { loaded, error, dbs, infos, showNewDBModal } = this.state
+    const { loaded, error, infos, showNewDBModal } = this.state
 
     return (
       <div>
