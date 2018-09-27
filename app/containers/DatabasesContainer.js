@@ -97,6 +97,9 @@ export default class extends React.Component {
                 <tr>
                   <td><Link to={`/${couch}/_node/couchdb@localhost/_config`}>_config</Link></td>
                 </tr>
+                <tr>
+                  <td><a target='_blank' href={`${couchUrl}_scheduler/jobs`}>_scheduler/jobs</a> (replication status) </td>
+                </tr>
               </tbody>
             </table>
             <br /><br />
