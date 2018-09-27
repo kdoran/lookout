@@ -24,8 +24,7 @@ export default class extends React.Component {
         <div className='breadcrumbs'>
           <Link to={`/${couch}/`}>{couch}</Link>
           <span> / </span>
-          <Link to={`/${couch}/${dbName}/`}>{dbName}</Link>
-          <span> / </span>
+          {dbName && <span><Link to={`/${couch}/${dbName}/`}>{dbName}</Link><span> / </span></span>}
           <span> {docId} </span>
         </div>
       )

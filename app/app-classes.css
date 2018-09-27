@@ -33,3 +33,24 @@
 .warning-modal {
   background-color: red;
 }
+
+.config-container {
+
+}
+.config-container section {
+  margin: 5px;
+  margin-left: 5%;
+}
+.config-container--header {
+  font-weight: bold;
+  margin: 15px 0 15px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.config-container--content {
+  margin-left: 20px;
+}
+
+.config-container--content div {
+  margin-bottom: 5px;
+}
