@@ -4,13 +4,16 @@ import Loading from 'components/Loading'
 import Error from 'components/Error'
 
 import { Link } from 'react-router-dom'
+import './search-container.css'
 
 // TODO: move to utils
 const isExcluded = db => ['_global_changes', '_metadata', '_replicator'].indexOf(db) === -1
 
 const SingleView = (props = {}) => {
   const docs = props.docs || []
-  return docs.map(doc => <a key={doc._id}>{doc._id}</a>)
+  let url = id => props.dbUrl ? `${props.dbUrl}/${id}` : id
+
+  return docs.map(doc => <Link key={doc._id} to={url(doc._id)}>{doc._id}</Link>)
 }
 
 /**
@@ -24,7 +27,7 @@ const MultipleView = (props = {}) => {
   return Object.keys(docs).map(db =>
     <div key={db}>
       <h5>{db}</h5>
-      <SingleView docs={docs[db]} />
+      <SingleView docs={docs[db]} dbUrl={db} />
     </div>)
 }
 
@@ -34,7 +37,8 @@ export default class extends React.Component {
     searching: false
   }
 
-  fetcher (couchUrl, db, text, limit = 10) {
+  fetcher (db, text, limit = 10) {
+    const {couchUrl} = this.props
     const body = {
       selector: {
         _id: {
@@ -52,20 +56,20 @@ export default class extends React.Component {
 
   async search (text) {
     this.setState({searching: true})
-    const {multipleSearch, dbs, db, couchUrl} = this.props
+    const {multipleSearch, dbs, db} = this.props
 
     let result = []
     if (multipleSearch) {
-      result = await this.multipleSearch(text, dbs, couchUrl)
+      result = await this.multipleSearch(text, dbs)
     } else {
-      result = await this.singleSearch(text, db, couchUrl)
+      result = await this.singleSearch(text, db)
     }
     this.setState({searching: false, result})
   }
 
   handleOnChange = (event) => {
     const text = event.target.value
-    // TODO: add debouce field here
+    // TODO: add debouce field here or Create a debouce input component
     this.search(text)
   }
 
@@ -86,25 +90,25 @@ export default class extends React.Component {
     return flatten
   }
 
-  async multipleSearch (text, dbs, couchUrl) {
+  async multipleSearch (text, dbs) {
     // limit as 3 each from each db since its a multiple search
     const promises = dbs
       .filter(db => isExcluded(db)) // exclude some dbs
-      .map(db => this.fetcher(couchUrl, db, text, 3))
+      .map(db => this.fetcher(db, text, 3))
 
     const results = await Promise.all(promises)
     // flatten array result
     return this._flattenResult(results)
   }
 
-  async singleSearch (text, db, couchUrl) {
-    const result = await this.fetcher(couchUrl, db, text)
+  async singleSearch (text, db) {
+    const result = await this.fetcher(db, text)
     return this._flattenResult([result])
   }
 
   render () {
     const { result } = this.state
-    const { multipleSearch, db } = this.props
+    const { multipleSearch, db, couchUrl } = this.props
 
     return (
       <div>
@@ -116,8 +120,8 @@ export default class extends React.Component {
             onChange={this.handleOnChange}
           />
         </label>
-        <div> {/* search result drop down */}
-          {result && multipleSearch ? <MultipleView docs={result} /> : <SingleView docs={result[db]} /> }
+        <div className='search-drop-results'> {/* search result drop down */}
+          {result && multipleSearch ? <MultipleView docs={result} couchUrl={couchUrl} /> : <SingleView docs={result[db]} /> }
         </div>
       </div>
     )
