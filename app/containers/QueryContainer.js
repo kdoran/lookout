@@ -10,20 +10,25 @@ import { copyTextToClipboard } from 'utils/utils'
 import { Link } from 'react-router-dom'
 import { downloadJSON } from 'utils/download'
 
-export default class extends React.Component {
+export default class QueryContainer extends React.Component {
   state = {
     loading: false,
     valid: true,
     result: null,
     error: null,
-    response: null
+    response: null,
+    input: undefined
   }
 
   static getDerivedStateFromProps (nextProps, prevState) {
     const { queryId = 'id-regex' } = nextProps.match.params
     const queries = getAllQueries(nextProps.dbUrl)
     const query = getQuery(nextProps.dbUrl, queryId)
-    return { ...prevState, queries, queryId, query }
+    let input = prevState.input
+    if (input === undefined) {
+      input = query.string
+    }
+    return { ...prevState, queries, queryId, query, input }
   }
 
   onEdit = async (input) => {
@@ -42,7 +47,7 @@ export default class extends React.Component {
     try {
       parsedInput = new Function(input + '; return {fetchParams, parse}')() // eslint-disable-line
     } catch (error) {
-      this.setState({ error: 'syntax error', loading: false })
+      this.setState({ error: error.message, loading: false })
       return
     }
 
@@ -88,7 +93,7 @@ export default class extends React.Component {
         }
         <Editor
           onChange={this.onEdit}
-          value={input || query.string}
+          value={input}
           height='50%'
           onCmdEnter={this.run}
           startRow={query.startRow}
