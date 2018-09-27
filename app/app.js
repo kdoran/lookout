@@ -5,6 +5,7 @@ import { HashRouter as Router, Route, Switch } from 'react-router-dom'
 import SetupCouchContainer from './containers/SetupCouchContainer'
 import DatabasesContainer from './containers/DatabasesContainer'
 import DocsContainer from './containers/DocsContainer'
+import DesignDocsContainer from './containers/DesignDocsContainer'
 import DocContainer from './containers/DocContainer'
 import EditDocContainer from './containers/EditDocContainer'
 import QueryContainer from './containers/QueryContainer'
@@ -58,7 +59,7 @@ class UserRoutes extends Component {
               <Route path='/:couch/:dbName/:docId/editing' component={withParams(EditDocContainer)} />
               <Route exact path='/:couch/:dbName/query' component={withParams(QueryContainer)} />
               <Route path='/:couch/:dbName/query/:queryId' component={withParams(QueryContainer)} />
-              <Route path='/:couch/:dbName/:docId/:rev/' component={withParams(DocContainer)} />
+              <Route exact path='/:couch/:dbName/_design/:designId/views' component={withParams(DesignDocsContainer)} />
               <Route path='/:couch/:dbName/:docId' component={withParams(DocContainer)} />
               <Route path='/:couch/:dbName' component={withParams(DocsContainer)} />
               <Route path='/:couch/' component={withParams(DatabasesContainer)} />

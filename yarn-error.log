@@ -1,0 +1,76 @@
+Arguments: 
+  /Users/pitaside/.nvm/versions/node/v8.11.4/bin/node /Users/pitaside/.yarn/bin/yarn.js start
+
+PATH: 
+  /Users/pitaside/.yarn/bin:/Users/pitaside/.config/yarn/global/node_modules/.bin:/Users/pitaside/.nvm/versions/node/v8.11.4/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Users/pitaside/Library/Android/sdk/platform-tools:/Users/pitaside/Library/Android/sdk/tools:/usr/local/sbin:/usr/local/bin/
+
+Yarn version: 
+  1.5.1
+
+Node version: 
+  8.11.4
+
+Platform: 
+  darwin x64
+
+npm manifest: 
+  {
+    "name": "couchlookout",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+      "start": "webpack-dev-server",
+      "build": "webpack",
+      "test": "standard"
+    },
+    "license": "MIT",
+    "dependencies": {
+      "react": "^16.4.1",
+      "react-ace": "^6.1.0",
+      "react-dom": "^16.4.1",
+      "react-onclickout": "^2.0.8",
+      "react-router-dom": "^4.3.1"
+    },
+    "devDependencies": {
+      "babel-core": "^6.26.0",
+      "babel-eslint": "^8.2.2",
+      "babel-loader": "^7.1.4",
+      "babel-plugin-transform-async-to-generator": "^6.24.1",
+      "babel-preset-react": "^6.24.1",
+      "babel-preset-stage-0": "^6.24.1",
+      "css-loader": "^0.28.10",
+      "standard": "^11.0.1",
+      "style-loader": "^0.20.3",
+      "webpack": "^4.1.1",
+      "webpack-cli": "^2.0.12",
+      "webpack-dev-server": "^3.1.1"
+    },
+    "standard": {
+      "parser": "babel-eslint",
+      "ignore": [
+        "/dist/"
+      ]
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  Error: Command failed.
+  Exit code: 1
+  Command: sh
+  Arguments: -c webpack-dev-server
+  Directory: /Users/pitaside/Documents/workspace/fielded/lookout
+  Output:
+  
+      at ProcessTermError.MessageError (/Users/pitaside/.yarn/lib/cli.js:186:110)
+      at new ProcessTermError (/Users/pitaside/.yarn/lib/cli.js:226:113)
+      at ChildProcess.<anonymous> (/Users/pitaside/.yarn/lib/cli.js:30281:17)
+      at emitTwo (events.js:126:13)
+      at ChildProcess.emit (events.js:214:7)
+      at maybeClose (internal/child_process.js:925:16)
+      at Process.ChildProcess._handle.onexit (internal/child_process.js:209:5)
