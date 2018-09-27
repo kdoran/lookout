@@ -16,7 +16,7 @@ export default class extends React.Component {
   }
 
   render () {
-    const { userCtx, match: { params: { couch, dbName } } } = this.props
+    const { userCtx, dbs, match: { params: { couch, dbName } } } = this.props
     const { showSearchModal } = this.state
     const couchUrl = parseUrl(couch)
 
@@ -24,9 +24,8 @@ export default class extends React.Component {
       <div className='nav-container'>
         <div className='nav'>
           <span className='nav-left'>
-            CouchDB Lookout | <Link to='/'>change couch</Link> {dbName && (
-              <span> | <a href='' onClick={this.toggleSearchModal}>search</a></span>
-            )}
+            CouchDB Lookout | <Link to='/'>change couch</Link>
+            <span> | <a href='' onClick={this.toggleSearchModal}>search</a></span>
           </span>
           <span className='nav-right'>
             user: <Link to={`/${couch}/_users/org.couchdb.user:${encodeURIComponent(userCtx.name)}`}>{userCtx.name}</Link> |&nbsp;
@@ -36,6 +35,9 @@ export default class extends React.Component {
         <Modal
           show={showSearchModal}
           onClose={this.toggleSearchModal}
+          multipleSearch={!dbName}
+          db={dbName}
+          dbs={dbs}
           className='search-modal'
         >
           <SearchContainer />

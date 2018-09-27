@@ -20,13 +20,17 @@ import fetcher from 'utils/fetcher'
 import 'app-classes.css'
 import 'app-tags.css'
 
+const Databases = withParams(DatabasesContainer)
+const LIMIT = 100
+
 class UserRoutes extends Component {
   constructor (props) {
     super(props)
     this.state = {
       authenticated: !!cache.userCtx.name,
       loading: true,
-      couchUrl: parseUrl(props.match.params.couch)
+      couchUrl: parseUrl(props.match.params.couch),
+      dbs: null
     }
   }
 
@@ -36,7 +40,9 @@ class UserRoutes extends Component {
     if (userCtx.name || userCtx.roles.length) {
       this.onAuthenticated(userCtx)
     }
-    this.setState({ loading: false })
+
+    const dbs = await fetcher.get(`${couchUrl}_all_dbs`, { limit: LIMIT })
+    this.setState({ loading: false, dbs })
   }
 
   onAuthenticated = (userCtx) => {
@@ -45,7 +51,7 @@ class UserRoutes extends Component {
   }
 
   render () {
-    const { authenticated, loading, couchUrl } = this.state
+    const { authenticated, loading, couchUrl, dbs } = this.state
     if (loading) {
       return <Loading />
     }
@@ -63,10 +69,10 @@ class UserRoutes extends Component {
               <Route path='/:couch/:dbName/:docId/:rev/' component={withParams(DocContainer)} />
               <Route path='/:couch/:dbName/:docId' component={withParams(DocContainer)} />
               <Route path='/:couch/:dbName' component={withParams(DocsContainer)} />
-              <Route path='/:couch/' component={withParams(DatabasesContainer)} />
+              <Route path='/:couch/' component={props => <Databases {...props} dbs={dbs} />} />
             </Switch>
           </div>
-          <Route path='/:couch/:dbName?/:docId?' render={props => (<Nav {...props} userCtx={cache.userCtx} />)} />
+          <Route path='/:couch/:dbName?/:docId?' render={props => (<Nav {...props} dbs={dbs} userCtx={cache.userCtx} />)} />
         </div>
       )
     }
