@@ -62,7 +62,7 @@
 /******/ 	}
 /******/
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "0eea30f5efbe34144ebf"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "c42330964980bcb6d594"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -1408,9 +1408,18 @@ const ACE_WIDTH = '100%';
     return _asyncToGenerator(function* () {
       const editor = _this.refs.aceEditor.editor;
       editor.commands.removeCommands(['gotoline', 'find']);
+      editor.session.$worker.send('changeOptions', [{ asi: true }]);
       if (_this.props.startRow) {
         editor.selection.moveTo(_this.props.startRow, _this.props.startColumn);
       }
+      editor.getSession().on('changeAnnotation', function () {
+        const annotation = editor.getSession().getAnnotations();
+        for (let key in annotation) {
+          if (annotation.hasOwnProperty(key)) {
+            console.log(`[${annotation[key].row} , ${annotation[key].column}] - ${annotation[key].text}`);
+          }
+        }
+      });
     })();
   }
 
@@ -3142,6 +3151,7 @@ function isValidDBName(input) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return QueryContainer; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var components_Editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! components/Editor */ "./app/components/Editor.js");
@@ -3170,7 +3180,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 
 
-/* harmony default export */ __webpack_exports__["default"] = (class extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Component {
+class QueryContainer extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Component {
   constructor(...args) {
     var _temp, _this;
 
@@ -3179,7 +3189,8 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       valid: true,
       result: null,
       error: null,
-      response: null
+      response: null,
+      input: undefined
     }, this.onEdit = (() => {
       var _ref = _asyncToGenerator(function* (input) {
         _this.setState({ input, error: '' });
@@ -3201,7 +3212,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         try {
           parsedInput = new Function(input + '; return {fetchParams, parse}')(); // eslint-disable-line
         } catch (error) {
-          _this.setState({ error: 'syntax error', loading: false });
+          _this.setState({ error: error.message, loading: false });
           return;
         }
 
@@ -3234,7 +3245,11 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
     const { queryId = 'id-regex' } = nextProps.match.params;
     const queries = Object(utils_queries__WEBPACK_IMPORTED_MODULE_7__["getAllQueries"])(nextProps.dbUrl);
     const query = Object(utils_queries__WEBPACK_IMPORTED_MODULE_7__["getQuery"])(nextProps.dbUrl, queryId);
-    return _extends({}, prevState, { queries, queryId, query });
+    let input = prevState.input;
+    if (input === undefined) {
+      input = query.string;
+    }
+    return _extends({}, prevState, { queries, queryId, query, input });
   }
 
   render() {
@@ -3262,7 +3277,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       ) : 'waiting for valid json',
       react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_Editor__WEBPACK_IMPORTED_MODULE_1__["default"], {
         onChange: this.onEdit,
-        value: input || query.string,
+        value: input,
         height: '50%',
         onCmdEnter: this.run,
         startRow: query.startRow,
@@ -3292,7 +3307,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       })
     );
   }
-});
+}
 
 /***/ }),
 
@@ -4011,7 +4026,7 @@ function getAllQueries(dbUrl) {
         // tip: chrome dev tools, right-click on logged object, store as global variable
         console.log(response);
         // limit doc length to display so we don't crash the browser
-        return Object.assign({}, response, { docs: response.docs.slice(0, 50) });
+        return Object.assign({}, response, { docs: response.rows.slice(0, 50) });
       },
       startRow: 5,
       startColumn: 25
