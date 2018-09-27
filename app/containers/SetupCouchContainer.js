@@ -7,7 +7,7 @@ import cache from '../utils/cache'
 export default class extends React.Component {
   constructor () {
     super()
-    let recentCouches = localStorager.getRecent('couchurls')
+    let recentCouches = localStorager.getRecent('couchurls').sort()
     recentCouches = recentCouches.length ? recentCouches : ['http://localhost:5984/']
     this.state = {
       error: null,

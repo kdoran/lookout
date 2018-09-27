@@ -87,6 +87,19 @@ export default class extends React.Component {
               </tbody>
             </table>
             <br /><br />
+            <table>
+              <thead>
+                <tr>
+                  <th>Couch Server Links</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><Link to={`/${couch}/_node/couchdb@localhost/_config`}>_config</Link></td>
+                </tr>
+              </tbody>
+            </table>
+            <br /><br />
             <AllowEditButton
               couchUrl={couchUrl}
               onConfirm={() => this.setState({ showNewDBModal: true })}

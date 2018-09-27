@@ -1,6 +1,7 @@
 /* global localStorage */
 
 const lookoutPrefix = 'couchlookout::'
+const limit = 25
 
 export default {
   getRecent (id) {
@@ -17,7 +18,7 @@ export default {
     let recent = this.getRecent(id)
     if (!recent.includes(item)) {
       recent.unshift(item)
-      recent = recent.slice(0, 9)
+      recent = recent.slice(0, limit)
     }
     return localStorage.setItem(lookoutPrefix + id, JSON.stringify(recent))
   },
