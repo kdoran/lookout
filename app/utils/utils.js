@@ -81,3 +81,14 @@ export function copyTextToClipboard (text) {
 
   document.body.removeChild(textArea)
 }
+
+export function keyMap (keyCode) {
+  const keys = {
+    13: 'ENTER',
+    27: 'ESCAPE',
+    38: 'ARROW_UP',
+    40: 'ARROW_DOWN',
+    191: 'FORWARD_SLASH'
+  }
+  return keys[keyCode]
+}
