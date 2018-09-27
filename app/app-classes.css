@@ -54,3 +54,7 @@
 .config-container--content div {
   margin-bottom: 5px;
 }
+
+.search-modal {
+  height: 80%;
+}
