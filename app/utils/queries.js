@@ -6,11 +6,14 @@ export function getAllQueries (dbUrl) {
         method: 'POST',
         body: {
           selector: { _id: { '$regex': '' } },
-          limit: 500
+          limit: 200
         }
       },
       fn: function parse (response) {
-        return response
+        // tip: chrome dev tools, right-click on logged object, store as global variable
+        console.log(response)
+        // limit doc length to display so we don't crash the browser
+        return Object.assign({}, response, { docs: response.docs.slice(0, 50) })
       },
       startRow: 6,
       startColumn: 19

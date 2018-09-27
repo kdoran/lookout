@@ -5,6 +5,7 @@ import Error from 'components/Error'
 import AllowEditButton from 'components/AllowEditButton'
 import Breadcrumbs from 'components/Breadcrumbs'
 import { Link } from 'react-router-dom'
+import { downloadJSON } from 'utils/download'
 
 import './doc-container.css'
 
@@ -37,6 +38,11 @@ export default class extends React.Component {
     }
   }
 
+  download = event => {
+    event.preventDefault()
+    downloadJSON(this.state.doc, this.state.doc._id + ' _rev ' + this.state.doc._rev)
+  }
+
   render () {
     const { rev } = this.props.match.params
     const { couchUrl, dbName, couch } = this.props
@@ -50,6 +56,7 @@ export default class extends React.Component {
         {!error && loaded && (
           <div>
             <div className='controls'>
+              <a href='#' onClick={this.download}>download</a> &nbsp;
               <AllowEditButton
                 dbName={dbName}
                 couchUrl={couchUrl}

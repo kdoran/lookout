@@ -74,7 +74,7 @@ export default class extends React.Component {
         <Editor
           onChange={this.onEdit}
           value={input || query.string}
-          height='40%'
+          height='50%'
           onCmdEnter={this.run}
           startRow={query.startRow}
           startColumn={query.startColumn}

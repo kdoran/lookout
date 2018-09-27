@@ -40,7 +40,7 @@ module.exports = {
   },
   devServer: {
     hot: true,
-    port: 7000,
+    port: 8080,
     clientLogLevel: 'none'
   },
   plugins: [
