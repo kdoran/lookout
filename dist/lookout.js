@@ -62,7 +62,7 @@
 /******/ 	}
 /******/
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "3a0763c0cff133b90ae2"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "0eea30f5efbe34144ebf"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -2624,6 +2624,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/es/index.js");
 /* harmony import */ var _docs_container_css__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./docs-container.css */ "./app/containers/docs-container.css");
 /* harmony import */ var _docs_container_css__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_docs_container_css__WEBPACK_IMPORTED_MODULE_9__);
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 
@@ -2662,7 +2664,11 @@ const LIMIT = 500;
       try {
         const options = { skip: offset, limit: LIMIT };
         const response = yield utils_fetcher__WEBPACK_IMPORTED_MODULE_1__["default"].dbGet(couchUrl, dbName, '_all_docs', options);
-        _this.setState({ response, loaded: true });
+        const rows = response.rows.map(function (row) {
+          const link = row.id.indexOf('/') === -1 ? row.id : encodeURIComponent(row.id);
+          return _extends({}, row, { link });
+        });
+        _this.setState({ response, rows, loaded: true });
       } catch (error) {
         _this.setState({ error, loaded: true });
         console.error(error);
@@ -2673,7 +2679,7 @@ const LIMIT = 500;
   render() {
     const { location: { pathname }, history } = this.props;
     const { dbName, couchUrl, couch, searchParams: { offset = 0 } } = this.props;
-    const { loaded, error, response, showDeleteModal } = this.state;
+    const { loaded, error, response, rows, showDeleteModal } = this.state;
 
     const PaginationComponent = () => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_Pagination__WEBPACK_IMPORTED_MODULE_4__["default"], {
       total: response.total_rows,
@@ -2750,7 +2756,7 @@ const LIMIT = 500;
           react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
             'tbody',
             null,
-            response.rows.map(row => {
+            rows.map(row => {
               return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
                 'tr',
                 { key: row.id },
@@ -2759,7 +2765,7 @@ const LIMIT = 500;
                   null,
                   react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
                     react_router_dom__WEBPACK_IMPORTED_MODULE_8__["Link"],
-                    { to: `/${couch}/${dbName}/${row.id}` },
+                    { to: `/${couch}/${dbName}/${row.link}` },
                     row.id
                   )
                 ),
