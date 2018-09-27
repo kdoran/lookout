@@ -13,7 +13,11 @@ const SingleView = (props = {}) => {
   const docs = props.docs || []
   let url = id => props.dbUrl ? `${props.dbUrl}/${id}` : id
 
-  return docs.map(doc => <Link key={doc._id} to={url(doc._id)}>{doc._id}</Link>)
+  return docs.map(doc => <Link className={props.currentItemId === doc._id ? 'active' : ''}
+    key={doc._id}
+    to={url(doc._id)}
+    onMouseEnter={() => props.handleMouseEnter(doc._id)}
+  >{doc._id}</Link>)
 }
 
 /**
@@ -27,7 +31,7 @@ const MultipleView = (props = {}) => {
   return Object.keys(docs).map(db =>
     <div key={db}>
       <h5>{db}</h5>
-      <SingleView docs={docs[db]} dbUrl={db} />
+      <SingleView docs={docs[db]} dbUrl={db} currentItemId={props.currentItemId} handleMouseEnter={props.handleMouseEnter} />
     </div>)
 }
 
@@ -67,10 +71,18 @@ export default class extends React.Component {
     this.setState({searching: false, result})
   }
 
+  // TODO: add debouce field here or Create a debouce input component
   handleOnChange = (event) => {
     const text = event.target.value
-    // TODO: add debouce field here or Create a debouce input component
-    this.search(text)
+    if (text !== '') {
+      this.search(text)
+    } else {
+      this.setState({result: {}})
+    }
+  }
+
+  handleMouseEnter = id => {
+    this.setState({currentItemId: id})
   }
 
   /**
@@ -107,8 +119,13 @@ export default class extends React.Component {
   }
 
   render () {
-    const { result } = this.state
+    const { result, currentItemId, searching } = this.state
     const { multipleSearch, db, couchUrl } = this.props
+
+    const commonAttr = {
+      currentItemId,
+      handleMouseEnter: this.handleMouseEnter
+    }
 
     return (
       <div>
@@ -120,9 +137,10 @@ export default class extends React.Component {
             onChange={this.handleOnChange}
           />
         </label>
-        <div className='search-drop-results'> {/* search result drop down */}
-          {result && multipleSearch ? <MultipleView docs={result} couchUrl={couchUrl} /> : <SingleView docs={result[db]} /> }
-        </div>
+        {searching && <Loading />}
+        {!searching && <div className='search-drop-results'> {/* search result drop down */}
+          {result && multipleSearch ? <MultipleView docs={result} couchUrl={couchUrl} {...commonAttr} /> : <SingleView docs={result[db]} {...commonAttr} /> }
+        </div>}
       </div>
     )
   }
