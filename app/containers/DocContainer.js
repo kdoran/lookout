@@ -6,6 +6,7 @@ import AllowEditButton from 'components/AllowEditButton'
 import Breadcrumbs from 'components/Breadcrumbs'
 import { Link } from 'react-router-dom'
 import { downloadJSON } from 'utils/download'
+import { copyTextToClipboard } from 'utils/utils'
 
 import './doc-container.css'
 
@@ -43,6 +44,11 @@ export default class extends React.Component {
     downloadJSON(this.state.doc, this.state.doc._id + ' _rev ' + this.state.doc._rev)
   }
 
+  copy = e => {
+    e.preventDefault()
+    copyTextToClipboard(JSON.stringify(this.state.doc, null, 2))
+  }
+
   handleConfirmEdit = () => {
     const {location} = this.props.history
     const pathname = location.pathname.charAt(location.pathname.length - 1) === '/'
@@ -64,6 +70,7 @@ export default class extends React.Component {
           <div>
             <div className='controls'>
               <a href='#' onClick={this.download}>download</a> &nbsp;
+              <a href='#' onClick={this.copy}>copy to clipboard</a> &nbsp;
               <AllowEditButton
                 dbName={dbName}
                 couchUrl={couchUrl}

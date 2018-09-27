@@ -6,14 +6,17 @@ import Error from 'components/Error'
 import Breadcrumbs from 'components/Breadcrumbs'
 import QueryResponse from 'components/QueryResponse'
 import { getQuery, getAllQueries } from 'utils/queries'
+import { copyTextToClipboard } from 'utils/utils'
 import { Link } from 'react-router-dom'
+import { downloadJSON } from 'utils/download'
 
 export default class extends React.Component {
   state = {
     loading: false,
     valid: true,
     result: null,
-    error: null
+    error: null,
+    response: null
   }
 
   static getDerivedStateFromProps (nextProps, prevState) {
@@ -47,11 +50,23 @@ export default class extends React.Component {
     try {
       const response = await fetcher.fetch(fetchParams)
       const result = parse(response)
-      this.setState({ result, loading: false })
+      this.setState({ response, result, loading: false })
     } catch (error) {
       this.setState({ error, loading: false })
       console.error(error)
     }
+  }
+
+  copy = e => {
+    e.preventDefault()
+    copyTextToClipboard(JSON.stringify(this.state.response, null, 2))
+  }
+
+  download = e => {
+    e.preventDefault()
+    const { dbName, couch } = this.props
+    const { queryId } = this.state
+    downloadJSON(this.state.response, `${couch} ${dbName} ${queryId}`)
   }
 
   render () {
@@ -82,6 +97,8 @@ export default class extends React.Component {
         />
         {error && <Error error={error} />}
         queries: {links}
+        <br /><br />
+        <a href='' onClick={this.copy}>copy response to clipboard</a> <a href='' onClick={this.download}>download response</a>
         {loading
           ? <Loading />
           : result &&
