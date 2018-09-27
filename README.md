@@ -8,8 +8,6 @@ If you have a CouchDB server with Allow Origin: * enabled, you can use https://k
 
 ### Running locally:
 
-You first have to remove `./dist` from the index.html right now to run locally (it's needed as is for github pages). `devServer: index: different-index.html` I couldn't get working.
-
 ```
   npm i
   npm start
