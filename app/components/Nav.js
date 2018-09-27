@@ -35,12 +35,14 @@ export default class extends React.Component {
         <Modal
           show={showSearchModal}
           onClose={this.toggleSearchModal}
-          multipleSearch={!dbName}
-          db={dbName}
-          dbs={dbs}
           className='search-modal'
         >
-          <SearchContainer />
+          <SearchContainer
+            multipleSearch={!dbName}
+            db={dbName}
+            dbs={dbs}
+            couchUrl={couchUrl}
+          />
         </Modal>
       </div>
     )
