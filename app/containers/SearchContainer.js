@@ -1,7 +1,6 @@
 import React from 'react'
 import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
-import Error from 'components/Error'
 
 import { Link } from 'react-router-dom'
 import './search-container.css'
@@ -85,6 +84,34 @@ export default class extends React.Component {
     this.setState({currentItemId: id})
   }
 
+  handleKeyDown = (key, results) => {
+    let currentItemId
+    if (key === 'ArrowDown') {
+      currentItemId = this._getItem()
+    }
+
+    if (key === 'ArrowUp') {
+      currentItemId = this._getItem(-1)
+    }
+
+    this.setState({currentItemId})
+  }
+
+  _getItem (movement = 1) {
+    const {result, currentItemId} = this.state
+    // create a single array of results
+    const dbDocs = Object.keys(result).reduce((array, db) => {
+      return array.concat(result[db])
+    }, [])
+
+    const index = dbDocs.findIndex(({_id}) => _id === currentItemId)
+    const item = dbDocs[index + movement]
+    if (item) {
+      return item._id
+    }
+    return currentItemId
+  }
+
   /**
    * Make result array to object and also removing empty result dbs
    * from result
@@ -128,7 +155,7 @@ export default class extends React.Component {
     }
 
     return (
-      <div>
+      <div onKeyDown={(e) => this.handleKeyDown(e.key, result)} tabIndex='0'>
         <h2>Doc Search</h2>
         <label>
           <input
