@@ -3,6 +3,7 @@ import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
 
 import { Link } from 'react-router-dom'
+import ReactDOM from 'react-dom'
 import './search-container.css'
 
 // TODO: move to utils
@@ -11,11 +12,12 @@ const isExcluded = db => ['_global_changes', '_metadata', '_replicator'].indexOf
 const SingleView = (props = {}) => {
   const docs = props.docs || []
   let url = id => props.dbUrl ? `${props.dbUrl}/${id}` : id
-
-  return docs.map(doc => <Link className={props.currentItemId === doc._id ? 'active' : ''}
+  const isActive = id => props.currentItemId === id
+  return docs.map(doc => <Link className={isActive(doc._id) ? 'active' : ''}
     key={doc._id}
     to={url(doc._id)}
     onMouseEnter={() => props.handleMouseEnter(doc._id)}
+    ref={link => link && isActive(doc._id) && ReactDOM.findDOMNode(link).focus()}
   >{doc._id}</Link>)
 }
 
