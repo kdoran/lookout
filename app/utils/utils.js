@@ -92,3 +92,17 @@ export function keyMap (keyCode) {
   }
   return keys[keyCode]
 }
+
+// https://gist.github.com/nmsdvid/8807205#gistcomment-2313801
+export const debounce = (callback, time = 950) => {
+  let interval
+  return (...args) => {
+    clearTimeout(interval)
+    interval = setTimeout(() => {
+      interval = null
+
+      // eslint-disable-next-line
+      callback(...args)
+    }, time)
+  }
+}
