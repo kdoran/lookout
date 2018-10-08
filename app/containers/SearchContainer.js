@@ -1,5 +1,6 @@
 import React from 'react'
 import fetcher from 'utils/fetcher'
+import { debounce } from 'utils/utils'
 import Loading from 'components/Loading'
 
 import { Link } from 'react-router-dom'
@@ -72,11 +73,11 @@ export default class extends React.Component {
     this.setState({searching: false, result})
   }
 
-  // TODO: add debouce field here or Create a debouce input component
   handleOnChange = (event) => {
     const text = event.target.value
     if (text !== '') {
-      this.search(text)
+      const searchFunc = debounce(string => this.search(string))
+      searchFunc(text)
     } else {
       this.setState({result: {}})
     }
