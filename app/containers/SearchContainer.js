@@ -17,6 +17,7 @@ const SingleView = (props = {}) => {
   return docs.map(doc => <Link className={isActive(doc._id) ? 'active' : ''}
     key={doc._id}
     to={url(doc._id)}
+    onClick={() => props.onClose()}
     onMouseEnter={() => props.handleMouseEnter(doc._id)}
     ref={link => link && isActive(doc._id) && ReactDOM.findDOMNode(link).focus()}
   >{doc._id}</Link>)
@@ -150,10 +151,11 @@ export default class extends React.Component {
 
   render () {
     const { result, currentItemId, searching } = this.state
-    const { multipleSearch, db, couchUrl } = this.props
+    const { multipleSearch, db, couchUrl, onClose } = this.props
 
     const commonAttr = {
       currentItemId,
+      onClose,
       handleMouseEnter: this.handleMouseEnter
     }
 
