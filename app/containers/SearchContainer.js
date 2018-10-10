@@ -30,11 +30,12 @@ const SingleView = (props = {}) => {
  * @returns HTMLElement Array<SingleView>
  */
 const MultipleView = (props = {}) => {
-  const docs = props.docs || {}
+  const {docs = {}, ...commonAttr} = props
+  // const docs = props.docs || {}
   return Object.keys(docs).map(db =>
     <div key={db}>
       <h5>{db}</h5>
-      <SingleView docs={docs[db]} dbUrl={db} currentItemId={props.currentItemId} handleMouseEnter={props.handleMouseEnter} />
+      <SingleView docs={docs[db]} dbUrl={db} {...commonAttr} />
     </div>)
 }
 
