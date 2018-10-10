@@ -161,7 +161,7 @@ export default class extends React.Component {
 
     return (
       <div onKeyDown={(e) => this.handleKeyDown(e.key, result)} tabIndex='0'>
-        <h2>Doc Search</h2>
+        <h2>{multipleSearch ? 'Doc ID Search: Across All Databases' : `Doc Search: ${db}`}</h2>
         <label>
           <input
             autoFocus
