@@ -42,6 +42,7 @@ export default class extends React.Component {
             db={dbName}
             dbs={dbs}
             couchUrl={couchUrl}
+            onClose={this.toggleSearchModal}
           />
         </Modal>
       </div>
