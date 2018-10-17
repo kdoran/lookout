@@ -44,6 +44,8 @@ export default class extends React.Component {
     result: {},
     searching: false
   }
+  // init debounce function for searching
+  debouncedSearch = debounce(string => this.search(string))
 
   fetcher (db, text, limit = 10) {
     const {couchUrl} = this.props
@@ -78,8 +80,7 @@ export default class extends React.Component {
   handleOnChange = (event) => {
     const text = event.target.value
     if (text !== '') {
-      const searchFunc = debounce(string => this.search(string))
-      searchFunc(text)
+      this.debouncedSearch(text)
     } else {
       this.setState({result: {}})
     }
