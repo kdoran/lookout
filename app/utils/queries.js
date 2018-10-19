@@ -71,6 +71,23 @@ export function getAllQueries (dbUrl) {
       },
       startRow: 5,
       startColumn: 25
+    },
+    'keys-search': {
+      fetchParams: {
+        url: `${dbUrl}_all_docs?include_docs=true&limit=200`,
+        method: 'POST',
+        body: {
+          keys: []
+        }
+      },
+      fn: function parse (response) {
+        // tip: chrome dev tools, right-click on logged object, store as global variable
+        console.log(response)
+        // limit doc length to display so we don't crash the browser
+        return Object.assign({}, response, { docs: response.rows.slice(0, 50) })
+      },
+      startRow: 5,
+      startColumn: 25
     }
   }
 }
