@@ -62,7 +62,7 @@
 /******/ 	}
 /******/
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "c42330964980bcb6d594"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "580e63162083c5c599b9"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -932,6 +932,9 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 
 
+const Databases = Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_13__["default"])(_containers_DatabasesContainer__WEBPACK_IMPORTED_MODULE_4__["default"]);
+const LIMIT = 100;
+
 class UserRoutes extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   constructor(props) {
     super(props);
@@ -944,7 +947,8 @@ class UserRoutes extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
     this.state = {
       authenticated: !!_utils_cache__WEBPACK_IMPORTED_MODULE_14__["default"].userCtx.name,
       loading: true,
-      couchUrl: Object(_utils_utils__WEBPACK_IMPORTED_MODULE_15__["parseUrl"])(props.match.params.couch)
+      couchUrl: Object(_utils_utils__WEBPACK_IMPORTED_MODULE_15__["parseUrl"])(props.match.params.couch),
+      dbs: null
     };
   }
 
@@ -957,12 +961,14 @@ class UserRoutes extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
       if (userCtx.name || userCtx.roles.length) {
         _this.onAuthenticated(userCtx);
       }
-      _this.setState({ loading: false });
+
+      const dbs = yield utils_fetcher__WEBPACK_IMPORTED_MODULE_16__["default"].get(`${couchUrl}_all_dbs`, { limit: LIMIT });
+      _this.setState({ loading: false, dbs });
     })();
   }
 
   render() {
-    const { authenticated, loading, couchUrl } = this.state;
+    const { authenticated, loading, couchUrl, dbs } = this.state;
     if (loading) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Loading__WEBPACK_IMPORTED_MODULE_12__["default"], null);
     }
@@ -985,10 +991,10 @@ class UserRoutes extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/:dbName/:docId/:rev/', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_13__["default"])(_containers_DocContainer__WEBPACK_IMPORTED_MODULE_6__["default"]) }),
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/:dbName/:docId', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_13__["default"])(_containers_DocContainer__WEBPACK_IMPORTED_MODULE_6__["default"]) }),
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/:dbName', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_13__["default"])(_containers_DocsContainer__WEBPACK_IMPORTED_MODULE_5__["default"]) }),
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/', component: Object(_containers_withParams__WEBPACK_IMPORTED_MODULE_13__["default"])(_containers_DatabasesContainer__WEBPACK_IMPORTED_MODULE_4__["default"]) })
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/', component: props => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Databases, _extends({}, props, { dbs: dbs })) })
           )
         ),
-        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/:dbName?/:docId?', render: props => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Nav__WEBPACK_IMPORTED_MODULE_10__["default"], _extends({}, props, { userCtx: _utils_cache__WEBPACK_IMPORTED_MODULE_14__["default"].userCtx })) })
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], { path: '/:couch/:dbName?/:docId?', render: props => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Nav__WEBPACK_IMPORTED_MODULE_10__["default"], _extends({}, props, { dbs: dbs, userCtx: _utils_cache__WEBPACK_IMPORTED_MODULE_14__["default"].userCtx })) })
       );
     }
   }
@@ -1619,12 +1625,19 @@ __webpack_require__.r(__webpack_exports__);
 
 function Modal({ show, onClose, heading, children, className }) {
   const classes = 'modal ' + (className || '');
+
+  const handleOnKeyDown = event => {
+    if (event.key === 'Escape') {
+      onClose(event);
+    }
+  };
+
   return show ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
     react_onclickout__WEBPACK_IMPORTED_MODULE_1___default.a,
     { onClickOut: onClose },
     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
       'div',
-      { className: classes },
+      { className: classes, onKeyDown: handleOnKeyDown, tabIndex: '0' },
       react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
         'div',
         null,
@@ -1668,8 +1681,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/es/index.js");
 /* harmony import */ var utils_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! utils/utils */ "./app/utils/utils.js");
 /* harmony import */ var utils_fetcher__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! utils/fetcher */ "./app/utils/fetcher.js");
-/* harmony import */ var _nav_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./nav.css */ "./app/components/nav.css");
-/* harmony import */ var _nav_css__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_nav_css__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _Modal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Modal */ "./app/components/Modal.js");
+/* harmony import */ var _containers_SearchContainer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../containers/SearchContainer */ "./app/containers/SearchContainer.js");
+/* harmony import */ var _nav_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./nav.css */ "./app/components/nav.css");
+/* harmony import */ var _nav_css__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_nav_css__WEBPACK_IMPORTED_MODULE_6__);
+
+
 
 
 
@@ -1678,9 +1695,20 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = (class extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Component {
+  constructor(...args) {
+    var _temp;
+
+    return _temp = super(...args), this.state = { showSearchModal: false }, this.toggleSearchModal = e => {
+      if (e) e.preventDefault();
+      this.setState({ showSearchModal: !this.state.showSearchModal });
+    }, _temp;
+  }
+
   render() {
-    const { userCtx, match: { params: { couch } } } = this.props;
+    const { userCtx, dbs, match: { params: { couch, dbName } } } = this.props;
+    const { showSearchModal } = this.state;
     const couchUrl = Object(utils_utils__WEBPACK_IMPORTED_MODULE_2__["parseUrl"])(couch);
+
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
       'div',
       { className: 'nav-container' },
@@ -1695,6 +1723,16 @@ __webpack_require__.r(__webpack_exports__);
             react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"],
             { to: '/' },
             'change couch'
+          ),
+          react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+            'span',
+            null,
+            ' | ',
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+              'a',
+              { href: '', onClick: this.toggleSearchModal },
+              'search'
+            )
           )
         ),
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
@@ -1713,6 +1751,21 @@ __webpack_require__.r(__webpack_exports__);
             'logout'
           )
         )
+      ),
+      react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+        _Modal__WEBPACK_IMPORTED_MODULE_4__["default"],
+        {
+          show: showSearchModal,
+          onClose: this.toggleSearchModal,
+          className: 'search-modal'
+        },
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_containers_SearchContainer__WEBPACK_IMPORTED_MODULE_5__["default"], {
+          multipleSearch: !dbName,
+          db: dbName,
+          dbs: dbs,
+          couchUrl: couchUrl,
+          onClose: this.toggleSearchModal
+        })
       )
     );
   }
@@ -2076,15 +2129,12 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 
 
-const LIMIT = 100;
-
 /* harmony default export */ __webpack_exports__["default"] = (class extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Component {
   constructor(...args) {
     var _temp, _this;
 
     return _temp = _this = super(...args), this.state = {
       loaded: false,
-      dbs: null,
       error: null,
       infos: {},
       showNewDBModal: false
@@ -2116,10 +2166,9 @@ const LIMIT = 100;
     var _this2 = this;
 
     return _asyncToGenerator(function* () {
-      const { couchUrl } = _this2.props;
+      const { couchUrl, dbs } = _this2.props;
       try {
-        const dbs = yield utils_fetcher__WEBPACK_IMPORTED_MODULE_1__["default"].get(`${couchUrl}_all_dbs`, { limit: LIMIT });
-        _this2.setState({ dbs, loaded: true });
+        _this2.setState({ loaded: true });
         _this2.fetchInfos(couchUrl, dbs);
       } catch (error) {
         _this2.setState({ error, loaded: true });
@@ -2129,9 +2178,9 @@ const LIMIT = 100;
   }
 
   render() {
-    const { couchUrl, couch } = this.props;
+    const { couchUrl, couch, dbs } = this.props;
     const { history } = this.props;
-    const { loaded, error, dbs, infos, showNewDBModal } = this.state;
+    const { loaded, error, infos, showNewDBModal } = this.state;
 
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
       'div',
@@ -3311,6 +3360,245 @@ class QueryContainer extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Compon
 
 /***/ }),
 
+/***/ "./app/containers/SearchContainer.js":
+/*!*******************************************!*\
+  !*** ./app/containers/SearchContainer.js ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var utils_fetcher__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! utils/fetcher */ "./app/utils/fetcher.js");
+/* harmony import */ var utils_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! utils/utils */ "./app/utils/utils.js");
+/* harmony import */ var components_Loading__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! components/Loading */ "./app/components/Loading.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/es/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _search_container_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./search-container.css */ "./app/containers/search-container.css");
+/* harmony import */ var _search_container_css__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_search_container_css__WEBPACK_IMPORTED_MODULE_6__);
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+
+
+
+
+
+
+
+
+
+// TODO: move to utils
+const isExcluded = db => ['_global_changes', '_metadata', '_replicator'].indexOf(db) === -1;
+
+const SingleView = (props = {}) => {
+  const docs = props.docs || [];
+  let url = id => props.dbUrl ? `${props.dbUrl}/${id}` : id;
+  const isActive = id => props.currentItemId === id;
+  return docs.map(doc => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+    react_router_dom__WEBPACK_IMPORTED_MODULE_4__["Link"],
+    { className: isActive(doc._id) ? 'active' : '',
+      key: doc._id,
+      to: url(doc._id),
+      onClick: () => props.onClose(),
+      onMouseEnter: () => props.handleMouseEnter(doc._id),
+      ref: link => link && isActive(doc._id) && react_dom__WEBPACK_IMPORTED_MODULE_5___default.a.findDOMNode(link).focus()
+    },
+    doc._id
+  ));
+};
+
+/**
+ * Handle view for showing records gotten from different db
+ * for multiple search query
+ * @params dbs Object<{dbName: Array<doc>}>
+ * @returns HTMLElement Array<SingleView>
+ */
+const MultipleView = (props = {}) => {
+  const { docs = {} } = props,
+        commonAttr = _objectWithoutProperties(props, ['docs']);
+  // const docs = props.docs || {}
+  return Object.keys(docs).map(db => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+    'div',
+    { key: db },
+    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+      'h5',
+      null,
+      db
+    ),
+    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SingleView, _extends({ docs: docs[db], dbUrl: db }, commonAttr))
+  ));
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (class extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Component {
+  constructor(...args) {
+    var _temp;
+
+    return _temp = super(...args), this.state = {
+      result: {},
+      searching: false
+      // init debounce function for searching
+    }, this.debouncedSearch = Object(utils_utils__WEBPACK_IMPORTED_MODULE_2__["debounce"])(string => this.search(string)), this.handleOnChange = event => {
+      const text = event.target.value;
+      if (text !== '') {
+        this.debouncedSearch(text);
+      } else {
+        this.setState({ result: {} });
+      }
+    }, this.handleMouseEnter = id => {
+      this.setState({ currentItemId: id });
+    }, this.handleKeyDown = (key, results) => {
+      let currentItemId;
+      if (key === 'ArrowDown') {
+        currentItemId = this._getItem();
+      }
+
+      if (key === 'ArrowUp') {
+        currentItemId = this._getItem(-1);
+      }
+
+      this.setState({ currentItemId });
+    }, _temp;
+  }
+
+  fetcher(db, text, limit = 10) {
+    const { couchUrl } = this.props;
+    const body = {
+      selector: {
+        _id: {
+          '$regex': text
+        }
+      },
+      limit
+    };
+
+    return utils_fetcher__WEBPACK_IMPORTED_MODULE_1__["default"].post(`${couchUrl}${db}/_find`, body).then(result => ({ db, docs: result.docs }))
+    // catch incase of _user db permission
+    .catch(() => Promise.resolve({ db, docs: [] }));
+  }
+
+  search(text) {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      _this.setState({ searching: true });
+      const { multipleSearch, dbs, db } = _this.props;
+
+      let result = [];
+      if (multipleSearch) {
+        result = yield _this.multipleSearch(text, dbs);
+      } else {
+        result = yield _this.singleSearch(text, db);
+      }
+      _this.setState({ searching: false, result });
+    })();
+  }
+
+  _getItem(movement = 1) {
+    const { result, currentItemId } = this.state;
+    // create a single array of results
+    const dbDocs = Object.keys(result).reduce((array, db) => {
+      return array.concat(result[db]);
+    }, []);
+
+    const index = dbDocs.findIndex(({ _id }) => _id === currentItemId);
+    const item = dbDocs[index + movement];
+    if (item) {
+      return item._id;
+    }
+    return currentItemId;
+  }
+
+  /**
+   * Make result array to object and also removing empty result dbs
+   * from result
+   * @params results Array<{db:string, docs: Array<any>}>
+   * @returns Object<{[db]: docs}>
+   */
+  _flattenResult(results) {
+    const flatten = results.reduce((flat, pItem) => {
+      if (pItem.docs.length > 0) {
+        flat[pItem.db] = pItem.docs;
+      }
+      return flat;
+    }, {});
+
+    return flatten;
+  }
+
+  multipleSearch(text, dbs) {
+    var _this2 = this;
+
+    return _asyncToGenerator(function* () {
+      // limit as 3 each from each db since its a multiple search
+      const promises = dbs.filter(function (db) {
+        return isExcluded(db);
+      }) // exclude some dbs
+      .map(function (db) {
+        return _this2.fetcher(db, text, 3);
+      });
+
+      const results = yield Promise.all(promises);
+      // flatten array result
+      return _this2._flattenResult(results);
+    })();
+  }
+
+  singleSearch(text, db) {
+    var _this3 = this;
+
+    return _asyncToGenerator(function* () {
+      const result = yield _this3.fetcher(db, text);
+      return _this3._flattenResult([result]);
+    })();
+  }
+
+  render() {
+    const { result, currentItemId, searching } = this.state;
+    const { multipleSearch, db, couchUrl, onClose } = this.props;
+
+    const commonAttr = {
+      currentItemId,
+      onClose,
+      handleMouseEnter: this.handleMouseEnter
+    };
+
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+      'div',
+      { onKeyDown: e => this.handleKeyDown(e.key, result), tabIndex: '0' },
+      react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+        'h2',
+        null,
+        multipleSearch ? 'Doc ID Search: Across All Databases' : `Doc Search: ${db}`
+      ),
+      react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+        'label',
+        null,
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement('input', {
+          autoFocus: true,
+          placeholder: 'id regex without //',
+          onChange: this.handleOnChange
+        })
+      ),
+      searching && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_Loading__WEBPACK_IMPORTED_MODULE_3__["default"], null),
+      !searching && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+        'div',
+        { className: 'search-drop-results' },
+        ' ',
+        result && multipleSearch ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(MultipleView, _extends({ docs: result, couchUrl: couchUrl }, commonAttr)) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SingleView, _extends({ docs: result[db] }, commonAttr))
+      )
+    );
+  }
+});
+
+/***/ }),
+
 /***/ "./app/containers/SetupCouchContainer.js":
 /*!***********************************************!*\
   !*** ./app/containers/SetupCouchContainer.js ***!
@@ -3660,6 +3948,61 @@ if(content.locals) module.exports = content.locals;
 if(true) {
 	module.hot.accept(/*! !../../node_modules/css-loader??ref--5-1!./edit-doc-container.css */ "./node_modules/css-loader/index.js??ref--5-1!./app/containers/edit-doc-container.css", function(__WEBPACK_OUTDATED_DEPENDENCIES__) { (function() {
 		var newContent = __webpack_require__(/*! !../../node_modules/css-loader??ref--5-1!./edit-doc-container.css */ "./node_modules/css-loader/index.js??ref--5-1!./app/containers/edit-doc-container.css");
+
+		if(typeof newContent === 'string') newContent = [[module.i, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	})(__WEBPACK_OUTDATED_DEPENDENCIES__); });
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ "./app/containers/search-container.css":
+/*!*********************************************!*\
+  !*** ./app/containers/search-container.css ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../node_modules/css-loader??ref--5-1!./search-container.css */ "./node_modules/css-loader/index.js??ref--5-1!./app/containers/search-container.css");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(true) {
+	module.hot.accept(/*! !../../node_modules/css-loader??ref--5-1!./search-container.css */ "./node_modules/css-loader/index.js??ref--5-1!./app/containers/search-container.css", function(__WEBPACK_OUTDATED_DEPENDENCIES__) { (function() {
+		var newContent = __webpack_require__(/*! !../../node_modules/css-loader??ref--5-1!./search-container.css */ "./node_modules/css-loader/index.js??ref--5-1!./app/containers/search-container.css");
 
 		if(typeof newContent === 'string') newContent = [[module.i, newContent, '']];
 
@@ -4066,6 +4409,23 @@ function getAllQueries(dbUrl) {
       },
       startRow: 5,
       startColumn: 25
+    },
+    'keys-search': {
+      fetchParams: {
+        url: `${dbUrl}_all_docs?include_docs=true&limit=200`,
+        method: 'POST',
+        body: {
+          keys: []
+        }
+      },
+      fn: function parse(response) {
+        // tip: chrome dev tools, right-click on logged object, store as global variable
+        console.log(response);
+        // limit doc length to display so we don't crash the browser
+        return Object.assign({}, response, { docs: response.rows.slice(0, 50) });
+      },
+      startRow: 5,
+      startColumn: 25
     }
   };
 }
@@ -4090,7 +4450,7 @@ ${queries[queryName].fn.toString().replace(/ {6}/g, '')}
 /*!****************************!*\
   !*** ./app/utils/utils.js ***!
   \****************************/
-/*! exports provided: parseUrl, showMBSize, showSize, withCommas, getParams, copyTextToClipboard */
+/*! exports provided: parseUrl, showMBSize, showSize, withCommas, getParams, copyTextToClipboard, keyMap, debounce */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4101,6 +4461,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "withCommas", function() { return withCommas; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getParams", function() { return getParams; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "copyTextToClipboard", function() { return copyTextToClipboard; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "keyMap", function() { return keyMap; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "debounce", function() { return debounce; });
 const KB = 1000;
 const MB = Math.pow(KB, 2);
 const GB = Math.pow(KB, 3);
@@ -4184,6 +4546,31 @@ function copyTextToClipboard(text) {
 
   document.body.removeChild(textArea);
 }
+
+function keyMap(keyCode) {
+  const keys = {
+    13: 'ENTER',
+    27: 'ESCAPE',
+    38: 'ARROW_UP',
+    40: 'ARROW_DOWN',
+    191: 'FORWARD_SLASH'
+  };
+  return keys[keyCode];
+}
+
+// https://gist.github.com/nmsdvid/8807205#gistcomment-2313801
+const debounce = (callback, time = 950) => {
+  let interval;
+  return (...args) => {
+    clearTimeout(interval);
+    interval = setTimeout(() => {
+      interval = null;
+
+      // eslint-disable-next-line
+      callback(...args);
+    }, time);
+  };
+};
 
 /***/ }),
 
@@ -26005,7 +26392,7 @@ exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/li
 
 
 // module
-exports.push([module.i, "#app {\n  font-family: monospace;\n  color: black;\n  font-size: 1em;\n  margin: 0;\n}\n\n.breadcrumbs {\n  margin-bottom: 15px;\n}\n\n.page {\n  margin: 0 auto;\n  width: 95%;\n}\n\n.error {\n  color: red;\n}\n\n.action-button:disabled {\n  opacity: .8;\n}\n\n.warning {\n  background-color: #fbf2f2;\n}\n\n.align-right {\n  text-align: right;\n}\n\n.warning-modal {\n  background-color: red;\n}\n\n.config-container {\n\n}\n.config-container section {\n  margin: 5px;\n  margin-left: 5%;\n}\n.config-container--header {\n  font-weight: bold;\n  margin: 15px 0 15px 0;\n  border-bottom: 1px solid #eee;\n}\n\n.config-container--content {\n  margin-left: 20px;\n}\n\n.config-container--content div {\n  margin-bottom: 5px;\n}\n", "", {"version":3,"sources":["/Users/kdoran/code/lookout/app/app-classes.css"],"names":[],"mappings":"AAAA;EACE,uBAAuB;EACvB,aAAa;EACb,eAAe;EACf,UAAU;CACX;;AAED;EACE,oBAAoB;CACrB;;AAED;EACE,eAAe;EACf,WAAW;CACZ;;AAED;EACE,WAAW;CACZ;;AAED;EACE,YAAY;CACb;;AAED;EACE,0BAA0B;CAC3B;;AAED;EACE,kBAAkB;CACnB;;AAED;EACE,sBAAsB;CACvB;;AAED;;CAEC;AACD;EACE,YAAY;EACZ,gBAAgB;CACjB;AACD;EACE,kBAAkB;EAClB,sBAAsB;EACtB,8BAA8B;CAC/B;;AAED;EACE,kBAAkB;CACnB;;AAED;EACE,mBAAmB;CACpB","file":"app-classes.css","sourcesContent":["#app {\n  font-family: monospace;\n  color: black;\n  font-size: 1em;\n  margin: 0;\n}\n\n.breadcrumbs {\n  margin-bottom: 15px;\n}\n\n.page {\n  margin: 0 auto;\n  width: 95%;\n}\n\n.error {\n  color: red;\n}\n\n.action-button:disabled {\n  opacity: .8;\n}\n\n.warning {\n  background-color: #fbf2f2;\n}\n\n.align-right {\n  text-align: right;\n}\n\n.warning-modal {\n  background-color: red;\n}\n\n.config-container {\n\n}\n.config-container section {\n  margin: 5px;\n  margin-left: 5%;\n}\n.config-container--header {\n  font-weight: bold;\n  margin: 15px 0 15px 0;\n  border-bottom: 1px solid #eee;\n}\n\n.config-container--content {\n  margin-left: 20px;\n}\n\n.config-container--content div {\n  margin-bottom: 5px;\n}\n"],"sourceRoot":""}]);
+exports.push([module.i, "#app {\n  font-family: monospace;\n  color: black;\n  font-size: 1em;\n  margin: 0;\n}\n\n.breadcrumbs {\n  margin-bottom: 15px;\n}\n\n.page {\n  margin: 0 auto;\n  width: 95%;\n}\n\n.error {\n  color: red;\n}\n\n.action-button:disabled {\n  opacity: .8;\n}\n\n.warning {\n  background-color: #fbf2f2;\n}\n\n.align-right {\n  text-align: right;\n}\n\n.warning-modal {\n  background-color: red;\n}\n\n.config-container {\n\n}\n.config-container section {\n  margin: 5px;\n  margin-left: 5%;\n}\n.config-container--header {\n  font-weight: bold;\n  margin: 15px 0 15px 0;\n  border-bottom: 1px solid #eee;\n}\n\n.config-container--content {\n  margin-left: 20px;\n}\n\n.config-container--content div {\n  margin-bottom: 5px;\n}\n\n.search-modal {\n  height: 80%;\n}\n", "", {"version":3,"sources":["/Users/theophy/dev/opensource/lookout-origin/app/app-classes.css"],"names":[],"mappings":"AAAA;EACE,uBAAuB;EACvB,aAAa;EACb,eAAe;EACf,UAAU;CACX;;AAED;EACE,oBAAoB;CACrB;;AAED;EACE,eAAe;EACf,WAAW;CACZ;;AAED;EACE,WAAW;CACZ;;AAED;EACE,YAAY;CACb;;AAED;EACE,0BAA0B;CAC3B;;AAED;EACE,kBAAkB;CACnB;;AAED;EACE,sBAAsB;CACvB;;AAED;;CAEC;AACD;EACE,YAAY;EACZ,gBAAgB;CACjB;AACD;EACE,kBAAkB;EAClB,sBAAsB;EACtB,8BAA8B;CAC/B;;AAED;EACE,kBAAkB;CACnB;;AAED;EACE,mBAAmB;CACpB;;AAED;EACE,YAAY;CACb","file":"app-classes.css","sourcesContent":["#app {\n  font-family: monospace;\n  color: black;\n  font-size: 1em;\n  margin: 0;\n}\n\n.breadcrumbs {\n  margin-bottom: 15px;\n}\n\n.page {\n  margin: 0 auto;\n  width: 95%;\n}\n\n.error {\n  color: red;\n}\n\n.action-button:disabled {\n  opacity: .8;\n}\n\n.warning {\n  background-color: #fbf2f2;\n}\n\n.align-right {\n  text-align: right;\n}\n\n.warning-modal {\n  background-color: red;\n}\n\n.config-container {\n\n}\n.config-container section {\n  margin: 5px;\n  margin-left: 5%;\n}\n.config-container--header {\n  font-weight: bold;\n  margin: 15px 0 15px 0;\n  border-bottom: 1px solid #eee;\n}\n\n.config-container--content {\n  margin-left: 20px;\n}\n\n.config-container--content div {\n  margin-bottom: 5px;\n}\n\n.search-modal {\n  height: 80%;\n}\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -26024,7 +26411,7 @@ exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/li
 
 
 // module
-exports.push([module.i, "body {\n  background-color: #fff;\n}\n\nh1, h2, h3, h4, h5, h6 {\n  margin: 5px 0;\n  text-align: center;\n}\n\nbutton {\n  padding: 10px 25px;\n  font-family: monospace;\n  border: 1px solid #ddd;\n  border-radius: .3em;\n  margin-bottom: 5px;\n  box-shadow: 1px 1px 4px rgba(0,0,0,.4);\n}\n\nbutton:hover {\n  border: 1px solid black;\n  cursor: pointer;\n}\n\nsection {\n  margin: 20px 0;\n}\n\ntable {\n  width: 100%;\n}\n\ntd {\n  padding-top: 2px;\n  padding-bottom: 2px;\n  border-top: 1px solid #eee;\n}\n\nform {\n  width: 80%;\n  margin: 0 auto;\n}\n\nform button {\n  width: 100%;\n}\n\ninput {\n  width: 100%;\n  height: 3em;\n  padding: 5px;\n  font-family: monospace;\n  margin: 10px 0;\n}\n\ninput:focus {\n  outline: black auto 1px;\n}\n\ntextarea {\n  font-family: monospace;\n}\n", "", {"version":3,"sources":["/Users/kdoran/code/lookout/app/app-tags.css"],"names":[],"mappings":"AAAA;EACE,uBAAuB;CACxB;;AAED;EACE,cAAc;EACd,mBAAmB;CACpB;;AAED;EACE,mBAAmB;EACnB,uBAAuB;EACvB,uBAAuB;EACvB,oBAAoB;EACpB,mBAAmB;EACnB,uCAAuC;CACxC;;AAED;EACE,wBAAwB;EACxB,gBAAgB;CACjB;;AAED;EACE,eAAe;CAChB;;AAED;EACE,YAAY;CACb;;AAED;EACE,iBAAiB;EACjB,oBAAoB;EACpB,2BAA2B;CAC5B;;AAED;EACE,WAAW;EACX,eAAe;CAChB;;AAED;EACE,YAAY;CACb;;AAED;EACE,YAAY;EACZ,YAAY;EACZ,aAAa;EACb,uBAAuB;EACvB,eAAe;CAChB;;AAED;EACE,wBAAwB;CACzB;;AAED;EACE,uBAAuB;CACxB","file":"app-tags.css","sourcesContent":["body {\n  background-color: #fff;\n}\n\nh1, h2, h3, h4, h5, h6 {\n  margin: 5px 0;\n  text-align: center;\n}\n\nbutton {\n  padding: 10px 25px;\n  font-family: monospace;\n  border: 1px solid #ddd;\n  border-radius: .3em;\n  margin-bottom: 5px;\n  box-shadow: 1px 1px 4px rgba(0,0,0,.4);\n}\n\nbutton:hover {\n  border: 1px solid black;\n  cursor: pointer;\n}\n\nsection {\n  margin: 20px 0;\n}\n\ntable {\n  width: 100%;\n}\n\ntd {\n  padding-top: 2px;\n  padding-bottom: 2px;\n  border-top: 1px solid #eee;\n}\n\nform {\n  width: 80%;\n  margin: 0 auto;\n}\n\nform button {\n  width: 100%;\n}\n\ninput {\n  width: 100%;\n  height: 3em;\n  padding: 5px;\n  font-family: monospace;\n  margin: 10px 0;\n}\n\ninput:focus {\n  outline: black auto 1px;\n}\n\ntextarea {\n  font-family: monospace;\n}\n"],"sourceRoot":""}]);
+exports.push([module.i, "body {\n  background-color: #fff;\n}\n\nh1, h2, h3, h4, h5, h6 {\n  margin: 5px 0;\n  text-align: center;\n}\n\nbutton {\n  padding: 10px 25px;\n  font-family: monospace;\n  border: 1px solid #ddd;\n  border-radius: .3em;\n  margin-bottom: 5px;\n  box-shadow: 1px 1px 4px rgba(0,0,0,.4);\n}\n\nbutton:hover {\n  border: 1px solid black;\n  cursor: pointer;\n}\n\nsection {\n  margin: 20px 0;\n}\n\ntable {\n  width: 100%;\n}\n\ntd {\n  padding-top: 2px;\n  padding-bottom: 2px;\n  border-top: 1px solid #eee;\n}\n\nform {\n  width: 80%;\n  margin: 0 auto;\n}\n\nform button {\n  width: 100%;\n}\n\ninput {\n  width: 100%;\n  height: 3em;\n  padding: 5px;\n  font-family: monospace;\n  margin: 10px 0;\n}\n\ninput:focus {\n  outline: black auto 1px;\n}\n\ntextarea {\n  font-family: monospace;\n}\n", "", {"version":3,"sources":["/Users/theophy/dev/opensource/lookout-origin/app/app-tags.css"],"names":[],"mappings":"AAAA;EACE,uBAAuB;CACxB;;AAED;EACE,cAAc;EACd,mBAAmB;CACpB;;AAED;EACE,mBAAmB;EACnB,uBAAuB;EACvB,uBAAuB;EACvB,oBAAoB;EACpB,mBAAmB;EACnB,uCAAuC;CACxC;;AAED;EACE,wBAAwB;EACxB,gBAAgB;CACjB;;AAED;EACE,eAAe;CAChB;;AAED;EACE,YAAY;CACb;;AAED;EACE,iBAAiB;EACjB,oBAAoB;EACpB,2BAA2B;CAC5B;;AAED;EACE,WAAW;EACX,eAAe;CAChB;;AAED;EACE,YAAY;CACb;;AAED;EACE,YAAY;EACZ,YAAY;EACZ,aAAa;EACb,uBAAuB;EACvB,eAAe;CAChB;;AAED;EACE,wBAAwB;CACzB;;AAED;EACE,uBAAuB;CACxB","file":"app-tags.css","sourcesContent":["body {\n  background-color: #fff;\n}\n\nh1, h2, h3, h4, h5, h6 {\n  margin: 5px 0;\n  text-align: center;\n}\n\nbutton {\n  padding: 10px 25px;\n  font-family: monospace;\n  border: 1px solid #ddd;\n  border-radius: .3em;\n  margin-bottom: 5px;\n  box-shadow: 1px 1px 4px rgba(0,0,0,.4);\n}\n\nbutton:hover {\n  border: 1px solid black;\n  cursor: pointer;\n}\n\nsection {\n  margin: 20px 0;\n}\n\ntable {\n  width: 100%;\n}\n\ntd {\n  padding-top: 2px;\n  padding-bottom: 2px;\n  border-top: 1px solid #eee;\n}\n\nform {\n  width: 80%;\n  margin: 0 auto;\n}\n\nform button {\n  width: 100%;\n}\n\ninput {\n  width: 100%;\n  height: 3em;\n  padding: 5px;\n  font-family: monospace;\n  margin: 10px 0;\n}\n\ninput:focus {\n  outline: black auto 1px;\n}\n\ntextarea {\n  font-family: monospace;\n}\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -26043,7 +26430,7 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, ".modal {\n  position: fixed;\n  top: 15px;\n  right: 0;\n  left: 0;\n  text-align: center;\n  margin: 0 auto;\n  max-width: 90%;\n  padding: 10px 35px;\n  background: white;\n  z-index: 100;\n  box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px 0px;\n  box-sizing: border-box;\n  border: 1px solid transparent;\n  border-radius: 3px;\n  h5 {\n    text-align: center;\n  }\n}\n\n.close {\n  position: absolute;\n  top: 10px;\n  right: 15px;\n}\n", "", {"version":3,"sources":["/Users/kdoran/code/lookout/app/components/modal.css"],"names":[],"mappings":"AAAA;EACE,gBAAgB;EAChB,UAAU;EACV,SAAS;EACT,QAAQ;EACR,mBAAmB;EACnB,eAAe;EACf,eAAe;EACf,mBAAmB;EACnB,kBAAkB;EAClB,aAAa;EACb,gDAAgD;EAChD,uBAAuB;EACvB,8BAA8B;EAC9B,mBAAmB;EACnB;IACE,mBAAmB;GACpB;CACF;;AAED;EACE,mBAAmB;EACnB,UAAU;EACV,YAAY;CACb","file":"modal.css","sourcesContent":[".modal {\n  position: fixed;\n  top: 15px;\n  right: 0;\n  left: 0;\n  text-align: center;\n  margin: 0 auto;\n  max-width: 90%;\n  padding: 10px 35px;\n  background: white;\n  z-index: 100;\n  box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px 0px;\n  box-sizing: border-box;\n  border: 1px solid transparent;\n  border-radius: 3px;\n  h5 {\n    text-align: center;\n  }\n}\n\n.close {\n  position: absolute;\n  top: 10px;\n  right: 15px;\n}\n"],"sourceRoot":""}]);
+exports.push([module.i, ".modal {\n  position: fixed;\n  top: 15px;\n  right: 0;\n  left: 0;\n  text-align: center;\n  margin: 0 auto;\n  max-width: 90%;\n  padding: 10px 35px;\n  background: white;\n  z-index: 100;\n  box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px 0px;\n  box-sizing: border-box;\n  border: 1px solid transparent;\n  border-radius: 3px;\n  h5 {\n    text-align: center;\n  }\n}\n\n.close {\n  position: absolute;\n  top: 10px;\n  right: 15px;\n}\n", "", {"version":3,"sources":["/Users/theophy/dev/opensource/lookout-origin/app/components/modal.css"],"names":[],"mappings":"AAAA;EACE,gBAAgB;EAChB,UAAU;EACV,SAAS;EACT,QAAQ;EACR,mBAAmB;EACnB,eAAe;EACf,eAAe;EACf,mBAAmB;EACnB,kBAAkB;EAClB,aAAa;EACb,gDAAgD;EAChD,uBAAuB;EACvB,8BAA8B;EAC9B,mBAAmB;EACnB;IACE,mBAAmB;GACpB;CACF;;AAED;EACE,mBAAmB;EACnB,UAAU;EACV,YAAY;CACb","file":"modal.css","sourcesContent":[".modal {\n  position: fixed;\n  top: 15px;\n  right: 0;\n  left: 0;\n  text-align: center;\n  margin: 0 auto;\n  max-width: 90%;\n  padding: 10px 35px;\n  background: white;\n  z-index: 100;\n  box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px 0px;\n  box-sizing: border-box;\n  border: 1px solid transparent;\n  border-radius: 3px;\n  h5 {\n    text-align: center;\n  }\n}\n\n.close {\n  position: absolute;\n  top: 10px;\n  right: 15px;\n}\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -26062,7 +26449,7 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, ".nav-container {\n  margin-top: 120px;\n}\n\n.nav {\n  position: fixed;\n  bottom: 0;\n  right: 0;\n  width: 100%;\n  display: flex;\n  justify-content: space-between;\n  font-size: 1.4em;\n  margin: 0 auto;\n  border-top: 1px solid #ccc;\n  padding: 20px 0 20px 0;\n  background-color: #fff;\n  z-index: 999;\n}\n\n.nav-left {\n  margin-left: 15px;\n}\n\n.nav-right {\n  margin-right: 15px;\n}\n", "", {"version":3,"sources":["/Users/kdoran/code/lookout/app/components/nav.css"],"names":[],"mappings":"AAAA;EACE,kBAAkB;CACnB;;AAED;EACE,gBAAgB;EAChB,UAAU;EACV,SAAS;EACT,YAAY;EACZ,cAAc;EACd,+BAA+B;EAC/B,iBAAiB;EACjB,eAAe;EACf,2BAA2B;EAC3B,uBAAuB;EACvB,uBAAuB;EACvB,aAAa;CACd;;AAED;EACE,kBAAkB;CACnB;;AAED;EACE,mBAAmB;CACpB","file":"nav.css","sourcesContent":[".nav-container {\n  margin-top: 120px;\n}\n\n.nav {\n  position: fixed;\n  bottom: 0;\n  right: 0;\n  width: 100%;\n  display: flex;\n  justify-content: space-between;\n  font-size: 1.4em;\n  margin: 0 auto;\n  border-top: 1px solid #ccc;\n  padding: 20px 0 20px 0;\n  background-color: #fff;\n  z-index: 999;\n}\n\n.nav-left {\n  margin-left: 15px;\n}\n\n.nav-right {\n  margin-right: 15px;\n}\n"],"sourceRoot":""}]);
+exports.push([module.i, ".nav-container {\n  margin-top: 120px;\n}\n\n.nav {\n  position: fixed;\n  bottom: 0;\n  right: 0;\n  width: 100%;\n  display: flex;\n  justify-content: space-between;\n  font-size: 1.4em;\n  margin: 0 auto;\n  border-top: 1px solid #ccc;\n  padding: 20px 0 20px 0;\n  background-color: #fff;\n  z-index: 999;\n}\n\n.nav-left {\n  margin-left: 15px;\n}\n\n.nav-right {\n  margin-right: 15px;\n}\n", "", {"version":3,"sources":["/Users/theophy/dev/opensource/lookout-origin/app/components/nav.css"],"names":[],"mappings":"AAAA;EACE,kBAAkB;CACnB;;AAED;EACE,gBAAgB;EAChB,UAAU;EACV,SAAS;EACT,YAAY;EACZ,cAAc;EACd,+BAA+B;EAC/B,iBAAiB;EACjB,eAAe;EACf,2BAA2B;EAC3B,uBAAuB;EACvB,uBAAuB;EACvB,aAAa;CACd;;AAED;EACE,kBAAkB;CACnB;;AAED;EACE,mBAAmB;CACpB","file":"nav.css","sourcesContent":[".nav-container {\n  margin-top: 120px;\n}\n\n.nav {\n  position: fixed;\n  bottom: 0;\n  right: 0;\n  width: 100%;\n  display: flex;\n  justify-content: space-between;\n  font-size: 1.4em;\n  margin: 0 auto;\n  border-top: 1px solid #ccc;\n  padding: 20px 0 20px 0;\n  background-color: #fff;\n  z-index: 999;\n}\n\n.nav-left {\n  margin-left: 15px;\n}\n\n.nav-right {\n  margin-right: 15px;\n}\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -26081,7 +26468,7 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, "th, td {\n  text-align: right;\n}\n\nth:first-child, td:first-child {\n  text-align: left;\n}\n", "", {"version":3,"sources":["/Users/kdoran/code/lookout/app/containers/databases-container.css"],"names":[],"mappings":"AAAA;EACE,kBAAkB;CACnB;;AAED;EACE,iBAAiB;CAClB","file":"databases-container.css","sourcesContent":["th, td {\n  text-align: right;\n}\n\nth:first-child, td:first-child {\n  text-align: left;\n}\n"],"sourceRoot":""}]);
+exports.push([module.i, "th, td {\n  text-align: right;\n}\n\nth:first-child, td:first-child {\n  text-align: left;\n}\n", "", {"version":3,"sources":["/Users/theophy/dev/opensource/lookout-origin/app/containers/databases-container.css"],"names":[],"mappings":"AAAA;EACE,kBAAkB;CACnB;;AAED;EACE,iBAAiB;CAClB","file":"databases-container.css","sourcesContent":["th, td {\n  text-align: right;\n}\n\nth:first-child, td:first-child {\n  text-align: left;\n}\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -26100,7 +26487,7 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, ".controls {\n  text-align: right;\n}\n\npre {\n  /* background-color: #eeeeee7a; */\n  border: 1px solid #eee;\n  padding: 35px;\n  border-radius: 4px;\n}\n", "", {"version":3,"sources":["/Users/kdoran/code/lookout/app/containers/doc-container.css"],"names":[],"mappings":"AAAA;EACE,kBAAkB;CACnB;;AAED;EACE,kCAAkC;EAClC,uBAAuB;EACvB,cAAc;EACd,mBAAmB;CACpB","file":"doc-container.css","sourcesContent":[".controls {\n  text-align: right;\n}\n\npre {\n  /* background-color: #eeeeee7a; */\n  border: 1px solid #eee;\n  padding: 35px;\n  border-radius: 4px;\n}\n"],"sourceRoot":""}]);
+exports.push([module.i, ".controls {\n  text-align: right;\n}\n\npre {\n  /* background-color: #eeeeee7a; */\n  border: 1px solid #eee;\n  padding: 35px;\n  border-radius: 4px;\n}\n", "", {"version":3,"sources":["/Users/theophy/dev/opensource/lookout-origin/app/containers/doc-container.css"],"names":[],"mappings":"AAAA;EACE,kBAAkB;CACnB;;AAED;EACE,kCAAkC;EAClC,uBAAuB;EACvB,cAAc;EACd,mBAAmB;CACpB","file":"doc-container.css","sourcesContent":[".controls {\n  text-align: right;\n}\n\npre {\n  /* background-color: #eeeeee7a; */\n  border: 1px solid #eee;\n  padding: 35px;\n  border-radius: 4px;\n}\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -26119,7 +26506,7 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, ".docs-controls {\n  display: flex;\n  justify-content: space-between;\n  text-align: left;\n}\n", "", {"version":3,"sources":["/Users/kdoran/code/lookout/app/containers/docs-container.css"],"names":[],"mappings":"AAAA;EACE,cAAc;EACd,+BAA+B;EAC/B,iBAAiB;CAClB","file":"docs-container.css","sourcesContent":[".docs-controls {\n  display: flex;\n  justify-content: space-between;\n  text-align: left;\n}\n"],"sourceRoot":""}]);
+exports.push([module.i, ".docs-controls {\n  display: flex;\n  justify-content: space-between;\n  text-align: left;\n}\n", "", {"version":3,"sources":["/Users/theophy/dev/opensource/lookout-origin/app/containers/docs-container.css"],"names":[],"mappings":"AAAA;EACE,cAAc;EACd,+BAA+B;EAC/B,iBAAiB;CAClB","file":"docs-container.css","sourcesContent":[".docs-controls {\n  display: flex;\n  justify-content: space-between;\n  text-align: left;\n}\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -26138,7 +26525,26 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, "/* .codeMarker {\n    background: #FFF677;\n    position:absolute;\n    z-index:20\n} */\n\n.controls {\n  text-align: right;\n}\n", "", {"version":3,"sources":["/Users/kdoran/code/lookout/app/containers/edit-doc-container.css"],"names":[],"mappings":"AAAA;;;;IAII;;AAEJ;EACE,kBAAkB;CACnB","file":"edit-doc-container.css","sourcesContent":["/* .codeMarker {\n    background: #FFF677;\n    position:absolute;\n    z-index:20\n} */\n\n.controls {\n  text-align: right;\n}\n"],"sourceRoot":""}]);
+exports.push([module.i, "/* .codeMarker {\n    background: #FFF677;\n    position:absolute;\n    z-index:20\n} */\n\n.controls {\n  text-align: right;\n}\n", "", {"version":3,"sources":["/Users/theophy/dev/opensource/lookout-origin/app/containers/edit-doc-container.css"],"names":[],"mappings":"AAAA;;;;IAII;;AAEJ;EACE,kBAAkB;CACnB","file":"edit-doc-container.css","sourcesContent":["/* .codeMarker {\n    background: #FFF677;\n    position:absolute;\n    z-index:20\n} */\n\n.controls {\n  text-align: right;\n}\n"],"sourceRoot":""}]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js??ref--5-1!./app/containers/search-container.css":
+/*!*********************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--5-1!./app/containers/search-container.css ***!
+  \*********************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(true);
+// imports
+
+
+// module
+exports.push([module.i, ".search-drop-results {\n  position: relative;\n  height: 80%;\n  overflow-y: scroll;\n}\n\n.search-drop-results a {\n    display: block;\n    padding: 10px;\n    text-decoration: none;\n    color: #666;\n    border: 1px solid #eee;\n    border-bottom: none;\n    font-weight: 100;\n    text-align: left;\n}\n\n.search-drop-results .active {\n    background-color: #2196F3;\n    color: white;\n}\n\n\n", "", {"version":3,"sources":["/Users/theophy/dev/opensource/lookout-origin/app/containers/search-container.css"],"names":[],"mappings":"AAAA;EACE,mBAAmB;EACnB,YAAY;EACZ,mBAAmB;CACpB;;AAED;IACI,eAAe;IACf,cAAc;IACd,sBAAsB;IACtB,YAAY;IACZ,uBAAuB;IACvB,oBAAoB;IACpB,iBAAiB;IACjB,iBAAiB;CACpB;;AAED;IACI,0BAA0B;IAC1B,aAAa;CAChB","file":"search-container.css","sourcesContent":[".search-drop-results {\n  position: relative;\n  height: 80%;\n  overflow-y: scroll;\n}\n\n.search-drop-results a {\n    display: block;\n    padding: 10px;\n    text-decoration: none;\n    color: #666;\n    border: 1px solid #eee;\n    border-bottom: none;\n    font-weight: 100;\n    text-align: left;\n}\n\n.search-drop-results .active {\n    background-color: #2196F3;\n    color: white;\n}\n\n\n"],"sourceRoot":""}]);
 
 // exports
 
