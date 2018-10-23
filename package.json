@@ -44,7 +44,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/theo4u/lookout.git"
+    "url": "https://github.com/kdoran/lookout.git"
   },
   "release": {
     "pkgRoot": "dist"
