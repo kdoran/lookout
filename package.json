@@ -1,11 +1,15 @@
 {
   "name": "couchlookout",
-  "version": "1.0.0",
+  "version": "0.0.0-development",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server",
-    "build": "webpack",
-    "test": "standard"
+    "copy:index": "cp ./index.html dist/index.html && cp ./package.json dist/package.json",
+    "build": "webpack && npm run copy:index",
+    "deploy": "gh-pages -d dist -r https://$GH_TOKEN@github.com/kdoran/lookout.git -x true",
+    "test": "standard",
+    "travis-deploy-once": "travis-deploy-once",
+    "semantic-release": "semantic-release"
   },
   "license": "MIT",
   "dependencies": {
@@ -23,8 +27,11 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "css-loader": "^0.28.10",
+    "gh-pages": "^2.0.1",
+    "semantic-release": "^15.9.17",
     "standard": "^11.0.1",
     "style-loader": "^0.20.3",
+    "travis-deploy-once": "^5.0.9",
     "webpack": "^4.1.1",
     "webpack-cli": "^2.0.12",
     "webpack-dev-server": "^3.1.1"
@@ -34,5 +41,12 @@
     "ignore": [
       "/dist/"
     ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theo4u/lookout.git"
+  },
+  "release": {
+    "pkgRoot": "dist"
   }
 }
