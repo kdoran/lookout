@@ -1,3 +1,5 @@
+import { isArray } from "util";
+
 const KB = 1000
 const MB = Math.pow(KB, 2)
 const GB = Math.pow(KB, 3)
@@ -105,4 +107,25 @@ export const debounce = (callback, time = 950) => {
       callback(...args)
     }, time)
   }
+}
+
+export const limitResponse = (response, start = 0, end = 50) => {
+  let responseRows
+  if (Array.isArray(response)) {
+    responseRows = response
+  }
+  if (!Array.isArray(response) && typeof response === 'object') {
+    if (response.docs) {
+      responseRows = response.docs
+    }
+
+    if (response.rows) {
+      responseRows = response.rows
+    }
+  }
+  if (!Array.isArray(responseRows)) {
+    console.log('Invalid Response: ', response)
+    return response
+  }
+  return Object.assign({}, response, { docs: responseRows.slice(0, 50) })
 }
