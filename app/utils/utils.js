@@ -1,5 +1,3 @@
-import { isArray } from "util";
-
 const KB = 1000
 const MB = Math.pow(KB, 2)
 const GB = Math.pow(KB, 3)
