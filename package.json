@@ -28,7 +28,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "css-loader": "^0.28.10",
     "gh-pages": "^2.0.1",
-    "semantic-release": "^15.9.17",
+    "semantic-release": "^15.10.5",
     "standard": "^11.0.1",
     "style-loader": "^0.20.3",
     "travis-deploy-once": "^5.0.9",
