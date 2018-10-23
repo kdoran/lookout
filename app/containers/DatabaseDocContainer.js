@@ -2,10 +2,7 @@ import React from 'react'
 import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
 import Error from 'components/Error'
-import AllowEditButton from 'components/AllowEditButton'
 import Breadcrumbs from 'components/Breadcrumbs'
-import { Link } from 'react-router-dom'
-import { downloadJSON } from 'utils/download'
 
 import './doc-container.css'
 
@@ -44,9 +41,8 @@ export default class extends React.Component {
   }
 
   render () {
-    const { rev } = this.props.match.params
-    const { couchUrl, couch } = this.props
-    const { loaded, error, sections, docId } = this.state
+    const { couch } = this.props
+    const { loaded, error, sections } = this.state
 
     return (
       <div className='config-container'>
