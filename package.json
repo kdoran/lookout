@@ -6,7 +6,6 @@
     "start": "webpack-dev-server",
     "copy:index": "cp ./index.html dist/index.html && cp ./package.json dist/package.json",
     "build": "webpack && npm run copy:index",
-    "deploy": "gh-pages -d dist -r https://$GH_TOKEN@github.com/kdoran/lookout.git -x true",
     "test": "standard",
     "travis-deploy-once": "travis-deploy-once",
     "semantic-release": "semantic-release"
@@ -27,7 +26,6 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "css-loader": "^0.28.10",
-    "gh-pages": "^2.0.1",
     "semantic-release": "^15.10.5",
     "standard": "^11.0.1",
     "style-loader": "^0.20.3",
