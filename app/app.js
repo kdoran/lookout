@@ -16,6 +16,7 @@ import withParams from './containers/withParams'
 import cache from './utils/cache'
 import { parseUrl } from './utils/utils'
 import fetcher from 'utils/fetcher'
+import DiffEditor from './components/DiffEditor'
 
 import 'app-classes.css'
 import 'app-tags.css'
@@ -62,6 +63,7 @@ class UserRoutes extends Component {
         <div>
           <div className='page'>
             <Switch>
+              <Route path='/:couch/:dbName/diff/:docId' component={withParams(DiffEditor)} />
               <Route path='/:couch/:dbName/:docId/editing' component={withParams(EditDocContainer)} />
               <Route exact path='/:couch/:dbName/query' component={withParams(QueryContainer)} />
               <Route exact path='/:couch/_node/couchdb@localhost/_config' component={withParams(DatabaseDocContainer)} />
