@@ -7,6 +7,7 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import QueryResponse from 'components/QueryResponse'
 import { getQuery, getAllQueries } from 'utils/queries'
 import { copyTextToClipboard } from 'utils/utils'
+import { encode, decode } from 'utils/url-params'
 import { Link } from 'react-router-dom'
 import { downloadJSON } from 'utils/download'
 
@@ -21,12 +22,14 @@ export default class QueryContainer extends React.Component {
   }
 
   static getDerivedStateFromProps (nextProps, prevState) {
-    const { queryId = 'id-regex' } = nextProps.match.params
+    const { queryId = 'id-regex', queryString } = nextProps.match.params
     const queries = getAllQueries(nextProps.dbUrl)
     const query = getQuery(nextProps.dbUrl, queryId)
     let input = prevState.input
     if (input === undefined) {
-      input = query.string
+      input = queryString
+        ? decode(queryString)
+        : query.string
     }
     return { ...prevState, queries, queryId, query, input }
   }
@@ -74,6 +77,14 @@ export default class QueryContainer extends React.Component {
     downloadJSON(this.state.response, `${couch} ${dbName} ${queryId}`)
   }
 
+  getUrl = async e => {
+    e.preventDefault()
+    const { input } = this.state
+    const param = await encode(input)
+    const currUrl = window.location.href.split('/query')[0]
+    copyTextToClipboard(`${currUrl}/query/custom/${param}`)
+  }
+
   render () {
     const { dbName, couch } = this.props
     const { query, queryId, queries, error, input, valid, loading, result } = this.state
@@ -103,7 +114,9 @@ export default class QueryContainer extends React.Component {
         {error && <Error error={error} />}
         queries: {links}
         <br /><br />
-        <a href='' onClick={this.copy}>copy response to clipboard</a> <a href='' onClick={this.download}>download response</a>
+        <a href='' onClick={this.copy}>copy response to clipboard</a>
+        &nbsp; <a href='' onClick={this.download}>download response</a>
+        &nbsp; <a href='' onClick={this.getUrl}>copy sharable url to clipboard</a>
         {loading
           ? <Loading />
           : result &&

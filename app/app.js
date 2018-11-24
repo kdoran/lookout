@@ -6,7 +6,7 @@ import SetupCouchContainer from './containers/SetupCouchContainer'
 import DatabasesContainer from './containers/DatabasesContainer'
 import DocsContainer from './containers/DocsContainer'
 import DocContainer from './containers/DocContainer'
-import DatabaseDocContainer from './containers/DatabaseDocContainer'
+import ConfigContainer from './containers/ConfigContainer'
 import EditDocContainer from './containers/EditDocContainer'
 import QueryContainer from './containers/QueryContainer'
 import Nav from './components/Nav'
@@ -64,7 +64,9 @@ class UserRoutes extends Component {
             <Switch>
               <Route path='/:couch/:dbName/:docId/editing' component={withParams(EditDocContainer)} />
               <Route exact path='/:couch/:dbName/query' component={withParams(QueryContainer)} />
-              <Route exact path='/:couch/_node/couchdb@localhost/_config' component={withParams(DatabaseDocContainer)} />
+              <Route exact path='/:couch/_node/couchdb@localhost/_config' component={withParams(ConfigContainer)} />
+              <Route exact path='/:couch/_node/nonode@nohost/_config' component={withParams(ConfigContainer)} />
+              <Route path='/:couch/:dbName/query/:queryId/:queryString' component={withParams(QueryContainer)} />
               <Route path='/:couch/:dbName/query/:queryId' component={withParams(QueryContainer)} />
               <Route path='/:couch/:dbName/:docId/:rev/' component={withParams(DocContainer)} />
               <Route path='/:couch/:dbName/:docId' component={withParams(DocContainer)} />

@@ -68,7 +68,7 @@ export default class extends React.Component {
                 <AllowEditButton
                   dbName={dbName}
                   couchUrl={couchUrl}
-                  onConfirm={() => history.push(`/${couch}/${dbName}/editing/new`)}
+                  onConfirm={() => history.push(`/${couch}/${dbName}/new/editing`)}
                 >
                   new document
                 </AllowEditButton>
