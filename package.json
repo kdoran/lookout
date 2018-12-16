@@ -12,6 +12,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@babel/runtime": "^7.2.0",
     "protobufjs": "^6.8.8",
     "react": "^16.4.1",
     "react-ace": "^6.1.0",
@@ -20,18 +21,20 @@
     "react-router-dom": "^4.3.1"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-eslint": "^8.2.2",
-    "babel-loader": "^7.1.4",
-    "babel-plugin-transform-async-to-generator": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.2.1",
+    "@babel/plugin-proposal-export-default-from": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "@babel/preset-env": "^7.2.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.4",
     "css-loader": "^0.28.10",
     "semantic-release": "^15.10.5",
+    "source-map-loader": "^0.2.4",
     "standard": "^11.0.1",
     "style-loader": "^0.20.3",
     "travis-deploy-once": "^5.0.9",
-    "webpack": "^4.1.1",
+    "webpack": "^4.27.1",
     "webpack-cli": "^2.0.12",
     "webpack-dev-server": "^3.1.1"
   },
@@ -39,6 +42,16 @@
     "parser": "babel-eslint",
     "ignore": [
       "/dist/"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-export-default-from",
+      "@babel/plugin-transform-runtime"
     ]
   },
   "repository": {

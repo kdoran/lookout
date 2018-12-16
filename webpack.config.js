@@ -24,8 +24,11 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['stage-0', 'react'],
-            plugins: ['transform-async-to-generator']
+            plugins: [
+              '@babel/plugin-proposal-class-properties',
+              '@babel/transform-async-to-generator',
+              '@babel/plugin-transform-runtime'
+            ]
           }
         }
       },
@@ -35,6 +38,11 @@ module.exports = {
           { loader: 'style-loader' },
           { loader: 'css-loader', options: { sourceMap: true } }
         ]
+      },
+      {
+        test: /node_modules/,
+        loader: "source-map-loader",
+        enforce: "pre"  // This means this is a Prealoader (comes before)
       }
     ]
   },
