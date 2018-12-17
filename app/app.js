@@ -16,7 +16,7 @@ import withParams from './containers/withParams'
 import cache from './utils/cache'
 import { parseUrl } from './utils/utils'
 import fetcher from 'utils/fetcher'
-import Welcome from './components/Welcome'
+import Welcome from './containers/WelcomeContainer'
 
 import 'app-classes.css'
 import 'app-tags.css'
