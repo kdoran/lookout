@@ -1,12 +1,12 @@
 import React from 'react'
-import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
-import Error from 'components/Error'
+// import Error from 'components/Error'
 import AllowEditButton from 'components/AllowEditButton'
 import Breadcrumbs from 'components/Breadcrumbs'
 import { Link } from 'react-router-dom'
 import { downloadJSON } from 'utils/download'
 import { copyTextToClipboard } from 'utils/utils'
+import {omit, pick} from 'lodash'
 
 import './doc-container.css'
 
@@ -14,7 +14,7 @@ export default class extends React.Component {
   state = {
     doc: null,
     loaded: false,
-    error: null,
+    // error: null,
     meta: null,
     docId: null
   }
@@ -25,18 +25,14 @@ export default class extends React.Component {
   }
 
   async componentDidMount () {
-    const { couchUrl, dbName } = this.props
-    const { rev } = this.props.match.params
-    const { docId } = this.state
-    const resource = rev ? `${docId}?rev=${rev}` : docId
-    try {
-      const doc = await fetcher.dbGet(couchUrl, dbName, resource)
-      const meta = await fetcher.dbGet(couchUrl, dbName, docId, { meta: true })
-      this.setState({ doc, meta, loaded: true })
-    } catch (error) {
-      this.setState({ error, loaded: true })
-      console.error(error)
-    }
+    const {api, couchUrl, dbName} = this.props
+    const {rev} = this.props.match.params
+    const {docId} = this.state
+    const response = await api.base.get(docId, {meta: true})
+      // .catch(error => this.setState({ error, loaded: true }))
+    const doc = omit(response, ['_conflicts', '_revs_info'])
+    const meta = pick(response, ['_conflicts', '_revs_info'])
+    this.setState({ doc, meta, loaded: true })
   }
 
   download = event => {
@@ -59,14 +55,14 @@ export default class extends React.Component {
   render () {
     const { rev } = this.props.match.params
     const { couchUrl, dbName, couch } = this.props
-    const { loaded, error, doc, meta, docId } = this.state
+    const { loaded, doc, meta, docId } = this.state
 
     return (
       <div>
         <Breadcrumbs couch={couch} dbName={dbName} docId={docId} final={rev} />
-        {error && <Error error={error} />}
-        {!error && !loaded && (<Loading />)}
-        {!error && loaded && (
+        {/* {error && <Error error={error} />} */}
+        {!loaded && (<Loading />)}
+        {loaded && (
           <div>
             <div className='controls'>
               <a href='#' onClick={this.download}>download</a> &nbsp;

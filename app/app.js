@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { HashRouter as Router, Route, Switch } from 'react-router-dom'
-// import manycouch from '@fielded/manycouch'
+import manycouch from '@fielded/manycouch'
 
 import SetupCouchContainer from './containers/SetupCouchContainer'
 import DatabasesContainer from './containers/DatabasesContainer'
@@ -13,15 +13,14 @@ import QueryContainer from './containers/QueryContainer'
 import Nav from './components/Nav'
 import Login from './components/Login'
 import Loading from './components/Loading'
-import withParams from './containers/withParams'
 import cache from './utils/cache'
 import { parseUrl } from './utils/utils'
 import fetcher from 'utils/fetcher'
+import CouchRoute from './CouchRoute'
 
 import 'app-classes.css'
 import 'app-tags.css'
 
-const Databases = withParams(DatabasesContainer)
 const LIMIT = 100
 
 class UserRoutes extends Component {
@@ -53,32 +52,33 @@ class UserRoutes extends Component {
 
   render () {
     const { authenticated, loading, couchUrl, dbs } = this.state
-    if (loading) {
-      return <Loading />
-    }
-    if (!authenticated) {
-      return <Login couchUrl={couchUrl} onAuthenticated={this.onAuthenticated} />
-    } else {
-      return (
-        <div>
-          <div className='page'>
-            <Switch>
-              <Route path='/:couch/:dbName/:docId/editing' component={withParams(EditDocContainer)} />
-              <Route exact path='/:couch/:dbName/query' component={withParams(QueryContainer)} />
-              <Route exact path='/:couch/_node/couchdb@localhost/_config' component={withParams(ConfigContainer)} />
-              <Route exact path='/:couch/_node/nonode@nohost/_config' component={withParams(ConfigContainer)} />
-              <Route path='/:couch/:dbName/query/:queryId/:queryString' component={withParams(QueryContainer)} />
-              <Route path='/:couch/:dbName/query/:queryId' component={withParams(QueryContainer)} />
-              <Route path='/:couch/:dbName/:docId/:rev/' component={withParams(DocContainer)} />
-              <Route path='/:couch/:dbName/:docId' component={withParams(DocContainer)} />
-              <Route path='/:couch/:dbName' component={withParams(DocsContainer)} />
-              <Route path='/:couch/' component={props => <Databases {...props} dbs={dbs} />} />
-            </Switch>
-          </div>
-          <Route path='/:couch/:dbName?/:docId?' render={props => (<Nav {...props} dbs={dbs} userCtx={cache.userCtx} />)} />
+
+    if (loading) return <Loading />
+
+    if (!authenticated) return <Login couchUrl={couchUrl} onAuthenticated={this.onAuthenticated} />
+
+    return (
+      <div>
+        <div className='page'>
+          <Switch>
+            <CouchRoute exact path='/:couch/:dbName/query' component={QueryContainer} />
+            <CouchRoute exact path='/:couch/_node/couchdb@localhost/_config' component={ConfigContainer} />
+            <CouchRoute exact path='/:couch/_node/nonode@nohost/_config' component={ConfigContainer} />
+            <CouchRoute path='/:couch/:dbName/:docId/editing' component={EditDocContainer} />
+            <CouchRoute path='/:couch/:dbName/query/:queryId/:queryString' component={QueryContainer} />
+            <CouchRoute path='/:couch/:dbName/query/:queryId' component={QueryContainer} />
+            <CouchRoute path='/:couch/:dbName/:docId/:rev/' component={DocContainer} />
+            <CouchRoute path='/:couch/:dbName/:docId' component={DocContainer} />
+            <CouchRoute path='/:couch/:dbName' component={DocsContainer} />
+            <CouchRoute path='/:couch/' component={props => <DatabasesContainer {...props} dbs={dbs} />} />
+          </Switch>
         </div>
-      )
-    }
+        <Route
+          path='/:couch/:dbName?/:docId?'
+          render={props => (<Nav {...props} dbs={dbs} userCtx={cache.userCtx} />)}
+        />
+      </div>
+    )
   }
 }
 

@@ -1,12 +1,10 @@
 import React from 'react'
-import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
-import Error from 'components/Error'
 import Pagination from 'components/Pagination'
 import AllowEditButton from 'components/AllowEditButton'
 import Breadcrumbs from 'components/Breadcrumbs'
 import DeleteDatabaseContainer from 'containers/DeleteDatabaseContainer'
-import { Link } from 'react-router-dom'
+import {Link} from 'react-router-dom'
 
 import './docs-container.css'
 
@@ -16,39 +14,32 @@ export default class extends React.Component {
   state = {
     loaded: false,
     rows: null,
-    error: null,
     showDeleteModal: false
   }
 
   async componentDidMount () {
-    const { dbName, couchUrl, searchParams: { offset = 0 } } = this.props
+    const {api, searchParams: {offset = 0}} = this.props
     this.setState({ loaded: false })
-
-    try {
-      const options = { skip: offset, limit: LIMIT }
-      const response = await fetcher.dbGet(couchUrl, dbName, '_all_docs', options)
-      const rows = response.rows.map(row => {
-        const link = (row.id.indexOf('/') === -1)
-          ? row.id
-          : encodeURIComponent(row.id)
-        return { ...row, link }
-      })
-      this.setState({ response, rows, loaded: true })
-    } catch (error) {
-      this.setState({ error, loaded: true })
-      console.error(error)
-    }
+    const options = {skip: offset, limit: LIMIT}
+    let {count, rows} = await api.base.listIds(options)
+    rows = rows.map(row => {
+      const link = (row.id.indexOf('/') === -1)
+        ? row.id
+        : encodeURIComponent(row.id)
+      return { ...row, link }
+    })
+    this.setState({ count, rows, loaded: true })
   }
 
   render () {
     const { location: { pathname }, history } = this.props
     const { dbName, couchUrl, couch, searchParams: { offset = 0 } } = this.props
-    const { loaded, error, response, rows, showDeleteModal } = this.state
+    const { loaded, rows, count, showDeleteModal } = this.state
 
     const PaginationComponent = () => (
       <Pagination
-        total={response.total_rows}
-        displayed={response.rows.length}
+        total={count}
+        displayed={rows.length}
         path={pathname}
         limit={LIMIT}
         offset={offset}
@@ -57,9 +48,8 @@ export default class extends React.Component {
     return (
       <div>
         <Breadcrumbs couch={couch} dbName={dbName} />
-        {error && <Error error={error} />}
-        {!error && !loaded && (<Loading />)}
-        {!error && loaded && (
+        {!loaded && (<Loading />)}
+        {loaded && (
           <div>
             <section className='docs-controls'>
               <PaginationComponent />
@@ -94,7 +84,7 @@ export default class extends React.Component {
               </tbody>
             </table>
             <section className='docs-controls'>
-              {response.rows.length > 20 && (
+              {rows.length > 20 && (
                 <PaginationComponent />
               )}
               <AllowEditButton

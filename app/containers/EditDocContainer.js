@@ -1,9 +1,9 @@
 import React from 'react'
-import fetcher from 'utils/fetcher'
 import DeleteDocModal from 'components/DeleteDocModal'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Loading from 'components/Loading'
 import Editor from 'components/Editor'
+import Error from 'components/Error'
 
 import './edit-doc-container.css'
 
@@ -13,7 +13,6 @@ export default class extends React.Component {
     original: '',
     input: '',
     changesMade: false,
-    error: null,
     saving: false,
     showDeleteModal: false,
     loaded: false
@@ -25,23 +24,18 @@ export default class extends React.Component {
   }
 
   async componentDidMount () {
-    const { couchUrl, dbName } = this.props
-    const { docId, isNew } = this.state
+    const {api} = this.props
+    const {docId, isNew} = this.state
 
     if (isNew) {
-      this.setState({ loaded: true, original: '{}', input: neat({ _id: '' }) })
+      this.setState({loaded: true, original: '{}', input: neat({ _id: '' })})
       return
     }
 
-    try {
-      const doc = await fetcher.dbGet(couchUrl, dbName, docId)
-      const original = neat(doc)
-      const input = original
-      this.setState({ doc, input, original, loaded: true })
-    } catch (error) {
-      this.setState({ error, loaded: true })
-      console.error(error)
-    }
+    const doc = await api.base.get(docId)
+    const original = neat(doc)
+    const input = original
+    this.setState({doc, input, original, loaded: true})
   }
 
   onEdit = input => {
@@ -52,21 +46,23 @@ export default class extends React.Component {
     } catch (e) {
       valid = false
     }
-    this.setState({ valid, input, changesMade: (original !== input) })
+    this.setState({valid, input, changesMade: (original !== input)})
   }
 
-  onSubmit = () => {
-    const { couchUrl, dbName } = this.props
-    const { input, isNew } = this.state
+  onSubmit = async () => {
+    const {api} = this.props
+    const {input, isNew} = this.state
+    this.setState({ saving: true })
 
     const jsObjectInput = JSON.parse(input)
-    this.setState({ saving: true }, () => {
       // New documents will get ID from input
-      const docId = isNew ? jsObjectInput._id : this.state.docId
-      fetcher.dbPut(couchUrl, dbName, docId, jsObjectInput).then(() => {
-        this.setState({ docId }, () => this.back())
-      }).catch(error => this.setState({ error, saving: false }))
-    })
+    const docId = isNew ? jsObjectInput._id : this.state.docId
+    try {
+      await api.base.put(jsObjectInput)
+      this.back(docId)
+    } catch (error) {
+      this.setState({error, saving: false})
+    }
   }
 
   deleteDoc = () => {
@@ -80,9 +76,8 @@ export default class extends React.Component {
     }
   }
 
-  back = () => {
+  back = docId => {
     const { couch, dbName } = this.props
-    const { docId } = this.state
 
     if (docId === 'new') {
       this.props.history.push(`/${couch}/${dbName}/`)
@@ -98,11 +93,11 @@ export default class extends React.Component {
       valid,
       input,
       changesMade,
-      error,
       saving,
       isNew,
       docId,
-      showDeleteModal
+      showDeleteModal,
+      error
     } = this.state
     const buttonText = getSubmitButtonText(valid, changesMade, saving)
     const canSave = (valid && changesMade && !saving)
@@ -110,6 +105,8 @@ export default class extends React.Component {
     return (
       <div>
         <Breadcrumbs couch={couch} dbName={dbName} docId={docId} final={'edit'} />
+
+        {error && (<Error error={error} />)}
 
         {loaded ? (
           <div>
@@ -136,7 +133,6 @@ export default class extends React.Component {
                 {changesMade ? 'cancel' : 'back'}
               </button>
             </div>
-            {error && (<div className='error'>{error}</div>)}
             <Editor
               onChange={this.onEdit}
               value={input}

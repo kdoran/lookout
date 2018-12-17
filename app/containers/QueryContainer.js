@@ -22,6 +22,7 @@ export default class QueryContainer extends React.Component {
   }
 
   static getDerivedStateFromProps (nextProps, prevState) {
+    console.log(nextProps)
     const { queryId = 'id-regex', queryString } = nextProps.match.params
     const queries = getAllQueries(nextProps.dbUrl)
     const query = getQuery(nextProps.dbUrl, queryId)

@@ -4,6 +4,7 @@ import { parseUrl, getParams } from 'utils/utils'
 export default function withParams (WrappedComponent) {
   class withParamsWrapper extends Component {
     render () {
+      console.log(this.props)
       const { params: { dbName, couch } } = this.props.match
       const couchUrl = parseUrl(this.props.match.params.couch)
       const { location: { search } } = this.props

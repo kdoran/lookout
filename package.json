@@ -13,6 +13,12 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.2.0",
+    "lodash": "^4.17.11",
+    "pouchdb-adapter-http": "^6.4.3",
+    "pouchdb-adapter-idb": "^6.4.3",
+    "pouchdb-all-dbs": "^1.0.2",
+    "pouchdb-core": "^6.4.3",
+    "pouchdb-replication": "^6.4.3",
     "protobufjs": "^6.8.8",
     "react": "^16.4.1",
     "react-ace": "^6.1.0",
