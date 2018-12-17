@@ -1,7 +1,7 @@
 import React from 'react'
 import fetcher from 'utils/fetcher'
 import localStorager from 'utils/localstorager'
-import {parseUrl} from 'utils/utils'
+import { parseUrl } from 'utils/utils'
 import cache from '../utils/cache'
 
 export default class extends React.Component {
@@ -19,7 +19,7 @@ export default class extends React.Component {
 
   async tryACouch (inputUrl) {
     inputUrl = parseUrl(inputUrl)
-    this.setState({inputUrl})
+    this.setState({ inputUrl })
     this.setState({ loading: true })
     try {
       const { userCtx } = await fetcher.checkSession(inputUrl)
@@ -81,7 +81,7 @@ export default class extends React.Component {
         >
           {loading ? ' Loading...' : 'Submit'}
         </button>
-        <a href='https://github.com/kdoran/lookout'>Lookout on GitHub</a>
+        <a href='https://github.com/kdoran/lookout'>Lookout on GitHub</a><br />
       </form>
     )
   }

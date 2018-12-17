@@ -90,7 +90,7 @@ class App extends Component {
         <div>
           <Route exact path='/' component={SetupCouchContainer} />
           <Route path='/:couch/' component={UserRoutes} />
-          <Route path ='/Welcome' component={Welcome} />
+          <Route path='/Welcome' component={Welcome} />
         </div>
       </Router>
     )
