@@ -81,7 +81,7 @@ export default class extends React.Component {
         >
           {loading ? ' Loading...' : 'Submit'}
         </button>
-        <a href='https://github.com/kdoran/lookout'>Lookout on GitHub</a><br />
+        <a href='https://github.com/kdoran/lookout'>Lookout on GitHub</a>
       </form>
     )
   }
