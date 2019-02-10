@@ -56,17 +56,18 @@ export default class extends React.Component {
   }
 
   onSubmit = () => {
-    const { couchUrl, dbName } = this.props
-    const { input, isNew } = this.state
+    const { couchUrl, dbName, couch } = this.props
+    const { input, isNew, docId  } = this.state
 
     const jsObjectInput = JSON.parse(input)
     this.setState({ saving: true }, () => {
       // New documents will get ID from input
       const docId = isNew ? jsObjectInput._id : this.state.docId
       fetcher.dbPut(couchUrl, dbName, docId, jsObjectInput).then(() => {
-        this.setState({ docId }, () => this.back())
+        this.setState({ docId }, () => {this.props.history.push(`/${couch}/${dbName}/${docId}`)})
       }).catch(error => this.setState({ error, saving: false }))
-    })
+    });
+
   }
 
   deleteDoc = () => {
@@ -85,11 +86,12 @@ export default class extends React.Component {
     const { docId } = this.state
 
     if (docId === 'new') {
-      this.props.history.push(`/${couch}/${dbName}/`)
+      this.props.history.push(`/${couch}/${dbName}`)
     } else {
       this.props.history.push(`/${couch}/${dbName}/${docId}`)
     }
   }
+
 
   render () {
     const { couch, couchUrl, dbName } = this.props
