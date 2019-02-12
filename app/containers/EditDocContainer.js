@@ -64,7 +64,7 @@ export default class extends React.Component {
       // New documents will get ID from input
       const docId = isNew ? jsObjectInput._id : this.state.docId
       fetcher.dbPut(couchUrl, dbName, docId, jsObjectInput).then(() => {
-        this.setState({ docId }, () => {this.props.history.push(`/${couch}/${dbName}/${docId}`)})
+         (docId) => {this.props.history.push(`/${couch}/${dbName}/${docId}`)}
       }).catch(error => this.setState({ error, saving: false }))
     });
 
