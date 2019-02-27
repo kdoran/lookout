@@ -9,6 +9,8 @@ import DocContainer from './containers/DocContainer'
 import ConfigContainer from './containers/ConfigContainer'
 import EditDocContainer from './containers/EditDocContainer'
 import QueryContainer from './containers/QueryContainer'
+import BulkChangesContainer from './containers/BulkChangesContainer'
+
 import Nav from './components/Nav'
 import Login from './components/Login'
 import Loading from './components/Loading'
@@ -62,6 +64,7 @@ class UserRoutes extends Component {
         <div>
           <div className='page'>
             <Switch>
+              <Route path='/:couch/:dbName/bulk-changes' component={withParams(BulkChangesContainer)} />
               <Route path='/:couch/:dbName/:docId/editing' component={withParams(EditDocContainer)} />
               <Route exact path='/:couch/:dbName/query' component={withParams(QueryContainer)} />
               <Route exact path='/:couch/_node/couchdb@localhost/_config' component={withParams(ConfigContainer)} />

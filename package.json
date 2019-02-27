@@ -14,7 +14,7 @@
   "dependencies": {
     "protobufjs": "^6.8.8",
     "react": "^16.4.1",
-    "react-ace": "^6.1.0",
+    "react-ace": "^6.4.0",
     "react-dom": "^16.4.1",
     "react-onclickout": "^2.0.8",
     "react-router-dom": "^4.3.1"
