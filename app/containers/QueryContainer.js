@@ -101,7 +101,7 @@ export default class QueryContainer extends React.Component {
     const response = await fetcher.post(`${dbUrl}_bulk_docs`, {docs})
     console.log(`deleted docs response`, response)
     const errorsFound = response.filter(r => !r.ok)
-    if (errorsFound) {
+    if (errorsFound.length) {
       console.error(`Errors found when trying to delete docs!`, errorsFound)
     }
   }
