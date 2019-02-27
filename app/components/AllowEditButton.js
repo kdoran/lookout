@@ -30,12 +30,21 @@ export default class extends React.Component {
 
   render () {
     const { showModal, inputText, allowEdit } = this.state
-    const { children, dbName, couchUrl } = this.props
+    const { children, dbName, couchUrl, type, infoMessage } = this.props
     return (
       <span>
-        <button className='action-button edit-button' onClick={this.toggleModal}>
-          {children}
-        </button>
+        {
+          type === 'link'
+          ? (
+            <a href='#' onClick={e => {e.preventDefault(); this.toggleModal()}}>
+              {children}
+            </a>
+          ) : (
+            <button className='action-button edit-button' onClick={this.toggleModal}>
+              {children}
+            </button>
+          )
+        }
         <Modal
           show={showModal}
           onClose={this.toggleModal}
@@ -49,6 +58,11 @@ export default class extends React.Component {
               <strong>{couchUrl}{dbName}</strong>
             </div>
           </div>
+          {infoMessage && (
+            <div>
+              {infoMessage}
+            </div>
+          )}
           <br />
           <form onSubmit={this.onSubmit}>
             <label>

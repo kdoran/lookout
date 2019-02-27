@@ -5,6 +5,7 @@ import Loading from 'components/Loading'
 import Error from 'components/Error'
 import Breadcrumbs from 'components/Breadcrumbs'
 import QueryResponse from 'components/QueryResponse'
+import AllowEditButton from 'components/AllowEditButton'
 import { getQuery, getAllQueries } from 'utils/queries'
 import { copyTextToClipboard } from 'utils/utils'
 import { encode, decode } from 'utils/url-params'
@@ -70,8 +71,7 @@ export default class QueryContainer extends React.Component {
     copyTextToClipboard(JSON.stringify(this.state.response, null, 2))
   }
 
-  download = e => {
-    e.preventDefault()
+  download = () => {
     const { dbName, couch } = this.props
     const { queryId } = this.state
     downloadJSON(this.state.response, `${couch} ${dbName} ${queryId}`)
@@ -85,8 +85,29 @@ export default class QueryContainer extends React.Component {
     copyTextToClipboard(`${currUrl}/query/custom/${param}`)
   }
 
+  handleConfirmDelete = async () => {
+    this.download()
+    const docs = this.state.response.docs.map(doc => ({
+      _id: doc._id,
+      _rev: doc._rev,
+      _deleted: true
+    }))
+    if (!docs.length || docs.find(d => (!d._id || !d._rev))) {
+      throw new Error(
+        `Docs, ids, or revs not found in response.docs, aborting delete. ${docs}`
+      )
+    }
+    const {dbUrl} = this.props
+    const response = await fetcher.post(`${dbUrl}_bulk_docs`, {docs})
+    console.log(`deleted docs response`, response)
+    const errorsFound = response.filter(r => !r.ok)
+    if (errorsFound) {
+      console.error(`Errors found when trying to delete docs!`, errorsFound)
+    }
+  }
+
   render () {
-    const { dbName, couch } = this.props
+    const { dbName, couch, couchUrl } = this.props
     const { query, queryId, queries, error, input, valid, loading, result } = this.state
 
     const links = Object.keys(queries).map(query => (
@@ -115,8 +136,23 @@ export default class QueryContainer extends React.Component {
         queries: {links}
         <br /><br />
         <a href='' onClick={this.copy}>copy response to clipboard</a>
-        &nbsp; <a href='' onClick={this.download}>download response</a>
+        &nbsp; <a href='' onClick={e => {e.preventDefault(); this.download()}}>download response</a>
         &nbsp; <a href='' onClick={this.getUrl}>copy sharable url to clipboard</a>
+        &nbsp;
+          <AllowEditButton
+            dbName={dbName}
+            type='link'
+            couchUrl={couchUrl}
+            onConfirm={this.handleConfirmDelete}
+            infoMessage={`
+              This will {_deleted: true} 'docs' found in the
+              response object (not the results of your 'parse' function!).
+              It downloads them first, keep that as your backup as couch
+              revisions are not guaranteed to stick around.
+            `}
+          >
+          delete response
+          </AllowEditButton>
         {loading
           ? <Loading />
           : result &&
