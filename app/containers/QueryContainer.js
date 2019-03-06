@@ -87,7 +87,9 @@ export default class QueryContainer extends React.Component {
 
   handleConfirmDelete = async () => {
     this.download()
-    const docs = this.state.response.docs.map(doc => ({
+    const {response} = this.state
+    const originalDocs = response.docs || response.rows.map(row => row.doc)
+    const docs = originalDocs.map(doc => ({
       _id: doc._id,
       _rev: doc._rev,
       _deleted: true
@@ -98,9 +100,9 @@ export default class QueryContainer extends React.Component {
       )
     }
     const {dbUrl} = this.props
-    const response = await fetcher.post(`${dbUrl}_bulk_docs`, {docs})
-    console.log(`deleted docs response`, response)
-    const errorsFound = response.filter(r => !r.ok)
+    const deleteResponse = await fetcher.post(`${dbUrl}_bulk_docs`, {docs})
+    console.log(`deleted docs response`, deleteResponse)
+    const errorsFound = deleteResponse.filter(r => !r.ok)
     if (errorsFound.length) {
       console.error(`Errors found when trying to delete docs!`, errorsFound)
     }

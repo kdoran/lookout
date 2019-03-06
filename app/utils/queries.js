@@ -88,6 +88,23 @@ export function getAllQueries (dbUrl) {
       },
       startRow: 5,
       startColumn: 25
+    },
+    'bulk-docs': {
+      fetchParams: {
+        url: `${dbUrl}_bulk_docs`,
+        method: 'POST',
+        body: {
+          docs: []
+        }
+      },
+      fn: function parse (response) {
+        // tip: chrome dev tools, right-click on logged object, store as global variable
+        console.log(response)
+        // limit doc length to display so we don't crash the browser
+        return response.slice(0, 50)
+      },
+      startRow: 5,
+      startColumn: 25
     }
   }
 }
