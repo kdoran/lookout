@@ -114,7 +114,7 @@ export default class QueryContainer extends React.Component {
 
     const links = Object.keys(queries).map(query => (
       <span key={query}>
-        <Link to={`/${couch}/${dbName}/query/${query}`}>{query}</Link>&nbsp;
+        <Link to={`/${couch}/${dbName}/query/${query}`}>{query}</Link>
       </span>
     ))
     return (
@@ -138,9 +138,9 @@ export default class QueryContainer extends React.Component {
         queries: {links}
         <br /><br />
         <a href='' onClick={this.copy}>copy response to clipboard</a>
-        &nbsp; <a href='' onClick={e => { e.preventDefault(); this.download() }}>download response</a>
-        &nbsp; <a href='' onClick={this.getUrl}>copy sharable url to clipboard</a>
-        &nbsp;
+        <a href='' onClick={e => { e.preventDefault(); this.download() }}>download response</a>
+        <a href='' onClick={this.getUrl}>copy sharable url to clipboard</a>
+
         <AllowEditButton
           dbName={dbName}
           type='link'

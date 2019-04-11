@@ -69,8 +69,8 @@ export default class extends React.Component {
         {!error && loaded && (
           <div>
             <div className='controls'>
-              <a href='#' onClick={this.download}>download</a> &nbsp;
-              <a href='#' onClick={this.copy}>copy to clipboard</a> &nbsp;
+              <a href='#' onClick={this.download}>download</a>
+              <a href='#' onClick={this.copy}>copy to clipboard</a>
               <AllowEditButton
                 dbName={dbName}
                 couchUrl={couchUrl}

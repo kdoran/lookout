@@ -62,8 +62,8 @@ export default class ConfigContainer extends React.Component {
       <div className='config-container'>
         <Breadcrumbs couch={couch} docId={'_config'} />
         <div className='controls'>
-          <a href='#' onClick={this.download}>download</a> &nbsp;
-          <a href='#' onClick={this.copy}>copy to clipboard</a> &nbsp;
+          <a href='#' onClick={this.download}>download</a>
+          <a href='#' onClick={this.copy}>copy to clipboard</a>
         </div>
         {error && <Error error={error} />}
         {!error && !loaded && (<Loading />)}
