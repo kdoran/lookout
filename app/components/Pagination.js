@@ -20,7 +20,6 @@ export default class Pagination extends React.Component {
             <Link to={path}>previous</Link>
           )}
           {previousNumber < 0 && 'previous'}
-          &nbsp;
           {offset + displayed < total && (
             <Link to={path + '?offset=' + nextNumber}>next</Link>
           )}
