@@ -35,15 +35,15 @@ export default class extends React.Component {
       <span>
         {
           type === 'link'
-          ? (
-            <a href='#' onClick={e => {e.preventDefault(); this.toggleModal()}}>
-              {children}
-            </a>
-          ) : (
-            <button className='action-button edit-button' onClick={this.toggleModal}>
-              {children}
-            </button>
-          )
+            ? (
+              <a href='#' onClick={e => { e.preventDefault(); this.toggleModal() }}>
+                {children}
+              </a>
+            ) : (
+              <button className='action-button edit-button' onClick={this.toggleModal}>
+                {children}
+              </button>
+            )
         }
         <Modal
           show={showModal}

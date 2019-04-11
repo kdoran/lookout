@@ -138,23 +138,23 @@ export default class QueryContainer extends React.Component {
         queries: {links}
         <br /><br />
         <a href='' onClick={this.copy}>copy response to clipboard</a>
-        &nbsp; <a href='' onClick={e => {e.preventDefault(); this.download()}}>download response</a>
+        &nbsp; <a href='' onClick={e => { e.preventDefault(); this.download() }}>download response</a>
         &nbsp; <a href='' onClick={this.getUrl}>copy sharable url to clipboard</a>
         &nbsp;
-          <AllowEditButton
-            dbName={dbName}
-            type='link'
-            couchUrl={couchUrl}
-            onConfirm={this.handleConfirmDelete}
-            infoMessage={`
+        <AllowEditButton
+          dbName={dbName}
+          type='link'
+          couchUrl={couchUrl}
+          onConfirm={this.handleConfirmDelete}
+          infoMessage={`
               This will {_deleted: true} 'docs' found in the
               response object (not the results of your 'parse' function!).
               It downloads them first, keep that as your backup as couch
               revisions are not guaranteed to stick around.
             `}
-          >
+        >
           delete response
-          </AllowEditButton>
+        </AllowEditButton>
         {loading
           ? <Loading />
           : result &&

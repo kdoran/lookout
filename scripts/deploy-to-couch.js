@@ -20,11 +20,11 @@ async function postDocs ({
     _rev,
     _attachments: {
       'index.html': {
-        content_type: 'text\/html',
+        content_type: `text\/html`, // eslint-disable-line
         data: getBase64File('index.html')
       },
       'lookout.js': {
-        content_type: 'text\/javascript',
+        content_type: `text\/javascript`, // eslint-disable-line
         data: getBase64File('lookout.js')
       }
     }
