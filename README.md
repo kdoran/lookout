@@ -25,13 +25,15 @@ On the wishlist is a deploy script for this, but you can add the `index.html` & 
 - [x] run queries interface
 - [x] github pages
 - [x] view revisions
-- [ ] deploy as a couch view to remote couch script
+- [x] deploy as a couch view to remote couch script
 - [ ] replication wizard
+- [ ] couchdb view query (like the `_find` page but the results of a view query)
 - [ ] server config editor (A SAFE ONE!!)
 - [ ] download doc as json buttons (and alldocs)
-- [ ] CRUD queries in local storage / `_local` docs
-- [ ] CRUD batch update scripts in `_local` docs
-- [ ] better id search with doc links (right now it's just a query)
+- [ ] bulk docs interface that shows you ace editor diffs of what docs are going to change
+- [x] better id search with doc links (right now it's just a query)
+
+also, see issues & also find your own adventure bugs
 
 ### License
 MIT
