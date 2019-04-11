@@ -64,7 +64,7 @@ export default class extends React.Component {
             <section className='docs-controls'>
               <PaginationComponent />
               <div>
-                <Link to={`/${couch}/${dbName}/query/`}>query</Link> &nbsp;
+                <Link to={`/${couch}/${dbName}/query/`}>query</Link>
                 <AllowEditButton
                   dbName={dbName}
                   couchUrl={couchUrl}
