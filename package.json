@@ -12,6 +12,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.18.0",
     "protobufjs": "^6.8.8",
     "react": "^16.4.1",
     "react-ace": "^6.1.0",
