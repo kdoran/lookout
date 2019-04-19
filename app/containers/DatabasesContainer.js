@@ -60,7 +60,7 @@ export default class extends React.Component {
               <thead>
                 <tr>
                   <th>name</th>
-                  <th></th>
+                  <th />
                   <th>doc count</th>
                   <th>data size</th>
                   <th>disk space</th>

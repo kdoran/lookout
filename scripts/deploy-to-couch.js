@@ -38,7 +38,7 @@ async function postDocs ({
 
 async function createDB (url, auth) {
   try {
-    const {status, statusText, data} = await axios.put(url, {}, {auth})
+    await axios.put(url, {}, {auth})
   } catch (error) {
     const {status, statusText, data} = error.response
     // this is fine

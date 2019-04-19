@@ -5,8 +5,7 @@ export default class extends React.Component {
     const { result } = this.props
     return (
       <div>
-        <section className='docs-controls'>
-        </section>
+        <section className='docs-controls' />
         <pre>
           {JSON.stringify(result, null, 2)}
         </pre>
