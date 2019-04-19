@@ -60,7 +60,8 @@ export default class extends React.Component {
               <thead>
                 <tr>
                   <th>name</th>
-                  <th>docs</th>
+                  <th></th>
+                  <th>doc count</th>
                   <th>data size</th>
                   <th>disk space</th>
                   <th>deleted</th>
@@ -71,7 +72,8 @@ export default class extends React.Component {
                 {dbs.map(db => {
                   return (
                     <tr key={db}>
-                      <td><Link to={`/${couch}/${db}/query`}>{db}</Link> | <Link to={`/${couch}/${db}/`}>all docs</Link></td>
+                      <td><Link to={`/${couch}/${db}/query`}>{db}</Link></td>
+                      <td><Link to={`/${couch}/${db}/`}>all docs</Link></td>
                       <td>{infos[db] ? withCommas(infos[db].doc_count) : 'loading...'}</td>
                       <td>{infos[db] ? showMBSize(infos[db].data_size) : 'loading...'}</td>
                       <td>{infos[db] ? showMBSize(infos[db].disk_size) : 'loading...'}</td>
