@@ -1,5 +1,6 @@
 const fs = require('fs')
 const parseArgs = require('minimist')
+const prompts = require('prompts')
 const axios = require('axios')
 
 const BUILD_PATH = './dist/'
@@ -14,6 +15,13 @@ async function postDocs ({
 }) {
   const dbUrl = `${couchUrl}${databaseName}`
   const docUrl = `${dbUrl}/lookout`
+  const {value: responseValue} = await prompts({
+    type: 'confirm',
+    name: 'value',
+    message: `Did you run npm build first? Deploy to ${docUrl}?`,
+    initial: false
+  })
+  if (!responseValue) return
   const auth = {username, password}
   await createDB(dbUrl, auth)
   const _rev = await getRev(docUrl, auth)
