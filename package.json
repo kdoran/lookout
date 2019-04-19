@@ -29,6 +29,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "css-loader": "^0.28.10",
+    "prompts": "^2.0.4",
     "semantic-release": "^15.10.5",
     "standard": "^11.0.1",
     "style-loader": "^0.20.3",

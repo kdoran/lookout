@@ -13,8 +13,10 @@ export function getAllQueries (dbUrl) {
       },
       fn: function parse (response) {
         // tip: chrome dev tools, right-click on logged object, store as global variable
-        console.log(response)
-        return response.docs
+        const docs = response.docs
+        // tip: if crashing your browser with large response results, return null
+        // and look in the console instead
+        return docs
       },
       startRow: 6,
       startColumn: 19
@@ -30,9 +32,11 @@ export function getAllQueries (dbUrl) {
       },
       fn: function parse (response) {
         // tip: chrome dev tools, right-click on logged object, store as global variable
-        console.log(response)
-        // limit doc length to display so we don't crash the browser
-        return Object.assign({}, response, { docs: response.rows.slice(0, 50) })
+        const docs = response.rows.map(row => row.doc)
+        console.log(docs)
+        // tip: if crashing your browser with large response results, return null
+        // and look in the console instead
+        return docs
       },
       startRow: 5,
       startColumn: 25
@@ -49,9 +53,11 @@ export function getAllQueries (dbUrl) {
       },
       fn: function parse (response) {
         // tip: chrome dev tools, right-click on logged object, store as global variable
-        console.log(response)
-        // limit doc length to display so we don't crash the browser
-        return Object.assign({}, response, { results: response.results.slice(0, 20) })
+        const changes = response.results
+        console.log(changes)
+        // tip: if crashing your browser with large response results, return null
+        // and look in the console instead
+        return changes
       },
       startRow: 5,
       startColumn: 25
@@ -83,9 +89,11 @@ export function getAllQueries (dbUrl) {
       },
       fn: function parse (response) {
         // tip: chrome dev tools, right-click on logged object, store as global variable
-        console.log(response)
-        // limit doc length to display so we don't crash the browser
-        return Object.assign({}, response, { docs: response.rows.slice(0, 50) })
+        const docs = response.rows.map(row => row.doc)
+        console.log(docs)
+        // tip: if crashing your browser with large response results, return null
+        // and look in the console instead
+        return docs
       },
       startRow: 5,
       startColumn: 25
@@ -101,8 +109,9 @@ export function getAllQueries (dbUrl) {
       fn: function parse (response) {
         // tip: chrome dev tools, right-click on logged object, store as global variable
         console.log(response)
-        // limit doc length to display so we don't crash the browser
-        return response.slice(0, 50)
+        // tip: if crashing your browser with large response results, return null
+        // and look in the console instead
+        return response
       },
       startRow: 5,
       startColumn: 25
