@@ -14,6 +14,7 @@ export function getAllQueries (dbUrl) {
       fn: function parse (response) {
         // tip: chrome dev tools, right-click on logged object, store as global variable
         const docs = response.docs
+        console.log(docs)
         // tip: if crashing your browser with large response results, return null
         // and look in the console instead
         return docs
