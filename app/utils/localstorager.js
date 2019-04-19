@@ -1,7 +1,7 @@
 /* global localStorage */
 
 const lookoutPrefix = 'couchlookout::'
-const limit = 25
+const limit = 50
 
 export default {
   getRecent (id) {
