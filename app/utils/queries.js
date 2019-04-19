@@ -1,3 +1,5 @@
+const DEFAULT_LIMIT = 2000
+
 export function getAllQueries (dbUrl) {
   return {
     'id-regex': {
@@ -6,7 +8,7 @@ export function getAllQueries (dbUrl) {
         method: 'POST',
         body: {
           selector: { _id: { '$regex': '' } },
-          limit: 200
+          limit: DEFAULT_LIMIT
         }
       },
       fn: function parse (response) {
@@ -23,7 +25,7 @@ export function getAllQueries (dbUrl) {
         url: `${dbUrl}_all_docs`,
         method: 'GET',
         params: {
-          limit: 500,
+          limit: DEFAULT_LIMIT,
           include_docs: true
         }
       },
@@ -41,7 +43,7 @@ export function getAllQueries (dbUrl) {
         url: `${dbUrl}_changes`,
         method: 'GET',
         params: {
-          limit: 200,
+          limit: DEFAULT_LIMIT,
           include_docs: true,
           descending: true
         }
@@ -74,7 +76,7 @@ export function getAllQueries (dbUrl) {
     },
     'keys-search': {
       fetchParams: {
-        url: `${dbUrl}_all_docs?include_docs=true&limit=200`,
+        url: `${dbUrl}_all_docs?include_docs=true&limit=${DEFAULT_LIMIT}`,
         method: 'POST',
         body: {
           keys: []
