@@ -8,6 +8,7 @@
     "build": "webpack && npm run copy:index",
     "test": "standard",
     "travis-deploy-once": "travis-deploy-once",
+    "deploy": "node ./scripts/deploy-to-couch",
     "semantic-release": "semantic-release"
   },
   "license": "MIT",

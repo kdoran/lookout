@@ -12,29 +12,31 @@ async function postDocs ({
   username = process.env.SCRIPT_USER || 'admin',
   password = process.env.SCRIPT_PASS || 'admin'
 }) {
-  const url = `${couchUrl}${databaseName}/lookout`
+  const dbUrl = `${couchUrl}${databaseName}`
+  const docUrl = `${dbUrl}/lookout`
   const auth = {username, password}
-  const _rev = await getRev(url, auth)
-  const doc = {
-    _id: 'lookout',
-    _rev,
-    _attachments: {
-      'index.html': {
-        content_type: `text\/html`, // eslint-disable-line
-        data: getBase64File('index.html')
-      },
-      'lookout.js': {
-        content_type: `text\/javascript`, // eslint-disable-line
-        data: getBase64File('lookout.js')
-      }
-    }
-  }
+  await createDB(dbUrl, auth)
+  const _rev = await getRev(docUrl, auth)
+  const doc = createDoc(_rev, BUILD_PATH)
   try {
-    const {data} = await axios.put(url, doc, {auth})
+    const {data} = await axios.put(docUrl, doc, {auth})
     console.log(data)
+    console.log(`\nlookout should be accessible at \n\n${docUrl}/index.html#/\n\n`)
   } catch (error) {
     const {status, statusText, data} = error.response
     console.log(status, statusText, data)
+  }
+}
+
+async function createDB (url, auth) {
+  try {
+    const {status, statusText, data} = await axios.put(url, {}, {auth})
+  } catch (error) {
+    const {status, statusText, data} = error.response
+    // this is fine
+    if (data.error.includes('exists')) return
+
+    console.log('error creating DB', status, statusText, data)
   }
 }
 
@@ -47,7 +49,24 @@ async function getRev (url, auth) {
   }
 }
 
-function getBase64File (fileName) {
-  const file = fs.readFileSync(`${BUILD_PATH}/${fileName}`)
+function createDoc (_rev, path) {
+  return {
+    _id: 'lookout',
+    _rev,
+    _attachments: {
+      'index.html': {
+        content_type: `text\/html`, // eslint-disable-line
+        data: getBase64File(`${path}index.html`)
+      },
+      'lookout.js': {
+        content_type: `text\/javascript`, // eslint-disable-line
+        data: getBase64File(`${path}lookout.js`)
+      }
+    }
+  }
+}
+
+function getBase64File (filePath) {
+  const file = fs.readFileSync(filePath)
   return file.toString('base64')
 }
