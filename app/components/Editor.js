@@ -13,18 +13,9 @@ export default class extends React.Component {
   async componentDidMount () {
     const editor = this.refs.aceEditor.editor
     editor.commands.removeCommands(['gotoline', 'find'])
-    editor.session.$worker.send('changeOptions', [{asi: true}])
     if (this.props.startRow) {
       editor.selection.moveTo(this.props.startRow, this.props.startColumn)
     }
-    editor.getSession().on('changeAnnotation', () => {
-      const annotation = editor.getSession().getAnnotations()
-      for (let key in annotation) {
-        if (annotation.hasOwnProperty(key)) {
-          console.log(`[${annotation[key].row} , ${annotation[key].column}] - ${annotation[key].text}`)
-        }
-      }
-    })
   }
 
   cmdEnter = () => {
