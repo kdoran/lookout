@@ -22,6 +22,23 @@ export function getAllQueries (dbUrl) {
       startRow: 6,
       startColumn: 19
     },
+    'id-regex-console': {
+      fetchParams: {
+        url: `${dbUrl}_find`,
+        method: 'POST',
+        body: {
+          selector: { _id: { '$regex': '' } },
+          limit: 50000000
+        }
+      },
+      fn: function parse (response) {
+        // tip: chrome dev tools, right-click on logged object, store as global variable
+        const docs = response.docs
+        console.log(docs)
+      },
+      startRow: 6,
+      startColumn: 19
+    },
     'all-docs': {
       fetchParams: {
         url: `${dbUrl}_all_docs`,
@@ -116,6 +133,39 @@ export function getAllQueries (dbUrl) {
       },
       startRow: 5,
       startColumn: 25
+    },
+    'and': {
+      fetchParams: {
+        url: `${dbUrl}_find`,
+        method: 'POST',
+        body: {
+          selector: {
+            '$and': [
+              {
+                status: {
+                  '$eq': 'accepted'
+                }
+              },
+              {
+                programId: {
+                  '$eq': 'program:hiv-aids'
+                }
+              }
+            ]
+          },
+          limit: DEFAULT_LIMIT
+        }
+      },
+      fn: function parse (response) {
+        // tip: chrome dev tools, right-click on logged object, store as global variable
+        const docs = response.docs
+        console.log(docs)
+        // tip: if crashing your browser with large response results, return null
+        // and look in the console instead
+        return docs
+      },
+      startRow: 6,
+      startColumn: 19
     }
   }
 }
