@@ -1,4 +1,5 @@
 const DEFAULT_LIMIT = 2000
+const DEFAULT_LARGE_LIMIT = 50000000
 
 export function getAllQueries (dbUrl) {
   return {
@@ -28,7 +29,7 @@ export function getAllQueries (dbUrl) {
         method: 'POST',
         body: {
           selector: { _id: { '$regex': '' } },
-          limit: 50000000
+          limit: DEFAULT_LARGE_LIMIT
         }
       },
       fn: function parse (response) {
@@ -82,20 +83,25 @@ export function getAllQueries (dbUrl) {
     },
     'conflicts': {
       fetchParams: {
-        url: `${dbUrl}_all_docs`,
-        method: 'GET',
-        params: {
-          include_docs: true,
-          conflicts: true
+        url: `${dbUrl}_find`,
+        method: 'POST',
+        body: {
+          selector: { _conflicts: { '$exists': true } },
+          conflicts: true,
+          fields: ['_id', '_conflicts'],
+          limit: DEFAULT_LARGE_LIMIT
         }
       },
       fn: function parse (response) {
-        const docs = response.rows.filter(row => row.doc._conflicts)
+        // tip: chrome dev tools, right-click on logged object, store as global variable
+        const docs = response.docs
         console.log(docs)
-        return docs.length
+        // tip: if crashing your browser with large response results, return null
+        // and look in the console instead
+        return `number conflicts found: ${docs.length}`
       },
-      startRow: 5,
-      startColumn: 25
+      startRow: 6,
+      startColumn: 19
     },
     'keys-search': {
       fetchParams: {
