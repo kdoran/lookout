@@ -61,6 +61,8 @@ export default class UserContainer extends React.Component {
         try {
           // Just pushes the password with the exact username to the config admin doc
           await fetcher.put(url, firstPassword)
+          window.alert('Succesfully changed password')
+          window.location.reload()
         } catch (err) { this.setState({err}) }
       } else {
         // For non-admin users with doc
@@ -71,7 +73,11 @@ export default class UserContainer extends React.Component {
           roles: [],
           password: firstPassword
         }
-        fetcher.dbPut(couchUrl, dbName, resource, payload).catch(err => this.setState(err))
+        try {
+          fetcher.dbPut(couchUrl, dbName, resource, payload)
+          window.alert('Succesfully changed password')
+          window.location.reload()
+        } catch (err) { this.setState({err}) }
       }
     }
 
