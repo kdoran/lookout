@@ -10,6 +10,7 @@ import ConfigContainer from './containers/ConfigContainer'
 import AdminContainer from './containers/AdminContainer'
 import EditDocContainer from './containers/EditDocContainer'
 import QueryContainer from './containers/QueryContainer'
+import UserContainer from './containers/UserContainer'
 import Nav from './components/Nav'
 import Login from './components/Login'
 import Loading from './components/Loading'
@@ -71,6 +72,7 @@ class UserRoutes extends Component {
               <Route exact path='/:couch/_node/nonode@nohost/_config' component={withParams(ConfigContainer)} />
               <Route path='/:couch/:dbName/query/:queryId/:queryString' component={withParams(QueryContainer)} />
               <Route path='/:couch/:dbName/query/:queryId' component={withParams(QueryContainer)} />
+              <Route exact path='/:couch/_users/:docId' component={withParams(UserContainer)} />
               <Route path='/:couch/:dbName/:docId/:rev/' component={withParams(DocContainer)} />
               <Route path='/:couch/:dbName/:docId' component={withParams(DocContainer)} />
               <Route path='/:couch/:dbName' component={withParams(DocsContainer)} />
