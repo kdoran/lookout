@@ -7,6 +7,7 @@
     "copy:index": "cp ./index.html dist/index.html && cp ./package.json dist/package.json",
     "build": "webpack && npm run copy:index",
     "test": "standard",
+    "test-api": "webpack-dev-server --config ./webpack.test.config.js --openPage tests.html",
     "travis-deploy-once": "travis-deploy-once",
     "deploy": "node ./scripts/deploy-to-couch",
     "semantic-release": "semantic-release"
@@ -14,6 +15,8 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.18.0",
+    "isomorphic-fetch": "^2.2.1",
+    "lodash": "^4.17.15",
     "protobufjs": "^6.8.8",
     "react": "^16.4.1",
     "react-ace": "^6.1.0",
