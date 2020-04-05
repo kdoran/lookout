@@ -33,7 +33,7 @@ class StoreApi {
       return session
     }
 
-    const user = await this.fetcher(`_users/${session.name}`)
+    const user = await this.fetcher(`_users/org.couchdb.user:${session.name}`)
     this.user = user
     return user
   }

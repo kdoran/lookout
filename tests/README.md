@@ -4,6 +4,8 @@
 export TEST_URL=[couchdburl]
 export TEST_USERNAME=[couchdburl]
 export TEST_PASSWORD=[couchdburl]
+export TEST_ADMIN_USERNAME=[couchdburl]
+export TEST_ADMIN_PASSWORD=[couchdburl]
 npm run test-api
 
 ## src & browser

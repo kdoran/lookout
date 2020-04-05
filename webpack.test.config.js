@@ -24,8 +24,10 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.TEST_URL': JSON.stringify(process.env.TEST_URL || 'http://localhost:5984'),
-      'process.env.TEST_USERNAME': JSON.stringify(process.env.TEST_USERNAME || 'admin'),
-      'process.env.TEST_PASSWORD': JSON.stringify(process.env.TEST_PASSWORD || 'admin')
+      'process.env.TEST_ADMIN_USERNAME': JSON.stringify(process.env.TEST_USERNAME || 'admin'),
+      'process.env.TEST_ADMIN_PASSWORD': JSON.stringify(process.env.TEST_PASSWORD || 'admin'),
+      'process.env.TEST_USERNAME': JSON.stringify(process.env.TEST_USERNAME || 'test'),
+      'process.env.TEST_PASSWORD': JSON.stringify(process.env.TEST_PASSWORD || 'test')
     })
   ]
 }
