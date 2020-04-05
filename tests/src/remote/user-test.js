@@ -37,31 +37,6 @@ test('api constructor non admin login', async t => {
   t.deepEquals(user, currentUser, 'returns current user')
 })
 
-// const api = new Api(url)
-// // returns null if not there
-// let user = await api.getCurrentUser()
-//
-// if (!user) {
-//   // you try/catch this with actual error
-//   user = await api.login(username, password)
-// }
-//
-// const databases = await api.listDatabases()
-//
-// // creates a pouch session if it doesn't exist
-// api.setDatabase(databases[0].name)
-//
-// // raw documents on a database-level (no knowledge of schemas, validation)
-// api.create(docWithId)
-// api.update(fullDocUpdate)
-// api.get(docId)
-// api.list({limit, offset})
-// api.destroy(docId)
-// api.createMany([doc1, doc2])
-// api.destroyMany(docId)
-// api.query(couchFindParams)
-//
-// // deletes remote session
-// api.logout()
-// // closes open pouchdbs but does not logout
-// api.close()
+test('api user teardown', async t => {
+  await api.logout()
+})

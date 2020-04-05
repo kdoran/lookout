@@ -27,7 +27,8 @@ module.exports = {
       'process.env.TEST_ADMIN_USERNAME': JSON.stringify(process.env.TEST_USERNAME || 'admin'),
       'process.env.TEST_ADMIN_PASSWORD': JSON.stringify(process.env.TEST_PASSWORD || 'admin'),
       'process.env.TEST_USERNAME': JSON.stringify(process.env.TEST_USERNAME || 'test'),
-      'process.env.TEST_PASSWORD': JSON.stringify(process.env.TEST_PASSWORD || 'test')
+      'process.env.TEST_PASSWORD': JSON.stringify(process.env.TEST_PASSWORD || 'test'),
+      'process.env.TEST_DATABASE_NAME': JSON.stringify(process.env.TEST_DATABASE_NAME || 'lookout-integration-test')
     })
   ]
 }

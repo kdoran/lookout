@@ -45,6 +45,22 @@ class StoreApi {
     return this.getUserFromSession(session)
   }
 
+  async listDatabases () {
+    return this.fetcher('_all_dbs')
+  }
+
+  async createDatabase (databaseName) {
+    return this.fetcher(databaseName, {method: 'PUT'})
+  }
+
+  async getDatabase (databaseName) {
+    return this.fetcher(databaseName)
+  }
+
+  async destroyDatabase (databaseName) {
+    return this.fetcher(databaseName, {method: 'DELETE'})
+  }
+
   async list (params = {}) {
 
   }
