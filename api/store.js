@@ -1,9 +1,14 @@
 const {getFetch} = require('./get-fetch')
+const {PouchDB} = require('./pouchdb')
 
 class StoreApi {
   constructor (url) {
     this.url = url
     this.fetcher = getFetch({url})
+    this.databases = {}
+    // this will probably change to support node
+    // will have to deal with setDatabase & username/passwords
+    this.PouchDBConstructor = PouchDB.defaults({prefix: url})
   }
 
   async logout () {
@@ -62,7 +67,28 @@ class StoreApi {
   }
 
   async list (params = {}) {
+    const options = Object.assign({}, {include_docs: true}, params)
+    const db = this.getDatabase()
+    const response = await db.allDocs(options)
+    return options.include_docs
+      ? response.rows.map(row => row.doc)
+      : response.rows
+  }
 
+  setDatabase (databaseName) {
+    if (!this.databases[databaseName]) {
+      this.databases[databaseName] = new this.PouchDBConstructor(databaseName)
+    }
+
+    this.currentDatabase = this.databases[databaseName]
+  }
+
+  getDatabase () {
+    if (!this.currentDatabase) {
+      throw new Error('error: store.currentDatabase is not defined, call setDatabase first')
+    }
+
+    return this.currentDatabase
   }
 
   async create () {
