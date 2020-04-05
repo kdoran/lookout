@@ -91,20 +91,65 @@ class StoreApi {
     return this.currentDatabase
   }
 
-  async create () {
+  async create (doc) {
+    if (doc._rev || !doc._id) {
+      throw new Error('crearte expects doc with an _id and without a _rev ')
+    }
 
+    const db = this.getDatabase()
+    await db.put(doc)
+    return this.get(doc._id)
   }
 
-  async get () {
+  createMany (docs) {
+    const db = this.getDatabase()
 
+    docs.forEach(doc => {
+      if (doc._rev || !doc._id) {
+        throw new Error('crearte expects doc with an _id and without a _rev ')
+      }
+    })
+
+    return db.bulkDocs(docs)
   }
 
-  async update () {
-
+  async get (id) {
+    const db = this.getDatabase()
+    return db.get(id)
   }
 
-  async createMany () {
+  async update (doc) {
+    if (!doc._rev || !doc._id) {
+      throw new Error('update expects full doc')
+    }
 
+    const db = this.getDatabase()
+    await db.put(doc)
+    return this.get(doc._id)
+  }
+
+  async destroy (docId) {
+    const db = this.getDatabase()
+    const doc = await this.get(docId)
+    doc._deleted = true
+    return db.put(doc)
+  }
+
+  // heads up: this will fail any doc validation functions
+  // that don't handle _deleted
+  async destroyMany (docs) {
+    const db = this.getDatabase()
+    const deletedDocs = docs.map(doc => {
+      const {_id, _rev} = doc
+      return {_id, _rev, _deleted: true}
+    })
+
+    return db.bulkDocs(deletedDocs)
+  }
+
+  query (params) {
+    const db = this.getDatabase()
+    return db.find(params)
   }
 }
 
