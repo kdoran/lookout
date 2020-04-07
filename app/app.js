@@ -38,17 +38,22 @@ class UserRoutes extends Component {
   async componentDidMount () {
     const { couchUrl } = this.state
     const { userCtx } = await fetcher.checkSession(couchUrl)
-    if (userCtx.name || userCtx.roles.length) {
-      this.onAuthenticated(userCtx)
+    const authenticated = userCtx.name || userCtx.roles.includes('_admin')
+
+    if (!authenticated) {
+      this.setState({loading: false})
+      return
     }
 
-    const dbs = await fetcher.get(`${couchUrl}_all_dbs`, { limit: LIMIT })
-    this.setState({ loading: false, dbs })
+    this.onAuthenticated(userCtx)
   }
 
-  onAuthenticated = (userCtx) => {
+  // TODO: this cache object was never used much
+  onAuthenticated = async (userCtx) => {
+    const { couchUrl } = this.state
     Object.assign(cache.userCtx, userCtx)
-    this.setState({ authenticated: true })
+    const dbs = await fetcher.get(`${couchUrl}_all_dbs`, { limit: LIMIT })
+    this.setState({ loading: false, dbs, authenticated: true })
   }
 
   render () {
