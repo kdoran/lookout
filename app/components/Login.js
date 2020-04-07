@@ -26,7 +26,7 @@ export default class LoginContainer extends React.Component {
         <div>{couchUrl} <Link to='/'>change couch</Link></div>
         <input autoFocus type='text' ref='username' /> <br />
         <input type='password' ref='password' />
-        {error && <pre className='error'>{JSON.stringify(error, null, 2)}</pre>} <br />
+        {error && <pre className='error'>{error.message ? error.message : JSON.stringify(error, null, 2)}</pre>} <br />
         <button disabled={loading} type='submit'>{loading ? 'Loading...' : 'Submit'}</button> <br />
       </form>
     )
