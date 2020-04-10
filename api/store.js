@@ -68,7 +68,7 @@ class StoreApi {
 
   async list (params = {}) {
     const options = Object.assign({}, {include_docs: true}, params)
-    const db = this.getDatabase()
+    const db = this.getCurrentDatabase()
     const response = await db.allDocs(options)
     return options.include_docs
       ? response.rows.map(row => row.doc)
@@ -83,7 +83,7 @@ class StoreApi {
     this.currentDatabase = this.databases[databaseName]
   }
 
-  getDatabase () {
+  getCurrentDatabase () {
     if (!this.currentDatabase) {
       throw new Error('error: store.currentDatabase is not defined, call setDatabase first')
     }
@@ -96,13 +96,13 @@ class StoreApi {
       throw new Error('crearte expects doc with an _id and without a _rev ')
     }
 
-    const db = this.getDatabase()
+    const db = this.getCurrentDatabase()
     await db.put(doc)
     return this.get(doc._id)
   }
 
   createMany (docs) {
-    const db = this.getDatabase()
+    const db = this.getCurrentDatabase()
 
     docs.forEach(doc => {
       if (doc._rev || !doc._id) {
@@ -114,7 +114,7 @@ class StoreApi {
   }
 
   async get (id) {
-    const db = this.getDatabase()
+    const db = this.getCurrentDatabase()
     return db.get(id)
   }
 
@@ -123,13 +123,13 @@ class StoreApi {
       throw new Error('update expects full doc')
     }
 
-    const db = this.getDatabase()
+    const db = this.getCurrentDatabase()
     await db.put(doc)
     return this.get(doc._id)
   }
 
   async destroy (docId) {
-    const db = this.getDatabase()
+    const db = this.getCurrentDatabase()
     const doc = await this.get(docId)
     doc._deleted = true
     return db.put(doc)
@@ -138,7 +138,7 @@ class StoreApi {
   // heads up: this will fail any doc validation functions
   // that don't handle _deleted
   async destroyMany (docs) {
-    const db = this.getDatabase()
+    const db = this.getCurrentDatabase()
     const deletedDocs = docs.map(doc => {
       const {_id, _rev} = doc
       return {_id, _rev, _deleted: true}
@@ -148,7 +148,7 @@ class StoreApi {
   }
 
   query (params) {
-    const db = this.getDatabase()
+    const db = this.getCurrentDatabase()
     return db.find(params)
   }
 }

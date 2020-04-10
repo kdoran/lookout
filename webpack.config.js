@@ -41,7 +41,8 @@ module.exports = {
   devServer: {
     hot: true,
     port: 8080,
-    clientLogLevel: 'none'
+    clientLogLevel: 'none',
+    open: true
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin()
