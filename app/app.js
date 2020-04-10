@@ -17,6 +17,7 @@ import withParams from './containers/withParams'
 import cache from './utils/cache'
 import { parseUrl } from './utils/utils'
 import fetcher from 'utils/fetcher'
+import WelcomeContainer from './containers/WelcomeContainer'
 
 import 'app-classes.css'
 import 'app-tags.css'
@@ -83,6 +84,7 @@ class UserRoutes extends Component {
             </Switch>
           </div>
           <Route path='/:couch/:dbName?/:docId?' render={props => (<Nav {...props} dbs={dbs} userCtx={cache.userCtx} />)} />
+
         </div>
       )
     }
@@ -96,6 +98,7 @@ class App extends Component {
         <div>
           <Route exact path='/' component={SetupCouchContainer} />
           <Route path='/:couch/' component={UserRoutes} />
+          <Route path='/Welcome' component={Welcome} />
         </div>
       </Router>
     )
