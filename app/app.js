@@ -14,7 +14,6 @@ import Nav from './components/Nav'
 import Login from './components/Login'
 import Loading from './components/Loading'
 import withParams from './containers/withParams'
-import cache from './utils/cache'
 import { parseUrl } from './utils/utils'
 import fetcher from 'utils/fetcher'
 
@@ -24,11 +23,11 @@ import 'app-tags.css'
 const Databases = withParams(DatabasesContainer)
 const LIMIT = 100
 
-class UserRoutes extends Component {
+class CouchRoutes extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      authenticated: !!cache.userCtx.name,
+      userCtx: null,
       loading: true,
       couchUrl: parseUrl(props.match.params.couch),
       dbs: null
@@ -45,47 +44,44 @@ class UserRoutes extends Component {
       return
     }
 
-    this.onAuthenticated(userCtx)
+    this.onUser(userCtx)
   }
 
   // TODO: this cache object was never used much
-  onAuthenticated = async (userCtx) => {
+  onUser = async (userCtx) => {
     const { couchUrl } = this.state
-    Object.assign(cache.userCtx, userCtx)
     const dbs = await fetcher.get(`${couchUrl}_all_dbs`, { limit: LIMIT })
-    this.setState({ loading: false, dbs, authenticated: true })
+    this.setState({ loading: false, dbs, userCtx })
   }
 
   render () {
-    const { authenticated, loading, couchUrl, dbs } = this.state
-    if (loading) {
-      return <Loading />
-    }
-    if (!authenticated) {
-      return <Login couchUrl={couchUrl} onAuthenticated={this.onAuthenticated} />
-    } else {
-      return (
-        <div>
-          <div className='page'>
-            <Switch>
-              <Route path='/:couch/:dbName/:docId/editing' component={withParams(EditDocContainer)} />
-              <Route exact path='/:couch/:dbName/query' component={withParams(QueryContainer)} />
-              <Route exact path='/:couch/_node/couchdb@localhost/_config/admins' component={withParams(AdminContainer)} />
-              <Route exact path='/:couch/_node/nonode@nohost/_config/admins' component={withParams(AdminContainer)} />
-              <Route exact path='/:couch/_node/couchdb@localhost/_config' component={withParams(ConfigContainer)} />
-              <Route exact path='/:couch/_node/nonode@nohost/_config' component={withParams(ConfigContainer)} />
-              <Route path='/:couch/:dbName/query/:queryId/:queryString' component={withParams(QueryContainer)} />
-              <Route path='/:couch/:dbName/query/:queryId' component={withParams(QueryContainer)} />
-              <Route path='/:couch/:dbName/:docId/:rev/' component={withParams(DocContainer)} />
-              <Route path='/:couch/:dbName/:docId' component={withParams(DocContainer)} />
-              <Route path='/:couch/:dbName' component={withParams(DocsContainer)} />
-              <Route path='/:couch/' component={props => <Databases {...props} dbs={dbs} />} />
-            </Switch>
-          </div>
-          <Route path='/:couch/:dbName?/:docId?' render={props => (<Nav {...props} dbs={dbs} userCtx={cache.userCtx} />)} />
+    const { userCtx, loading, couchUrl, dbs } = this.state
+
+    if (loading) return <Loading />
+
+    if (!userCtx) return <Login couchUrl={couchUrl} onUser={this.onUser} />
+
+    return (
+      <div>
+        <div className='page'>
+          <Switch>
+            <Route path='/:couch/:dbName/:docId/editing' component={withParams(EditDocContainer)} />
+            <Route exact path='/:couch/:dbName/query' component={withParams(QueryContainer)} />
+            <Route exact path='/:couch/_node/couchdb@localhost/_config/admins' component={withParams(AdminContainer)} />
+            <Route exact path='/:couch/_node/nonode@nohost/_config/admins' component={withParams(AdminContainer)} />
+            <Route exact path='/:couch/_node/couchdb@localhost/_config' component={withParams(ConfigContainer)} />
+            <Route exact path='/:couch/_node/nonode@nohost/_config' component={withParams(ConfigContainer)} />
+            <Route path='/:couch/:dbName/query/:queryId/:queryString' component={withParams(QueryContainer)} />
+            <Route path='/:couch/:dbName/query/:queryId' component={withParams(QueryContainer)} />
+            <Route path='/:couch/:dbName/:docId/:rev/' component={withParams(DocContainer)} />
+            <Route path='/:couch/:dbName/:docId' component={withParams(DocContainer)} />
+            <Route path='/:couch/:dbName' component={withParams(DocsContainer)} />
+            <Route path='/:couch/' component={props => <Databases {...props} dbs={dbs} />} />
+          </Switch>
         </div>
-      )
-    }
+        <Route path='/:couch/:dbName?/:docId?' render={props => (<Nav {...props} dbs={dbs} userCtx={userCtx} />)} />
+      </div>
+    )
   }
 }
 
@@ -95,7 +91,7 @@ class App extends Component {
       <Router>
         <div>
           <Route exact path='/' component={SetupCouchContainer} />
-          <Route path='/:couch/' component={UserRoutes} />
+          <Route path='/:couch/' component={CouchRoutes} />
         </div>
       </Router>
     )

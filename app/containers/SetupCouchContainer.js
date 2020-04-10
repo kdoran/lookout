@@ -2,9 +2,8 @@ import React from 'react'
 import fetcher from 'utils/fetcher'
 import localStorager from 'utils/localstorager'
 import {parseUrl} from 'utils/utils'
-import cache from '../utils/cache'
 
-export default class extends React.Component {
+export default class SetupCouchContainer extends React.Component {
   constructor () {
     super()
     let recentCouches = localStorager.getRecent('couchurls').sort()
@@ -22,9 +21,9 @@ export default class extends React.Component {
     this.setState({inputUrl})
     this.setState({ loading: true })
     try {
-      const { userCtx } = await fetcher.checkSession(inputUrl)
+      // is the couch reachable?
+      await fetcher.get(inputUrl)
       localStorager.saveRecent('couchurls', inputUrl)
-      Object.assign(cache.userCtx, userCtx)
       this.props.history.push(inputUrl.split('//')[1])
     } catch (error) {
       this.setState({ error: error.toString(), loading: false })
@@ -44,6 +43,7 @@ export default class extends React.Component {
 
   render () {
     const { inputUrl, recentCouches, error, loading } = this.state
+
     return (
       <form onSubmit={this.onSubmit}>
         <h1>CouchDB Lookout: Select Couch Server</h1>
@@ -67,7 +67,7 @@ export default class extends React.Component {
             <br /><br />
             {recentCouches.map(url => (
               <div key={url}>
-                &nbsp; <a href='javascript:void(0)' onClick={() => this.onCouchClick(url)}>
+                &nbsp; <a href='#' onClick={(e) => { e.preventDefault(); this.onCouchClick(url) }}>
                   {url}
                 </a>
                 <br /><br />

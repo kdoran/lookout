@@ -11,7 +11,7 @@ export default class LoginContainer extends React.Component {
     this.setState({ loading: true })
     try {
       const response = await fetcher.login(couchUrl, this.refs.username.value, this.refs.password.value)
-      this.props.onAuthenticated(response)
+      this.props.onUser(response)
     } catch (error) {
       this.setState({ error, loading: false })
     }
