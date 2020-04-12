@@ -75,6 +75,20 @@ class RemoteCouchApi {
     return this.fetcher('_all_dbs')
   }
 
+  async listInfos (keys) {
+    try {
+      const response = await this.fetcher('_dbs_info', {method: 'POST', body: JSON.stringify({keys})})
+      return response
+    } catch (error) {
+      if (error.status !== 404) throw error
+
+      const promises = keys.map(dbName => this.getDatabase(dbName))
+      const response = await Promise.all(promises)
+      // make same shape as _dbs_info
+      return response.map((info, index) => ({key: keys[index], info}))
+    }
+  }
+
   async createDatabase (databaseName) {
     return this.fetcher(databaseName, {method: 'PUT'})
   }

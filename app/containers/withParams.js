@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { parseUrl, getParams } from 'utils/utils'
 
-export default function withParams (WrappedComponent) {
+export default function withParams (WrappedComponent, api, db) {
   class withParamsWrapper extends Component {
     render () {
       const { params: { dbName, couch } } = this.props.match
@@ -16,6 +16,8 @@ export default function withParams (WrappedComponent) {
           dbName={dbName}
           dbUrl={`${couchUrl}${dbName}/`}
           searchParams={searchParams}
+          api={api}
+          db={db}
           {...this.props}
         />
       )

@@ -21,8 +21,9 @@ export default class SetupCouchContainer extends React.Component {
     this.setState({inputUrl})
     this.setState({ loading: true })
     try {
-      // is the couch reachable?
-      await fetcher.get(inputUrl)
+      // is the couch reachable? (using session because '/' is sometimes nginxed
+      // to a non-couch resource)
+      await fetcher.get(inputUrl + '_session')
       localStorager.saveRecent('couchurls', inputUrl)
       this.props.history.push(inputUrl.split('//')[1])
     } catch (error) {
