@@ -1,3 +1,3 @@
-const {StoreApi} = require('./store')
+const {RemoteCouchApi} = require('./remote-couch-api')
 
-module.exports = {StoreApi}
+module.exports = {RemoteCouchApi}

@@ -18,6 +18,7 @@ function smalltest (name, func) {
         const {name, func} = testsToRun[i]
         await runTest(name, func)
       }
+      console.log('done running tests?')
     }, 10)
   }
 }

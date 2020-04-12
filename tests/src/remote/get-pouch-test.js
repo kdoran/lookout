@@ -13,23 +13,18 @@ test('api databases setup', async t => {
   }
 })
 
-test('api databases list', async t => {
-  const databases = await api.listDatabases()
-  t.ok(databases.length, 'returns databases')
-})
-
-test('api databases list', async t => {
-  await api.createDatabase(process.env.TEST_DATABASE_NAME)
-  const response = await api.getDatabase(process.env.TEST_DATABASE_NAME)
-  t.ok(response, 'creates and returns a database')
+test('api get pouch test', async t => {
+  const pouch = api.getPouchInstance(process.env.TEST_DATABASE_NAME)
+  console.log(pouch)
+  const response = await pouch.allDocs()
+  t.ok(Array.isArray(response.rows), 'runs a pouch call')
+  await pouch.destroy()
 })
 
 test('api databases teardown / destroy', async t => {
-  await api.destroyDatabase(process.env.TEST_DATABASE_NAME)
   try {
-    await api.getDatabase(process.env.TEST_DATABASE_NAME)
-    t.fail()
+    await api.destroyDatabase(process.env.TEST_DATABASE_NAME)
   } catch (error) {
-    t.ok(error, 'destroys database')
+    
   }
 })

@@ -1,7 +1,7 @@
 const test = require('../../smalltest')
-const {StoreApi} = require('../../../api')
+const {RemoteCouchApi} = require('../../../api')
 
-const api = new StoreApi(process.env.TEST_URL)
+const api = new RemoteCouchApi(process.env.TEST_URL)
 
 test('api test getCurrentUser on empty', async t => {
   await api.logout()
