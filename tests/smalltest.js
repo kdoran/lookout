@@ -14,7 +14,7 @@ function smalltest (name, func) {
 
   if (!started) {
     started = setTimeout(async () => {
-      for (i = 0; i < testsToRun.length; i++) {
+      for (let i = 0; i < testsToRun.length; i++) {
         const {name, func} = testsToRun[i]
         await runTest(name, func)
       }
@@ -36,7 +36,7 @@ function runTest (name, func) {
     },
     ok: (a, message = '') => console.assert(a, `${name} ok ${message}`),
     notOk: (a, message = '') => console.assert(!a, `${name} not ok ${message}`),
-    fail: (message = '') => console.assert(false, `${name} fail ${message}`),
+    fail: (message = '') => console.assert(false, `${name} fail ${message}`)
   }
 
   const result = func(testTypes)

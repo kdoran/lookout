@@ -1,3 +1,4 @@
+/* global btoa */
 const isomorphicFetch = require('isomorphic-fetch')
 
 function getFetch ({url, username, password, fetch = isomorphicFetch}) {

@@ -38,8 +38,7 @@ export default class AdminContainer extends React.Component {
 
   onSubmitNewAdmin = async event => {
     event.preventDefault()
-    const {couch} = this.props
-    const {adminName, docId, adminConfig, adminPassword} = this.state
+    const {adminName, adminPassword} = this.state
     if (!adminName || !adminPassword) {
       window.alert('admin name and password required')
       return

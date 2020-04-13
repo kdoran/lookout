@@ -11,7 +11,7 @@ test('api test getCurrentUser on empty', async t => {
 
 test('api admin login', async t => {
   try {
-    const user = await api.login()
+    await api.login()
     t.fail()
   } catch (error) {
     t.ok(error, 'fails without credentials')
@@ -25,7 +25,7 @@ test('api admin login', async t => {
 
 test('api constructor non admin login', async t => {
   try {
-    const user = await api.login()
+    await api.login()
     t.fail()
   } catch (error) {
     t.ok(error, 'fails without credentials')

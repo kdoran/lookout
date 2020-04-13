@@ -25,6 +25,6 @@ test('api databases teardown / destroy', async t => {
   try {
     await api.destroyDatabase(process.env.TEST_DATABASE_NAME)
   } catch (error) {
-    
+
   }
 })

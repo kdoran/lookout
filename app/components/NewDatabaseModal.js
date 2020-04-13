@@ -19,7 +19,6 @@ export default class NewDatabaseModal extends React.Component {
   onSubmit = async (e) => {
     e.preventDefault()
     const { inputText, validDBName } = this.state
-    const { couchUrl, history } = this.props
     if (validDBName) {
       this.props.onCreateDatabase(inputText)
     }

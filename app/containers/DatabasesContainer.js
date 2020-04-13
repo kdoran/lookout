@@ -24,8 +24,7 @@ export default class extends React.Component {
   }
 
   componentDidUpdate (prevProps) {
-    if (prevProps.couchUrl !== this.props.couchUrl)
-    this.fetchInfos()
+    if (prevProps.couchUrl !== this.props.couchUrl) { this.fetchInfos() }
   }
 
   fetchInfos = async () => {
@@ -51,7 +50,7 @@ export default class extends React.Component {
   }
 
   render () {
-    const { couchUrl, couch, history } = this.props
+    const { couchUrl, couch } = this.props
     const { loaded, error, infos, dbs, showNewDBModal } = this.state
 
     return (

@@ -24,7 +24,7 @@ function getPage () {
 const header = document.getElementById('page-header')
 header.innerHTML = (page === 'api') ? 'api' : `Tests: ${page}`
 
-function requireAll(r) { r.keys().forEach(r) }
+function requireAll (r) { r.keys().forEach(r) }
 
 if (page === 'all') {
   console.log('Running all tests')
@@ -65,7 +65,6 @@ if (page === 'all') {
 //     window.api is an initialized api instance, so things like await api.form.list() should work
 //   `)
 // }
-
 
 const browserTests = require
   .context('./src/browser', true, /-test\.js$/).keys().map(key => `/browser${key}`)

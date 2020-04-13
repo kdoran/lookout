@@ -49,7 +49,6 @@ export default class SearchContainer extends React.Component {
   debouncedSearch = debounce(string => this.search(string))
 
   fetcher (db, text, limit = 10) {
-    const {couchUrl} = this.props
     const body = {
       selector: {
         _id: {

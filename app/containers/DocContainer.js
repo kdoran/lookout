@@ -31,11 +31,11 @@ export default class extends React.Component {
   componentDidUpdate (prevProps) {
     const {dbUrl, docId, searchParams: {offset}} = this.props
     const {match: {params: {rev}}} = this.props
-    if (prevProps.dbUrl !== dbUrl
-        || prevProps.searchParams.offset !== offset
-        || prevProps.docId !== docId
-        || prevProps.match.params.rev !== rev
-      ) {
+    if (prevProps.dbUrl !== dbUrl ||
+        prevProps.searchParams.offset !== offset ||
+        prevProps.docId !== docId ||
+        prevProps.match.params.rev !== rev
+    ) {
       this.load()
     }
   }
@@ -48,7 +48,7 @@ export default class extends React.Component {
       // _revs_info & _conflicts are not returned if rev option is present,
       // so we always fetch those and if there's a rev url param, get the specific rev
       let doc = await pouchDB.get(docId, {revs_info: true, conflicts: true})
-      const {_revs_info, _conflicts} = doc
+      const {_revs_info, _conflicts} = doc // eslint-disable-line
       delete doc._revs_info
       delete doc._conflicts
       if (rev) {
@@ -81,7 +81,7 @@ export default class extends React.Component {
   render () {
     const { rev } = this.props.match.params
     const { couchUrl, dbName, couch } = this.props
-    const { loaded, error, doc, _revs_info, _conflicts, docId } = this.state
+    const { loaded, error, doc, _revs_info, _conflicts, docId } = this.state // eslint-disable-line
 
     return (
       <div>
@@ -104,32 +104,32 @@ export default class extends React.Component {
             <pre>
               {JSON.stringify(doc, null, 2)}
             </pre>
-              <span>
-                <h5>Rev Links</h5>
-                {_revs_info && _revs_info.map(row => (
-                  <div key={row.rev}>
-                    <span>
-                      {(row.status === 'available' && (row.rev !== doc._rev))
-                        ? (
-                          <Link to={`/${couch}/${dbName}/${docId}/${row.rev}/`}>
-                            {row.rev}
-                          </Link>
-                        )
-                        : row.rev
-                      }
-                    </span>
-                    <span>
+            <span>
+              <h5>Rev Links</h5>
+              {_revs_info && _revs_info.map(row => ( // eslint-disable-line
+                <div key={row.rev}>
+                  <span>
+                    {(row.status === 'available' && (row.rev !== doc._rev))
+                      ? (
+                        <Link to={`/${couch}/${dbName}/${docId}/${row.rev}/`}>
+                          {row.rev}
+                        </Link>
+                      )
+                      : row.rev
+                    }
+                  </span>
+                  <span>
                       &nbsp; ({(row.rev === doc._rev) ? 'viewing' : row.status})
-                    </span>
-                  </div>
-                ))}
-                {_conflicts && _conflicts.length ? (
-                  <div>
-                    <h5>Conflicts</h5>
-                    {JSON.stringify(_conflicts, null, 2)}
-                  </div>
-                ) : <h5>No Conflicts Found.</h5>}
-              </span>
+                  </span>
+                </div>
+              ))}
+              {_conflicts && _conflicts.length ? (
+                <div>
+                  <h5>Conflicts</h5>
+                  {JSON.stringify(_conflicts, null, 2)}
+                </div>
+              ) : <h5>No Conflicts Found.</h5>}
+            </span>
           </div>
         )}
       </div>

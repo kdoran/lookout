@@ -23,8 +23,6 @@ import 'app-tags.css'
 // 2. CouchRoutes = routes for "we have couch URL but not a specific database."
 // 3. OnDatabaseRoutes = we have a couch url and a specific datbase
 
-const LIMIT = 100
-
 class OnDatabaseRoutes extends Component {
   constructor (props) {
     super(props)

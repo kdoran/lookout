@@ -29,16 +29,15 @@ export default class EditDocContainer extends React.Component {
 
   componentDidUpdate (prevProps) {
     const {dbUrl, match: {params: {docId}}, searchParams: {offset}} = this.props
-    if (prevProps.dbUrl !== dbUrl
-        || prevProps.searchParams.offset !== offset
-        || prevProps.match.params.docId !== docId
-      ) {
+    if (prevProps.dbUrl !== dbUrl ||
+        prevProps.searchParams.offset !== offset ||
+        prevProps.match.params.docId !== docId
+    ) {
       this.load()
     }
   }
 
   load = async () => {
-    const { couchUrl, dbName } = this.props
     const { docId, isNew } = this.state
 
     if (isNew) {
@@ -69,7 +68,7 @@ export default class EditDocContainer extends React.Component {
   }
 
   onSubmit = async () => {
-    const { couchUrl, dbName, couch } = this.props
+    const { dbName, couch } = this.props
     const { input, isNew } = this.state
     this.setState({saving: true})
     const jsObjectInput = JSON.parse(input)

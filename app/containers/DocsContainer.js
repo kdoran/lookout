@@ -31,7 +31,7 @@ export default class extends React.Component {
   }
 
   load = async () => {
-    const { dbName, couchUrl, searchParams: { offset = 0 } } = this.props
+    const { searchParams: { offset = 0 } } = this.props
     this.setState({ loaded: false })
 
     try {
