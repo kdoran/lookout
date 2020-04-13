@@ -1,7 +1,7 @@
 import React from 'react'
 import keyBy from 'lodash/keyBy'
 import Loading from 'components/Loading'
-import NewDatabaseContainer from 'containers/NewDatabaseContainer'
+import NewDatabaseModal from 'components/NewDatabaseModal'
 import Error from 'components/Error'
 import { Link } from 'react-router-dom'
 import AllowEditButton from 'components/AllowEditButton'
@@ -37,6 +37,17 @@ export default class extends React.Component {
     const infosResponse = await this.props.api.listInfos(dbs)
     const infos = keyBy(infosResponse, 'key')
     this.setState({loaded: true, infos})
+  }
+
+  createDatabase = async (dbName) => {
+    const {api, history, couch} = this.props
+    try {
+      await api.createDatabase(dbName)
+      window.alert(`Created database ${dbName}`)
+      history.push(`/${couch}/${dbName}`)
+    } catch (error) {
+      this.setState({ error })
+    }
   }
 
   render () {
@@ -102,10 +113,9 @@ export default class extends React.Component {
             >
             New Database
             </AllowEditButton>
-            <NewDatabaseContainer
-              couchUrl={couchUrl}
-              history={history}
+            <NewDatabaseModal
               onClose={() => this.setState({ showNewDBModal: false })}
+              onCreateDatabase={this.createDatabase}
               show={showNewDBModal}
             />
           </div>
