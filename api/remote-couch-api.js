@@ -14,16 +14,6 @@ class RemoteCouchApi {
     this.databases = {}
   }
 
-  // TODO: user stuff in its own class that this one extends,
-  // probably will need a base "remote couch interface" class
-  // RemoteCouchAPI
-  //  constructor: (url, username, password) {this = those things}
-  // UserCouchApi extends RemoteCouchAPI
-  // RemoteCouchApi extends UserCouchApi
-  // OR this.currentUser = new UserCouchApi(url)
-  // this.currentUser.get()
-  // this.currentUser.login()
-  // this.currentUser.logout()
   async logout () {
     await this.fetcher('_session', {method: 'DELETE'})
     this.user = null
