@@ -167,7 +167,7 @@ class CouchRoutes extends Component {
             />
             <Route
               exact
-              path='/:couch/_node/couchdb@localhost/_config'
+              path='/:couch/view-config'
               render={props => (<ConfigContainer {...props} {...commonProps} />)}
             />
             <Route

@@ -1,5 +1,4 @@
 import React from 'react'
-import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
 import Error from 'components/Error'
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -17,16 +16,20 @@ export default class ConfigContainer extends React.Component {
     resp: {}
   }
 
-  static getDerivedStateFromProps (nextProps, prevState) {
-    const docId = decodeURIComponent(nextProps.match.path.split('/:couch/')[1])
-    return { ...prevState, docId }
+  componentDidMount () {
+    this.load()
   }
 
-  async componentDidMount () {
-    const { couchUrl } = this.props
-    const { docId } = this.state
+  componentDidUpdate (newProps) {
+    const {dbUrl, searchParams: {offset}} = this.props
+    if (newProps.dbUrl !== dbUrl || newProps.searchParams.offset !== offset) {
+      this.load()
+    }
+  }
+
+  load = async () => {
     try {
-      const resp = await fetcher.get(`${couchUrl}${docId}`)
+      const resp = await this.props.api.getConfig()
       const sections = []
       let rows
       for (let prop in resp) {
@@ -51,7 +54,7 @@ export default class ConfigContainer extends React.Component {
   download = event => {
     event.preventDefault()
     const { couch } = this.props
-    downloadJSON(this.state.resp, `${couch}-config.json`)
+    downloadJSON(this.state.resp, `${couch}-config`)
   }
 
   render () {

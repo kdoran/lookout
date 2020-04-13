@@ -86,7 +86,7 @@ export default class extends React.Component {
               </thead>
               <tbody>
                 <tr>
-                  <td><Link to={couch.startsWith('localhost:') ? `/${couch}/_node/couchdb@localhost/_config` : `/${couch}/_node/nonode@nohost/_config`}>_config</Link></td>
+                  <td><Link to={`/${couch}/view-config`}>config</Link></td>
                 </tr>
                 <tr>
                   <td><Link to={`/${couch}/view-admins`}>admin</Link></td>

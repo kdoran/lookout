@@ -69,6 +69,10 @@ class RemoteCouchApi {
       : `_node/nonode@nohost/_config`
   }
 
+  async getConfig () {
+    return this.fetcher(`${this.getConfigUrl()}`)
+  }
+
   async getAdminConfig () {
     return this.fetcher(`${this.getConfigUrl()}/admins`)
   }
