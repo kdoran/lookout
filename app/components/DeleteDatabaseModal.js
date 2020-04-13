@@ -1,6 +1,5 @@
 import React from 'react'
 import Modal from 'components/Modal'
-import fetcher from 'utils/fetcher'
 
 export default class DeleteDatabaseModal extends React.Component {
   state = { dbNameConfirmed: false, inputText: '' }

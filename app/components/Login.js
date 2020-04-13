@@ -1,5 +1,4 @@
 import React from 'react'
-import fetcher from 'utils/fetcher'
 import {Link} from 'react-router-dom'
 
 export default class LoginContainer extends React.Component {
