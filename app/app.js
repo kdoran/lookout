@@ -44,7 +44,9 @@ class OnDatabaseRoutes extends Component {
   }
 
   setupDatabase = async (dbName) => {
-    this.currentDB = this.props.api.getPouchInstance(dbName)
+    this.pouchDB = this.props.api.getPouchInstance(dbName)
+    window.pouchDB = this.pouchDB
+    console.log(`${dbName} available in console as window.pouchDB`)
     this.setState({loading: false})
   }
 
@@ -55,9 +57,11 @@ class OnDatabaseRoutes extends Component {
     const commonProps = {
       dbUrl: `${couchUrl}${dbName}/`,
       dbName,
-      db: this.currentDB,
+      pouchDB: this.pouchDB,
       ...this.props
     }
+
+    if (!commonProps.pouchDB) return null
 
     return (
       <div>
@@ -126,6 +130,13 @@ class CouchRoutes extends Component {
   setupCouch = async (couch) => {
     const couchUrl = parseUrl(couch)
     this.api = new RemoteCouchApi(couchUrl)
+    window.api = this.api
+    console.log(`
+      remote couch api on ${couchUrl} available in console as window.api,
+      api.PouchDBConstructor is pouch constructor with couchUrl prefix
+      api.GenericPouchDB is Pouch constructor without prefix
+    `)
+
     const user = await this.api.getCurrentUser()
     this.setState({loading: false, user})
   }

@@ -1,5 +1,4 @@
 import React from 'react'
-import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
 import Error from 'components/Error'
 import AllowEditButton from 'components/AllowEditButton'
@@ -15,7 +14,8 @@ export default class extends React.Component {
     doc: null,
     loaded: false,
     error: null,
-    meta: null,
+    _revs_info: [],
+    _conflicts: [],
     docId: null
   }
 
@@ -24,15 +24,37 @@ export default class extends React.Component {
     return { ...prevState, docId }
   }
 
-  async componentDidMount () {
-    const { couchUrl, dbName } = this.props
+  componentDidMount () {
+    this.load()
+  }
+
+  componentDidUpdate (newProps) {
+    const {dbUrl, docId, searchParams: {offset}} = this.props
+    const {match: {params: {rev}}} = this.props
+    if (newProps.dbUrl !== dbUrl
+        || newProps.searchParams.offset !== offset
+        || newProps.docId !== docId
+        || newProps.match.params.rev !== rev
+      ) {
+      this.load()
+    }
+  }
+
+  load = async () => {
+    const { pouchDB } = this.props
     const { rev } = this.props.match.params
     const { docId } = this.state
-    const resource = rev ? `${docId}?rev=${rev}` : docId
     try {
-      const doc = await fetcher.dbGet(couchUrl, dbName, resource)
-      const meta = await fetcher.dbGet(couchUrl, dbName, docId, { meta: true })
-      this.setState({ doc, meta, loaded: true })
+      // _revs_info & _conflicts are not returned if rev option is present,
+      // so we always fetch those and if there's a rev url param, get the specific rev
+      let doc = await pouchDB.get(docId, {revs_info: true, conflicts: true})
+      const {_revs_info, _conflicts} = doc
+      delete doc._revs_info
+      delete doc._conflicts
+      if (rev) {
+        doc = await pouchDB.get(docId, {rev})
+      }
+      this.setState({ doc, _revs_info, _conflicts, loaded: true })
     } catch (error) {
       this.setState({ error, loaded: true })
       console.error(error)
@@ -59,7 +81,7 @@ export default class extends React.Component {
   render () {
     const { rev } = this.props.match.params
     const { couchUrl, dbName, couch } = this.props
-    const { loaded, error, doc, meta, docId } = this.state
+    const { loaded, error, doc, _revs_info, _conflicts, docId } = this.state
 
     return (
       <div>
@@ -82,10 +104,9 @@ export default class extends React.Component {
             <pre>
               {JSON.stringify(doc, null, 2)}
             </pre>
-            {meta && meta._revs_info && (
               <span>
                 <h5>Rev Links</h5>
-                {meta._revs_info.map(row => (
+                {_revs_info && _revs_info.map(row => (
                   <div key={row.rev}>
                     <span>
                       {(row.status === 'available' && (row.rev !== doc._rev))
@@ -102,14 +123,13 @@ export default class extends React.Component {
                     </span>
                   </div>
                 ))}
-                {meta._conflicts ? (
+                {_conflicts && _conflicts.length ? (
                   <div>
                     <h5>Conflicts</h5>
-                    {JSON.stringify(meta._conflicts, null, 2)}
+                    {JSON.stringify(_conflicts, null, 2)}
                   </div>
                 ) : <h5>No Conflicts Found.</h5>}
               </span>
-            )}
           </div>
         )}
       </div>
