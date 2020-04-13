@@ -5,7 +5,7 @@ import Error from 'components/Error'
 import Pagination from 'components/Pagination'
 import AllowEditButton from 'components/AllowEditButton'
 import Breadcrumbs from 'components/Breadcrumbs'
-import DeleteDatabaseContainer from 'containers/DeleteDatabaseContainer'
+import DeleteDatabaseModal from 'components/DeleteDatabaseModal'
 import { Link } from 'react-router-dom'
 
 import './docs-container.css'
@@ -49,6 +49,13 @@ export default class extends React.Component {
       this.setState({ error, loaded: true })
       console.error(error)
     }
+  }
+
+  onConfirmDeleteDatabase = async () => {
+    const {couch, dbName} = this.props
+    await this.props.api.destroyDatabase(dbName)
+    window.alert(`Database ${dbName} deleted.`)
+    this.props.history.push(`/${couch}`)
   }
 
   render () {
@@ -115,12 +122,11 @@ export default class extends React.Component {
               >
                 Delete Database
               </AllowEditButton>
-              <DeleteDatabaseContainer
+              <DeleteDatabaseModal
                 couchUrl={couchUrl}
                 dbName={dbName}
-                history={history}
-                couch={couch}
                 onClose={() => this.setState({ showDeleteModal: false })}
+                onConfirm={this.onConfirmDeleteDatabase}
                 show={showDeleteModal}
               />
             </section>

@@ -1,6 +1,5 @@
 import React from 'react'
 import keyBy from 'lodash/keyBy'
-import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
 import NewDatabaseContainer from 'containers/NewDatabaseContainer'
 import Error from 'components/Error'
