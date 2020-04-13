@@ -28,13 +28,13 @@ export default class extends React.Component {
     this.load()
   }
 
-  componentDidUpdate (newProps) {
+  componentDidUpdate (prevProps) {
     const {dbUrl, docId, searchParams: {offset}} = this.props
     const {match: {params: {rev}}} = this.props
-    if (newProps.dbUrl !== dbUrl
-        || newProps.searchParams.offset !== offset
-        || newProps.docId !== docId
-        || newProps.match.params.rev !== rev
+    if (prevProps.dbUrl !== dbUrl
+        || prevProps.searchParams.offset !== offset
+        || prevProps.docId !== docId
+        || prevProps.match.params.rev !== rev
       ) {
       this.load()
     }
