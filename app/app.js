@@ -10,76 +10,195 @@ import ConfigContainer from './containers/ConfigContainer'
 import AdminContainer from './containers/AdminContainer'
 import EditDocContainer from './containers/EditDocContainer'
 import QueryContainer from './containers/QueryContainer'
-import Nav from './components/Nav'
+import Footer from './components/Footer'
 import Login from './components/Login'
 import Loading from './components/Loading'
-import withParams from './containers/withParams'
-import { parseUrl } from './utils/utils'
-import fetcher from 'utils/fetcher'
+import { parseUrl, getParams } from './utils/utils'
+import {RemoteCouchApi} from '../api/'
 
 import 'app-classes.css'
 import 'app-tags.css'
 
-const Databases = withParams(DatabasesContainer)
-const LIMIT = 100
+// 1. App = if no couch in the URL, return SetupCouchContainer
+// 2. CouchRoutes = routes for "we have couch URL but not a specific database."
+// 3. OnDatabaseRoutes = we have a couch url and a specific datbase
 
-class CouchRoutes extends Component {
+class OnDatabaseRoutes extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      userCtx: null,
-      loading: true,
-      couchUrl: parseUrl(props.match.params.couch),
-      dbs: null
+      loading: true
     }
   }
 
   async componentDidMount () {
-    const { couchUrl } = this.state
-    const { userCtx } = await fetcher.checkSession(couchUrl)
-    const authenticated = userCtx.name || userCtx.roles.includes('_admin')
-
-    if (!authenticated) {
-      this.setState({loading: false})
-      return
-    }
-
-    this.onUser(userCtx)
+    this.setupDatabase(this.props.match.params.dbName)
   }
 
-  // TODO: this cache object was never used much
-  onUser = async (userCtx) => {
-    const { couchUrl } = this.state
-    const dbs = await fetcher.get(`${couchUrl}_all_dbs`, { limit: LIMIT })
-    this.setState({ loading: false, dbs, userCtx })
+  componentDidUpdate (prevProps) {
+    if (prevProps.match.params.dbName !== this.props.match.params.dbName) {
+      this.setupDatabase(this.props.match.params.dbName)
+    }
+  }
+
+  setupDatabase = async (dbName) => {
+    this.pouchDB = this.props.api.getPouchInstance(dbName)
+    window.pouchDB = this.pouchDB
+    console.log(`${dbName} available in console as window.pouchDB`)
+    this.setState({loading: false})
   }
 
   render () {
-    const { userCtx, loading, couchUrl, dbs } = this.state
+    const { dbName } = this.props.match.params
+    const {couchUrl} = this.props
 
-    if (loading) return <Loading />
+    const commonProps = {
+      dbUrl: `${couchUrl}${dbName}/`,
+      dbName,
+      pouchDB: this.pouchDB,
+      ...this.props
+    }
 
-    if (!userCtx) return <Login couchUrl={couchUrl} onUser={this.onUser} />
+    if (!commonProps.pouchDB) return null
 
     return (
       <div>
         <div className='page'>
           <Switch>
-            <Route path='/:couch/:dbName/:docId/editing' component={withParams(EditDocContainer)} />
-            <Route exact path='/:couch/:dbName/query' component={withParams(QueryContainer)} />
-            <Route exact path='/:couch/_node/couchdb@localhost/_config/admins' component={withParams(AdminContainer)} />
-            <Route exact path='/:couch/_node/nonode@nohost/_config/admins' component={withParams(AdminContainer)} />
-            <Route exact path='/:couch/_node/couchdb@localhost/_config' component={withParams(ConfigContainer)} />
-            <Route exact path='/:couch/_node/nonode@nohost/_config' component={withParams(ConfigContainer)} />
-            <Route path='/:couch/:dbName/query/:queryId/:queryString' component={withParams(QueryContainer)} />
-            <Route path='/:couch/:dbName/query/:queryId' component={withParams(QueryContainer)} />
-            <Route path='/:couch/:dbName/:docId/:rev/' component={withParams(DocContainer)} />
-            <Route path='/:couch/:dbName/:docId' component={withParams(DocContainer)} />
-            <Route path='/:couch/:dbName' component={withParams(DocsContainer)} />
-            <Route path='/:couch/' component={props => <Databases {...props} dbs={dbs} />} />
+            <Route
+              path='/:couch/:dbName/:docId/editing'
+              render={props => (<EditDocContainer {...commonProps} {...props} />)}
+            />
+            <Route
+              exact path='/:couch/:dbName/query'
+              render={props => (<QueryContainer {...commonProps} {...props} />)}
+            />
+            <Route
+              path='/:couch/:dbName/query/:queryId/:queryString'
+              render={props => (<QueryContainer {...commonProps} {...props} />)}
+            />
+            <Route
+              path='/:couch/:dbName/query/:queryId'
+              render={props => (<QueryContainer {...commonProps} {...props} />)}
+            />
+            <Route
+              path='/:couch/:dbName/:docId/:rev/'
+              render={props => (<DocContainer {...commonProps} {...props} />)}
+            />
+            <Route
+              path='/:couch/:dbName/:docId'
+              render={props => (<DocContainer {...commonProps} {...props} />)}
+            />
+            <Route
+              path='/:couch/:dbName'
+              render={props => (<DocsContainer {...commonProps} {...props} />)}
+            />
           </Switch>
         </div>
-        <Route path='/:couch/:dbName?/:docId?' render={props => (<Nav {...props} dbs={dbs} userCtx={userCtx} />)} />
+      </div>
+    )
+  }
+}
+
+class CouchRoutes extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      user: null,
+      loading: true
+    }
+  }
+
+  async componentDidMount () {
+    this.setupCouch(this.props.match.params.couch)
+  }
+
+  componentDidUpdate (prevProps) {
+    if (prevProps.match.params.couch !== this.props.match.params.couch) {
+      this.setupCouch(this.props.match.params.couch)
+    }
+  }
+
+  login = (username, password) => {
+    return this.api.login(username, password).then(user => {
+      this.setState({user})
+    })
+  }
+
+  setupCouch = async (couch) => {
+    const couchUrl = parseUrl(couch)
+    this.api = new RemoteCouchApi(couchUrl)
+    window.api = this.api
+    console.log(`
+      remote couch api on ${couchUrl} available in console as window.api,
+      api.PouchDBConstructor is pouch constructor with couchUrl prefix
+      api.GenericPouchDB is Pouch constructor without prefix
+    `)
+
+    const user = await this.api.getCurrentUser()
+    this.setState({loading: false, user})
+  }
+
+  render () {
+    const { couch } = this.props.match.params
+    const couchUrl = parseUrl(couch)
+    const searchParams = getParams(this.props.location.search)
+
+    const { user, loading } = this.state
+
+    if (loading) return <Loading />
+
+    if (!user) {
+      return (
+        <Login
+          couchUrl={couchUrl}
+          login={this.login}
+        />
+      )
+    }
+
+    const commonProps = {
+      couch,
+      couchUrl,
+      searchParams,
+      user,
+      api: this.api
+    }
+
+    return (
+      <div>
+        <div className='page'>
+          <Switch>
+            <Route
+              exact
+              path='/:couch/view-admins'
+              render={props => (<AdminContainer {...props} {...commonProps} />)}
+            />
+            <Route
+              exact
+              path='/:couch/view-config'
+              render={props => (<ConfigContainer {...props} {...commonProps} />)}
+            />
+            <Route
+              exact
+              path='/:couch/_node/nonode@nohost/_config'
+              render={props => (<ConfigContainer {...props} {...commonProps} />)}
+            />
+            <Route
+              exact
+              path='/:couch/'
+              render={props => (<DatabasesContainer {...props} {...commonProps} />)}
+            />
+            <Route
+              path='/:couch/:dbName'
+              render={props => (<OnDatabaseRoutes {...props} {...commonProps} />)}
+            />
+          </Switch>
+        </div>
+        <Route
+          path='/:couch/:dbName?/:docId?'
+          render={props => (<Footer {...props} api={this.api} dbs={[]} user={user} />)}
+        />
       </div>
     )
   }

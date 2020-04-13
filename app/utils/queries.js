@@ -1,11 +1,11 @@
 const DEFAULT_LIMIT = 2000
 const DEFAULT_LARGE_LIMIT = 50000000
 
-export function getAllQueries (dbUrl) {
+export function getAllQueries (dbName) {
   return {
     'id-regex': {
       fetchParams: {
-        url: `${dbUrl}_find`,
+        url: `${dbName}/_find`,
         method: 'POST',
         body: {
           selector: { _id: { '$regex': '' } },
@@ -25,7 +25,7 @@ export function getAllQueries (dbUrl) {
     },
     'id-regex-console': {
       fetchParams: {
-        url: `${dbUrl}_find`,
+        url: `${dbName}/_find`,
         method: 'POST',
         body: {
           selector: { _id: { '$regex': '' } },
@@ -42,7 +42,7 @@ export function getAllQueries (dbUrl) {
     },
     'all-docs': {
       fetchParams: {
-        url: `${dbUrl}_all_docs`,
+        url: `${dbName}/_all_docs`,
         method: 'GET',
         params: {
           limit: DEFAULT_LIMIT,
@@ -62,7 +62,7 @@ export function getAllQueries (dbUrl) {
     },
     '_changes': {
       fetchParams: {
-        url: `${dbUrl}_changes`,
+        url: `${dbName}/_changes`,
         method: 'GET',
         params: {
           limit: DEFAULT_LIMIT,
@@ -83,7 +83,7 @@ export function getAllQueries (dbUrl) {
     },
     'conflicts': {
       fetchParams: {
-        url: `${dbUrl}_find`,
+        url: `${dbName}/_find`,
         method: 'POST',
         body: {
           selector: { _conflicts: { '$exists': true } },
@@ -105,7 +105,7 @@ export function getAllQueries (dbUrl) {
     },
     'keys-search': {
       fetchParams: {
-        url: `${dbUrl}_all_docs?include_docs=true&limit=${DEFAULT_LIMIT}`,
+        url: `${dbName}/_all_docs?include_docs=true&limit=${DEFAULT_LIMIT}`,
         method: 'POST',
         body: {
           keys: []
@@ -124,7 +124,7 @@ export function getAllQueries (dbUrl) {
     },
     'bulk-docs': {
       fetchParams: {
-        url: `${dbUrl}_bulk_docs`,
+        url: `${dbName}/_bulk_docs`,
         method: 'POST',
         body: {
           docs: []
@@ -142,7 +142,7 @@ export function getAllQueries (dbUrl) {
     },
     'and': {
       fetchParams: {
-        url: `${dbUrl}_find`,
+        url: `${dbName}/_find`,
         method: 'POST',
         body: {
           selector: {
@@ -176,8 +176,8 @@ export function getAllQueries (dbUrl) {
   }
 }
 
-export function getQuery (dbUrl, queryName) {
-  const queries = getAllQueries(dbUrl)
+export function getQuery (dbName, queryName) {
+  const queries = getAllQueries(dbName)
   if (!queries[queryName]) {
     return `${queryName} not found`
   }

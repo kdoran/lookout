@@ -1,6 +1,6 @@
 import React from 'react'
-import fetcher from 'utils/fetcher'
 import localStorager from 'utils/localstorager'
+import {RemoteCouchApi} from '../../api/'
 import {parseUrl} from 'utils/utils'
 
 export default class SetupCouchContainer extends React.Component {
@@ -16,13 +16,18 @@ export default class SetupCouchContainer extends React.Component {
     }
   }
 
-  async tryACouch (inputUrl) {
+  tryACouch = async (inputUrl) => {
     inputUrl = parseUrl(inputUrl)
-    this.setState({inputUrl})
-    this.setState({ loading: true })
+    this.setState({inputUrl, loading: true})
+    console.log(this.props)
+    // is the couch reachable? (using session because '/' is sometimes nginxed
+    // to a non-couch resource)
     try {
-      // is the couch reachable?
-      await fetcher.get(inputUrl)
+      // instantiating api here & in the main app
+      // is weird, but trying to do it in the app
+      // ran into problems in passing router props around
+      const api = new RemoteCouchApi(inputUrl)
+      await api.getCurrentUser()
       localStorager.saveRecent('couchurls', inputUrl)
       this.props.history.push(inputUrl.split('//')[1])
     } catch (error) {

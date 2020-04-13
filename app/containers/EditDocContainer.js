@@ -1,5 +1,4 @@
 import React from 'react'
-import fetcher from 'utils/fetcher'
 import DeleteDocModal from 'components/DeleteDocModal'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Loading from 'components/Loading'
@@ -7,7 +6,7 @@ import Editor from 'components/Editor'
 
 import './edit-doc-container.css'
 
-export default class extends React.Component {
+export default class EditDocContainer extends React.Component {
   state = {
     valid: true,
     original: '',
@@ -24,8 +23,21 @@ export default class extends React.Component {
     return { ...prevState, docId, isNew: docId === 'new' }
   }
 
-  async componentDidMount () {
-    const { couchUrl, dbName } = this.props
+  componentDidMount () {
+    this.load()
+  }
+
+  componentDidUpdate (prevProps) {
+    const {dbUrl, match: {params: {docId}}, searchParams: {offset}} = this.props
+    if (prevProps.dbUrl !== dbUrl ||
+        prevProps.searchParams.offset !== offset ||
+        prevProps.match.params.docId !== docId
+    ) {
+      this.load()
+    }
+  }
+
+  load = async () => {
     const { docId, isNew } = this.state
 
     if (isNew) {
@@ -34,7 +46,7 @@ export default class extends React.Component {
     }
 
     try {
-      const doc = await fetcher.dbGet(couchUrl, dbName, docId)
+      const doc = await this.props.pouchDB.get(docId)
       const original = neat(doc)
       const input = original
       this.setState({ doc, input, original, loaded: true })
@@ -55,18 +67,26 @@ export default class extends React.Component {
     this.setState({ valid, input, changesMade: (original !== input) })
   }
 
-  onSubmit = () => {
-    const { couchUrl, dbName, couch } = this.props
+  onSubmit = async () => {
+    const { dbName, couch } = this.props
     const { input, isNew } = this.state
-
+    this.setState({saving: true})
     const jsObjectInput = JSON.parse(input)
-    this.setState({ saving: true }, () => {
-      // New documents will get ID from input
-      const docId = isNew ? jsObjectInput._id : this.state.docId
-      fetcher.dbPut(couchUrl, dbName, docId, jsObjectInput).then(() => {
-        this.setState({ docId }, () => { this.props.history.push(`/${couch}/${dbName}/${docId}`) })
-      }).catch(error => this.setState({ error, saving: false }))
-    })
+    // New documents will get ID from input
+    const docId = isNew ? jsObjectInput._id : this.state.docId
+
+    try {
+      const {id} = await this.props.pouchDB.put(jsObjectInput)
+      this.props.history.push(`/${couch}/${dbName}/${id}`)
+    } catch (error) {
+      if (error.status === 400 && docId === '_security') {
+        const body = JSON.stringify(jsObjectInput)
+        await this.props.api.fetcher(`${dbName}/_security`, {method: 'PUT', body})
+        this.props.history.push(`/${couch}/${dbName}/_security`)
+        return
+      }
+      this.setState({ error, saving: false })
+    }
   }
 
   deleteDoc = () => {
@@ -136,7 +156,7 @@ export default class extends React.Component {
                 {changesMade ? 'cancel' : 'back'}
               </button>
             </div>
-            {error && (<div className='error'>{error}</div>)}
+            {error && (<div className='error'>{JSON.stringify(error, null, 2)}</div>)}
             <Editor
               onChange={this.onEdit}
               value={input}

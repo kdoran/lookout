@@ -1,6 +1,5 @@
 import React from 'react'
 import Editor from 'components/Editor'
-import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
 import Error from 'components/Error'
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -19,20 +18,30 @@ export default class QueryContainer extends React.Component {
     result: null,
     error: null,
     response: null,
-    input: undefined
+    input: undefined,
+    setup: false
   }
 
-  static getDerivedStateFromProps (nextProps, prevState) {
-    const { queryId = 'id-regex', queryString } = nextProps.match.params
-    const queries = getAllQueries(nextProps.dbUrl)
-    const query = getQuery(nextProps.dbUrl, queryId)
-    let input = prevState.input
-    if (input === undefined) {
-      input = queryString
-        ? decode(queryString)
-        : query.string
+  componentDidMount () {
+    this.setupQuery()
+  }
+
+  componentDidUpdate (prevProps) {
+    const {queryId, queryString} = this.props.match.params
+    // console.log(queryId, queryString)
+    if (queryId !== prevProps.match.params.queryId || queryString !== prevProps.match.params.queryString) {
+      this.setupQuery()
     }
-    return { ...prevState, queries, queryId, query, input }
+  }
+
+  setupQuery () {
+    const { queryId = 'id-regex', queryString } = this.props.match.params
+    const queries = getAllQueries(this.props.dbUrl)
+    const query = getQuery(this.props.dbName, queryId)
+    const input = queryString
+      ? decode(queryString)
+      : query.string
+    this.setState({queries, queryId, query, input, setup: true})
   }
 
   onEdit = async (input) => {
@@ -56,8 +65,11 @@ export default class QueryContainer extends React.Component {
     }
 
     const { fetchParams, parse } = parsedInput
+    const {url} = fetchParams
+    delete fetchParams.url
+    fetchParams.body = JSON.stringify(fetchParams.body)
     try {
-      const response = await fetcher.fetch(fetchParams)
+      const response = await this.props.api.fetcher(url, fetchParams)
       const result = parse(response)
       this.setState({ response, result, loading: false })
     } catch (error) {
@@ -85,6 +97,7 @@ export default class QueryContainer extends React.Component {
     copyTextToClipboard(`${currUrl}/query/custom/${param}`)
   }
 
+  // TODO: move to api or smth
   handleConfirmDelete = async () => {
     this.download()
     const {response} = this.state
@@ -99,10 +112,11 @@ export default class QueryContainer extends React.Component {
         `Docs, ids, or revs not found in response.docs, aborting delete. ${docs}`
       )
     }
-    const {dbUrl} = this.props
-    const deleteResponse = await fetcher.post(`${dbUrl}_bulk_docs`, {docs})
+    const {dbName} = this.props
+    const body = JSON.stringify({docs})
+    const deleteResponse = await this.props.api.fetcher(`${dbName}/_bulk_docs`, {method: 'POST', body})
     console.log(`deleted docs response`, deleteResponse)
-    const errorsFound = deleteResponse.filter(r => !r.ok)
+    const errorsFound = deleteResponse.filter(r => !r.ok || r.error)
     if (errorsFound.length) {
       console.error(`Errors found when trying to delete docs!`, errorsFound)
     }
@@ -110,7 +124,9 @@ export default class QueryContainer extends React.Component {
 
   render () {
     const { dbName, couch, couchUrl } = this.props
-    const { query, queryId, queries, error, input, valid, loading, result } = this.state
+    const { query, queryId, queries, error, input, valid, loading, result, setup } = this.state
+
+    if (!setup) return null
 
     const links = Object.keys(queries).map(query => (
       <span key={query}>

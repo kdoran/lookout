@@ -1,11 +1,10 @@
 import React from 'react'
-import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
 import Error from 'components/Error'
 import Pagination from 'components/Pagination'
 import AllowEditButton from 'components/AllowEditButton'
 import Breadcrumbs from 'components/Breadcrumbs'
-import DeleteDatabaseContainer from 'containers/DeleteDatabaseContainer'
+import DeleteDatabaseModal from 'components/DeleteDatabaseModal'
 import { Link } from 'react-router-dom'
 
 import './docs-container.css'
@@ -20,13 +19,24 @@ export default class extends React.Component {
     showDeleteModal: false
   }
 
-  async componentDidMount () {
-    const { dbName, couchUrl, searchParams: { offset = 0 } } = this.props
+  componentDidMount () {
+    this.load()
+  }
+
+  componentDidUpdate (prevProps) {
+    const {dbUrl, searchParams: {offset}} = this.props
+    if (prevProps.dbUrl !== dbUrl || prevProps.searchParams.offset !== offset) {
+      this.load()
+    }
+  }
+
+  load = async () => {
+    const { searchParams: { offset = 0 } } = this.props
     this.setState({ loaded: false })
 
     try {
-      const options = { skip: offset, limit: LIMIT }
-      const response = await fetcher.dbGet(couchUrl, dbName, '_all_docs', options)
+      const options = { skip: offset, limit: LIMIT, include_docs: false }
+      const response = await this.props.pouchDB.allDocs(options)
       const rows = response.rows.map(row => {
         const link = (row.id.indexOf('/') === -1)
           ? row.id
@@ -38,6 +48,13 @@ export default class extends React.Component {
       this.setState({ error, loaded: true })
       console.error(error)
     }
+  }
+
+  onConfirmDeleteDatabase = async () => {
+    const {couch, dbName} = this.props
+    await this.props.api.destroyDatabase(dbName)
+    window.alert(`Database ${dbName} deleted.`)
+    this.props.history.push(`/${couch}`)
   }
 
   render () {
@@ -104,12 +121,11 @@ export default class extends React.Component {
               >
                 Delete Database
               </AllowEditButton>
-              <DeleteDatabaseContainer
+              <DeleteDatabaseModal
                 couchUrl={couchUrl}
                 dbName={dbName}
-                history={history}
-                couch={couch}
                 onClose={() => this.setState({ showDeleteModal: false })}
+                onConfirm={this.onConfirmDeleteDatabase}
                 show={showDeleteModal}
               />
             </section>

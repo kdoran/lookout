@@ -1,13 +1,12 @@
 import React from 'react'
 import Modal from 'components/Modal'
-import fetcher from 'utils/fetcher'
 
-export default class NewDatabaseContainer extends React.Component {
-  state = { validDBName: false, loading: false, inputText: '', error: null }
+export default class NewDatabaseModal extends React.Component {
+  state = { validDBName: false, inputText: '' }
 
   onInputChange = (e) => {
     const { value } = e.target
-    this.setState({ validDBName: isValidDBName(value), inputText: value, error: null })
+    this.setState({ validDBName: isValidDBName(value), inputText: value })
   }
 
   maybeEscape = (e) => {
@@ -20,23 +19,14 @@ export default class NewDatabaseContainer extends React.Component {
   onSubmit = async (e) => {
     e.preventDefault()
     const { inputText, validDBName } = this.state
-    const { couchUrl, history } = this.props
-    const id = inputText
     if (validDBName) {
-      this.setState({ loading: true })
-      const data = { id, name: inputText }
-      try {
-        await fetcher.put(couchUrl + id, data)
-        history.push(id)
-      } catch (error) {
-        this.setState({ error, loading: false })
-      }
+      this.props.onCreateDatabase(inputText)
     }
   }
 
   render () {
     const { show, onClose } = this.props
-    const { validDBName, loading, error, inputText } = this.state
+    const { validDBName, inputText } = this.state
     return (
       <Modal
         show={show}
@@ -55,10 +45,9 @@ export default class NewDatabaseContainer extends React.Component {
               onKeyUp={this.maybeEscape}
             />
           </label>
-          {error && (<div className='error'>{error}</div>)}
           <button
             className='action-button'
-            disabled={!validDBName || loading}
+            disabled={!validDBName}
             type='submit'
           >
             Submit

@@ -1,5 +1,4 @@
 import React from 'react'
-import fetcher from 'utils/fetcher'
 import { debounce } from 'utils/utils'
 import Loading from 'components/Loading'
 
@@ -10,6 +9,8 @@ import './search-container.css'
 // TODO: move to utils
 const isExcluded = db => ['_global_changes', '_metadata', '_replicator'].indexOf(db) === -1
 
+// TODO: multi db search broken after refactor to fix
+// 3.x database list
 const SingleView = (props = {}) => {
   const docs = props.docs || []
   let url = id => props.dbUrl ? `${props.dbUrl}/${id}` : id
@@ -39,7 +40,7 @@ const MultipleView = (props = {}) => {
     </div>)
 }
 
-export default class extends React.Component {
+export default class SearchContainer extends React.Component {
   state = {
     result: {},
     searching: false
@@ -48,7 +49,6 @@ export default class extends React.Component {
   debouncedSearch = debounce(string => this.search(string))
 
   fetcher (db, text, limit = 10) {
-    const {couchUrl} = this.props
     const body = {
       selector: {
         _id: {
@@ -58,7 +58,12 @@ export default class extends React.Component {
       limit
     }
 
-    return fetcher.post(`${couchUrl}${db}/_find`, body)
+    const params = {
+      method: 'POSt',
+      body: JSON.stringify(body)
+    }
+
+    return this.props.api.fetcher(`${db}/_find`, params)
       .then(result => ({db, docs: result.docs}))
     // catch incase of _user db permission
       .catch(() => Promise.resolve({db, docs: []}))

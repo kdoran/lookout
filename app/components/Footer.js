@@ -1,13 +1,12 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
 import { parseUrl } from 'utils/utils'
-import fetcher from 'utils/fetcher'
 import Modal from './Modal'
 import SearchContainer from '../containers/SearchContainer'
 
 import './nav.css'
 
-export default class extends React.Component {
+export default class Footer extends React.Component {
   state = { showSearchModal: false }
 
   toggleSearchModal = (e) => {
@@ -15,8 +14,15 @@ export default class extends React.Component {
     this.setState({ showSearchModal: !this.state.showSearchModal })
   }
 
+  logout = async (event) => {
+    event.preventDefault()
+    await this.props.api.logout()
+    window.location.href = '#/'
+    window.location.reload()
+  }
+
   render () {
-    const { userCtx, dbs, match: { params: { couch, dbName } } } = this.props
+    const { user, match: { params: { couch, dbName } } } = this.props
     const { showSearchModal } = this.state
     const couchUrl = parseUrl(couch)
 
@@ -25,11 +31,11 @@ export default class extends React.Component {
         <div className='nav'>
           <span className='nav-left'>
             CouchDB Lookout | <Link to='/'>change couch</Link>
-            <span> | <a href='' onClick={this.toggleSearchModal}>search</a></span>
+            {dbName && <span> | <a href='' onClick={this.toggleSearchModal}>search</a></span>}
           </span>
           <span className='nav-right'>
-            user: <Link to={`/${couch}/_users/org.couchdb.user:${encodeURIComponent(userCtx.name)}`}>{userCtx.name}</Link> |&nbsp;
-            <a href='#' onClick={() => fetcher.destroySession(couchUrl)}>logout</a>
+            user: <Link to={`/${couch}/_users/org.couchdb.user:${encodeURIComponent(user.name)}`}>{user.name}</Link> |&nbsp;
+            <a href='#' onClick={this.logout}>logout</a>
           </span>
         </div>
         <Modal
@@ -40,8 +46,8 @@ export default class extends React.Component {
           <SearchContainer
             multipleSearch={!dbName}
             db={dbName}
-            dbs={dbs}
             couchUrl={couchUrl}
+            api={this.props.api}
             onClose={this.toggleSearchModal}
           />
         </Modal>

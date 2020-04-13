@@ -1,7 +1,7 @@
 import React from 'react'
-import fetcher from 'utils/fetcher'
+import keyBy from 'lodash/keyBy'
 import Loading from 'components/Loading'
-import NewDatabaseContainer from 'containers/NewDatabaseContainer'
+import NewDatabaseModal from 'components/NewDatabaseModal'
 import Error from 'components/Error'
 import { Link } from 'react-router-dom'
 import AllowEditButton from 'components/AllowEditButton'
@@ -15,41 +15,43 @@ export default class extends React.Component {
     loaded: false,
     error: null,
     infos: {},
-    showNewDBModal: false
+    showNewDBModal: false,
+    dbs: []
   }
 
-  async componentDidMount () {
-    const { couchUrl, dbs } = this.props
+  componentDidMount () {
+    this.fetchInfos()
+  }
+
+  componentDidUpdate (prevProps) {
+    if (prevProps.couchUrl !== this.props.couchUrl) { this.fetchInfos() }
+  }
+
+  fetchInfos = async () => {
+    // infos and dbs are split for couch < 2.2 that does not have
+    // single infos call. lazy load dbs & display first
+    // so you're not always waiting on the 100 individual info calls
+    const dbs = await this.props.api.listDatabases()
+    this.setState({dbs})
+    const infosResponse = await this.props.api.listInfos(dbs)
+    const infos = keyBy(infosResponse, 'key')
+    this.setState({loaded: true, infos})
+  }
+
+  createDatabase = async (dbName) => {
+    const {api, history, couch} = this.props
     try {
-      this.setState({ loaded: true })
-      this.fetchInfos(couchUrl, dbs)
+      await api.createDatabase(dbName)
+      window.alert(`Created database ${dbName}`)
+      history.push(`/${couch}/${dbName}`)
     } catch (error) {
-      this.setState({ error, loaded: true })
-      console.error(error)
-    }
-  }
-
-  fetchInfos = async (couchUrl, dbs) => {
-    const infos = {}
-    for (let db of dbs) {
-      try {
-        const info = await fetcher.get(couchUrl + db)
-        infos[db] = info
-        if (typeof infos[db].update_seq === 'string') {
-          infos[db].update_seq = infos[db].update_seq.split('-')[0]
-        }
-      } catch (error) {
-        infos[db] = {}
-        console.error(error)
-      }
-      this.setState({ infos })
+      this.setState({ error })
     }
   }
 
   render () {
-    const { couchUrl, couch, dbs } = this.props
-    const { history } = this.props
-    const { loaded, error, infos, showNewDBModal } = this.state
+    const { couchUrl, couch } = this.props
+    const { loaded, error, infos, dbs, showNewDBModal } = this.state
 
     return (
       <div>
@@ -74,11 +76,11 @@ export default class extends React.Component {
                     <tr key={db}>
                       <td><Link to={`/${couch}/${db}/query`}>{db}</Link></td>
                       <td><Link to={`/${couch}/${db}/`}>all docs</Link></td>
-                      <td>{infos[db] ? withCommas(infos[db].doc_count) : 'loading...'}</td>
-                      <td>{infos[db] ? showMBSize(infos[db].data_size) : 'loading...'}</td>
-                      <td>{infos[db] ? showMBSize(infos[db].disk_size) : 'loading...'}</td>
-                      <td>{infos[db] ? withCommas(infos[db].doc_del_count) : 'loading...'}</td>
-                      <td>{infos[db] ? infos[db].update_seq : 'loading...'}</td>
+                      <td>{infos[db] ? withCommas(infos[db].info.doc_count) : 'loading...'}</td>
+                      <td>{infos[db] ? showMBSize(infos[db].info.data_size) : 'loading...'}</td>
+                      <td>{infos[db] ? showMBSize(infos[db].info.disk_size) : 'loading...'}</td>
+                      <td>{infos[db] ? withCommas(infos[db].info.doc_del_count) : 'loading...'}</td>
+                      <td>{infos[db] ? infos[db].info.update_seq.split('-')[0] : 'loading...'}</td>
                     </tr>
                   )
                 })}
@@ -93,10 +95,10 @@ export default class extends React.Component {
               </thead>
               <tbody>
                 <tr>
-                  <td><Link to={couch.startsWith('localhost:') ? `/${couch}/_node/couchdb@localhost/_config` : `/${couch}/_node/nonode@nohost/_config`}>_config</Link></td>
+                  <td><Link to={`/${couch}/view-config`}>config</Link></td>
                 </tr>
                 <tr>
-                  <td><Link to={couch.startsWith('localhost:') ? `/${couch}/_node/couchdb@localhost/_config/admins` : `/${couch}/_node/nonode@nohost/_config/admins`}>admin</Link></td>
+                  <td><Link to={`/${couch}/view-admins`}>admin</Link></td>
                 </tr>
                 <tr>
                   <td><a target='_blank' href={`${couchUrl}_scheduler/jobs`}>_scheduler/jobs</a> (replication status) </td>
@@ -110,10 +112,9 @@ export default class extends React.Component {
             >
             New Database
             </AllowEditButton>
-            <NewDatabaseContainer
-              couchUrl={couchUrl}
-              history={history}
+            <NewDatabaseModal
               onClose={() => this.setState({ showNewDBModal: false })}
+              onCreateDatabase={this.createDatabase}
               show={showNewDBModal}
             />
           </div>
