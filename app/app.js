@@ -10,7 +10,7 @@ import ConfigContainer from './containers/ConfigContainer'
 import AdminContainer from './containers/AdminContainer'
 import EditDocContainer from './containers/EditDocContainer'
 import QueryContainer from './containers/QueryContainer'
-import Nav from './components/Nav'
+import Footer from './components/Footer'
 import Login from './components/Login'
 import Loading from './components/Loading'
 import { parseUrl, getParams } from './utils/utils'
@@ -162,12 +162,7 @@ class CouchRoutes extends Component {
           <Switch>
             <Route
               exact
-              path='/:couch/_node/couchdb@localhost/_config/admins'
-              render={props => (<AdminContainer {...props} {...commonProps} />)}
-            />
-            <Route
-              exact
-              path='/:couch/_node/nonode@nohost/_config/admins'
+              path='/:couch/view-admins'
               render={props => (<AdminContainer {...props} {...commonProps} />)}
             />
             <Route
@@ -193,7 +188,7 @@ class CouchRoutes extends Component {
         </div>
         <Route
           path='/:couch/:dbName?/:docId?'
-          render={props => (<Nav {...props} api={this.api} dbs={[]} user={user} />)}
+          render={props => (<Footer {...props} api={this.api} dbs={[]} user={user} />)}
         />
       </div>
     )

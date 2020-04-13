@@ -7,7 +7,7 @@ import SearchContainer from '../containers/SearchContainer'
 
 import './nav.css'
 
-export default class extends React.Component {
+export default class Footer extends React.Component {
   state = { showSearchModal: false }
 
   toggleSearchModal = (e) => {

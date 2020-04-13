@@ -1,33 +1,34 @@
 import React from 'react'
-import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
 import Error from 'components/Error'
 import Breadcrumbs from 'components/Breadcrumbs'
 import AllowEditButton from 'components/AllowEditButton'
 import Modal from 'components/Modal'
-import { downloadJSON } from 'utils/download'
 
 export default class AdminContainer extends React.Component {
   state = {
     loaded: false,
     error: null,
-    docId: null,
     adminConfig: {},
     showCreateAdminModal: false,
     adminName: '',
     adminPassword: ''
   }
 
-  static getDerivedStateFromProps (nextProps, prevState) {
-    const docId = decodeURIComponent(nextProps.match.path.split('/:couch/')[1])
-    return { ...prevState, docId }
+  componentDidMount () {
+    this.load()
   }
 
-  async componentDidMount () {
-    const { couchUrl } = this.props
-    const { docId } = this.state
+  componentDidUpdate (newProps) {
+    const {dbUrl, searchParams: {offset}} = this.props
+    if (newProps.dbUrl !== dbUrl || newProps.searchParams.offset !== offset) {
+      this.load()
+    }
+  }
+
+  load = async () => {
     try {
-      const adminConfig = await fetcher.get(`${couchUrl}${docId}`)
+      const adminConfig = await this.props.api.getAdminConfig()
       this.setState({ adminConfig, loaded: true })
     } catch (error) {
       this.setState({ error, loaded: true })
@@ -37,17 +38,14 @@ export default class AdminContainer extends React.Component {
 
   onSubmitNewAdmin = async event => {
     event.preventDefault()
-    const {couch, couchUrl} = this.props
+    const {couch} = this.props
     const {adminName, docId, adminConfig, adminPassword} = this.state
     if (!adminName || !adminPassword) {
       window.alert('admin name and password required')
       return
     }
-    window.alert('downloading current admin list as backup')
-    downloadJSON(adminConfig, `${couch}-backup-admin-config.json`)
-    const url = `${couchUrl}${docId}/${adminName}`
     try {
-      await fetcher.put(url, adminPassword)
+      await this.props.api.updateAdmin(adminName, adminPassword)
       window.alert(`admin ${adminName} created/updated succesffully`)
       window.location.reload()
     } catch (error) {

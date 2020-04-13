@@ -62,6 +62,22 @@ class RemoteCouchApi {
     return this.getUserFromSession(session)
   }
 
+  getConfigUrl () {
+    const isLocal = this.url.includes('://localhost:') || this.url.includes('://127.0.0.1:')
+    return isLocal
+      ? `_node/couchdb@localhost/_config`
+      : `_node/nonode@nohost/_config`
+  }
+
+  async getAdminConfig () {
+    return this.fetcher(`${this.getConfigUrl()}/admins`)
+  }
+
+  async updateAdmin (username, password) {
+    const url = `${this.getConfigUrl()}/admins/${username}`
+    return this.fetcher(url, {method: 'PUT', body: `"${password}"`})
+  }
+
   getPouchInstance (databaseName) {
     if (!this.databases[databaseName]) {
       this.databases[databaseName] = new this.PouchDBConstructor(databaseName)

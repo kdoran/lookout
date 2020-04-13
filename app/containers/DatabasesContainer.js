@@ -89,7 +89,7 @@ export default class extends React.Component {
                   <td><Link to={couch.startsWith('localhost:') ? `/${couch}/_node/couchdb@localhost/_config` : `/${couch}/_node/nonode@nohost/_config`}>_config</Link></td>
                 </tr>
                 <tr>
-                  <td><Link to={couch.startsWith('localhost:') ? `/${couch}/_node/couchdb@localhost/_config/admins` : `/${couch}/_node/nonode@nohost/_config/admins`}>admin</Link></td>
+                  <td><Link to={`/${couch}/view-admins`}>admin</Link></td>
                 </tr>
                 <tr>
                   <td><a target='_blank' href={`${couchUrl}_scheduler/jobs`}>_scheduler/jobs</a> (replication status) </td>
