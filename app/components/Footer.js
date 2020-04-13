@@ -1,7 +1,6 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
 import { parseUrl } from 'utils/utils'
-import fetcher from 'utils/fetcher'
 import Modal from './Modal'
 import SearchContainer from '../containers/SearchContainer'
 
