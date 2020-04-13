@@ -18,8 +18,8 @@ export default class SetupCouchContainer extends React.Component {
 
   async tryACouch (inputUrl) {
     inputUrl = parseUrl(inputUrl)
-    this.setState({inputUrl})
-    this.setState({ loading: true })
+    this.setState({inputUrl, loading: true})
+    console.log(this.props)
     try {
       // is the couch reachable? (using session because '/' is sometimes nginxed
       // to a non-couch resource)

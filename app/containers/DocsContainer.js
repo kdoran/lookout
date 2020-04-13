@@ -20,7 +20,18 @@ export default class extends React.Component {
     showDeleteModal: false
   }
 
-  async componentDidMount () {
+  componentDidMount () {
+    this.load()
+  }
+
+  componentDidUpdate (newProps) {
+    const {dbUrl, searchParams: {offset}} = this.props
+    if (newProps.dbUrl !== dbUrl || newProps.searchParams.offset !== offset) {
+      this.load()
+    }
+  }
+
+  load = async () => {
     const { dbName, couchUrl, searchParams: { offset = 0 } } = this.props
     this.setState({ loaded: false })
 

@@ -58,5 +58,4 @@ didn't yet try:
 - re-installing node yet.
 - figuring out which other dependency messes up readable-stream via tape
 
-So using smalltest to pretend to be tape for a whilef
-
+So using smalltest to pretend to be tape for a while

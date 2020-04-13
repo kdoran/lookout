@@ -3,9 +3,8 @@ const {PouchDB} = require('./pouchdb')
 
 class RemoteCouchApi {
   constructor (url) {
-    url = url.endsWith('/')
-      ? url
-      : `${url}/`
+    url = url.endsWith('/') ? url : `${url}/`
+
     this.url = url
     this.fetcher = getFetch({url})
     // this will probably change to support node
@@ -27,14 +26,6 @@ class RemoteCouchApi {
   async logout () {
     await this.fetcher('_session', {method: 'DELETE'})
     this.user = null
-  }
-
-  getPouchInstance (databaseName) {
-    if (!this.databases[databaseName]) {
-      this.databases[databaseName] = new this.PouchDBConstructor(databaseName)
-    }
-
-    return this.databases[databaseName]
   }
 
   async getCurrentUser () {
@@ -69,6 +60,14 @@ class RemoteCouchApi {
       '_session', {method: 'POST', body: JSON.stringify({username, password})}
     )
     return this.getUserFromSession(session)
+  }
+
+  getPouchInstance (databaseName) {
+    if (!this.databases[databaseName]) {
+      this.databases[databaseName] = new this.PouchDBConstructor(databaseName)
+    }
+
+    return this.databases[databaseName]
   }
 
   async listDatabases () {

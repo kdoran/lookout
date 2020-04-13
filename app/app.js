@@ -13,15 +13,86 @@ import QueryContainer from './containers/QueryContainer'
 import Nav from './components/Nav'
 import Login from './components/Login'
 import Loading from './components/Loading'
-import withParams from './containers/withParams'
-import { parseUrl } from './utils/utils'
-import fetcher from 'utils/fetcher'
+import { parseUrl, getParams } from './utils/utils'
 import {RemoteCouchApi} from '../api/'
 
 import 'app-classes.css'
 import 'app-tags.css'
 
 const LIMIT = 100
+
+class OnDatabaseRoutes extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      loading: true
+    }
+  }
+
+  async componentDidMount () {
+    this.setupDatabase(this.props.match.params.dbName)
+  }
+
+  componentDidUpdate (prevProps) {
+    if (prevProps.match.params.dbName !== this.props.match.params.dbName) {
+      this.setupDatabase(this.props.match.params.dbName)
+    }
+  }
+
+  setupDatabase = async (dbName) => {
+    this.currentDB = this.props.api.getPouchInstance(dbName)
+    this.setState({loading: false})
+  }
+
+  render () {
+    const { dbName } = this.props.match.params
+    const {couchUrl} = this.props
+
+    const commonProps = {
+      dbUrl: `${couchUrl}${dbName}/`,
+      dbName,
+      db: this.currentDB,
+      ...this.props
+    }
+
+    return (
+      <div>
+        <div className='page'>
+          <Switch>
+            <Route
+              path='/:couch/:dbName/:docId/editing'
+              render={props => (<EditDocContainer {...commonProps} {...props} />)}
+            />
+            <Route
+              exact path='/:couch/:dbName/query'
+              render={props => (<QueryContainer {...commonProps} {...props} />)}
+            />
+            <Route
+              path='/:couch/:dbName/query/:queryId/:queryString'
+              render={props => (<QueryContainer {...commonProps} {...props} />)}
+            />
+            <Route
+              path='/:couch/:dbName/query/:queryId'
+              render={props => (<QueryContainer {...commonProps} {...props} />)}
+            />
+            <Route
+              path='/:couch/:dbName/:docId/:rev/'
+              render={props => (<DocContainer {...commonProps} {...props} />)}
+            />
+            <Route
+              path='/:couch/:dbName/:docId'
+              render={props => (<DocContainer {...commonProps} {...props} />)}
+            />
+            <Route
+              path='/:couch/:dbName'
+              render={props => (<DocsContainer {...commonProps} {...props} />)}
+            />
+          </Switch>
+        </div>
+      </div>
+    )
+  }
+}
 
 class CouchRoutes extends Component {
   constructor (props) {
@@ -56,8 +127,11 @@ class CouchRoutes extends Component {
   }
 
   render () {
+    const { couch } = this.props.match.params
+    const couchUrl = parseUrl(couch)
+    const searchParams = getParams(this.props.location.search)
+
     const { user, loading } = this.state
-    const couchUrl = parseUrl(this.props.match.params.couch)
 
     if (loading) return <Loading />
 
@@ -70,22 +144,47 @@ class CouchRoutes extends Component {
       )
     }
 
+    const commonProps = {
+      couch,
+      couchUrl,
+      searchParams,
+      user,
+      api: this.api
+    }
+
     return (
       <div>
         <div className='page'>
           <Switch>
-            <Route path='/:couch/:dbName/:docId/editing' component={withParams(EditDocContainer, this.api, this.currentDB)} />
-            <Route exact path='/:couch/:dbName/query' component={withParams(QueryContainer, this.api, this.currentDB)} />
-            <Route exact path='/:couch/_node/couchdb@localhost/_config/admins' component={withParams(AdminContainer, this.api, this.currentDB)} />
-            <Route exact path='/:couch/_node/nonode@nohost/_config/admins' component={withParams(AdminContainer, this.api, this.currentDB)} />
-            <Route exact path='/:couch/_node/couchdb@localhost/_config' component={withParams(ConfigContainer, this.api, this.currentDB)} />
-            <Route exact path='/:couch/_node/nonode@nohost/_config' component={withParams(ConfigContainer, this.api, this.currentDB)} />
-            <Route path='/:couch/:dbName/query/:queryId/:queryString' component={withParams(QueryContainer, this.api, this.currentDB)} />
-            <Route path='/:couch/:dbName/query/:queryId' component={withParams(QueryContainer, this.api, this.currentDB)} />
-            <Route path='/:couch/:dbName/:docId/:rev/' component={withParams(DocContainer, this.api, this.currentDB)} />
-            <Route path='/:couch/:dbName/:docId' component={withParams(DocContainer, this.api, this.currentDB)} />
-            <Route path='/:couch/:dbName' component={withParams(DocsContainer, this.api, this.currentDB)} />
-            <Route path='/:couch/' component={withParams(DatabasesContainer, this.api, this.currentDB)} />
+            <Route
+              exact
+              path='/:couch/_node/couchdb@localhost/_config/admins'
+              render={props => (<AdminContainer {...props} {...commonProps} />)}
+            />
+            <Route
+              exact
+              path='/:couch/_node/nonode@nohost/_config/admins'
+              render={props => (<AdminContainer {...props} {...commonProps} />)}
+            />
+            <Route
+              exact
+              path='/:couch/_node/couchdb@localhost/_config'
+              render={props => (<ConfigContainer {...props} {...commonProps} />)}
+            />
+            <Route
+              exact
+              path='/:couch/_node/nonode@nohost/_config'
+              render={props => (<ConfigContainer {...props} {...commonProps} />)}
+            />
+            <Route
+              exact
+              path='/:couch/'
+              render={props => (<DatabasesContainer {...props} {...commonProps} />)}
+            />
+            <Route
+              path='/:couch/:dbName'
+              render={props => (<OnDatabaseRoutes {...props} {...commonProps} />)}
+            />
           </Switch>
         </div>
         <Route
