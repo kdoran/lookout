@@ -6,7 +6,7 @@ import Editor from 'components/Editor'
 
 import './edit-doc-container.css'
 
-export default class extends React.Component {
+export default class EditDocContainer extends React.Component {
   state = {
     valid: true,
     original: '',
@@ -80,6 +80,12 @@ export default class extends React.Component {
       const {id} = await this.props.pouchDB.put(jsObjectInput)
       this.props.history.push(`/${couch}/${dbName}/${id}`)
     } catch (error) {
+      if (error.status === 400 && docId === '_security') {
+        const body = JSON.stringify(jsObjectInput)
+        await this.props.api.fetcher(`${dbName}/_security`, {method: 'PUT', body})
+        this.props.history.push(`/${couch}/${dbName}/_security`)
+        return
+      }
       this.setState({ error, saving: false })
     }
   }
@@ -151,7 +157,7 @@ export default class extends React.Component {
                 {changesMade ? 'cancel' : 'back'}
               </button>
             </div>
-            {error && (<div className='error'>{error}</div>)}
+            {error && (<div className='error'>{JSON.stringify(error, null, 2)}</div>)}
             <Editor
               onChange={this.onEdit}
               value={input}
