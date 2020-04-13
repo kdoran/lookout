@@ -22,7 +22,7 @@ export default class Footer extends React.Component {
   }
 
   render () {
-    const { user, dbs, match: { params: { couch, dbName } } } = this.props
+    const { user, match: { params: { couch, dbName } } } = this.props
     const { showSearchModal } = this.state
     const couchUrl = parseUrl(couch)
 
@@ -31,7 +31,7 @@ export default class Footer extends React.Component {
         <div className='nav'>
           <span className='nav-left'>
             CouchDB Lookout | <Link to='/'>change couch</Link>
-            <span> | <a href='' onClick={this.toggleSearchModal}>search</a></span>
+            {dbName && <span> | <a href='' onClick={this.toggleSearchModal}>search</a></span>}
           </span>
           <span className='nav-right'>
             user: <Link to={`/${couch}/_users/org.couchdb.user:${encodeURIComponent(user.name)}`}>{user.name}</Link> |&nbsp;
@@ -46,8 +46,8 @@ export default class Footer extends React.Component {
           <SearchContainer
             multipleSearch={!dbName}
             db={dbName}
-            dbs={dbs}
             couchUrl={couchUrl}
+            api={this.props.api}
             onClose={this.toggleSearchModal}
           />
         </Modal>
