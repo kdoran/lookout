@@ -1,5 +1,4 @@
 import React from 'react'
-import fetcher from 'utils/fetcher'
 import Loading from 'components/Loading'
 import Error from 'components/Error'
 import Pagination from 'components/Pagination'
@@ -36,8 +35,8 @@ export default class extends React.Component {
     this.setState({ loaded: false })
 
     try {
-      const options = { skip: offset, limit: LIMIT }
-      const response = await fetcher.dbGet(couchUrl, dbName, '_all_docs', options)
+      const options = { skip: offset, limit: LIMIT, include_docs: false }
+      const response = await this.props.pouchDB.allDocs(options)
       const rows = response.rows.map(row => {
         const link = (row.id.indexOf('/') === -1)
           ? row.id
