@@ -65,9 +65,13 @@ export default class QueryContainer extends React.Component {
     }
 
     const { fetchParams, parse } = parsedInput
-    const {url} = fetchParams
+    let {url} = fetchParams
     delete fetchParams.url
-    fetchParams.body = JSON.stringify(fetchParams.body)
+    if (fetchParams.params) {
+      url = `${url}?${getParams(fetchParams.params)}`
+    } else {
+      fetchParams.body = JSON.stringify(fetchParams.body)
+    }
     try {
       const response = await this.props.api.fetcher(url, fetchParams)
       const result = parse(response)
@@ -183,4 +187,8 @@ export default class QueryContainer extends React.Component {
       </div>
     )
   }
+}
+
+function getParams (data) {
+  return Object.keys(data).map(key => [key, data[key]].map(encodeURIComponent).join('=')).join('&')
 }
