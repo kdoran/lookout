@@ -48,8 +48,7 @@ export default class QueryContainer extends React.Component {
     this.setState({ input, error: '' })
   }
 
-  run = async event => {
-    if (event) event.preventDefault()
+  run = async () => {
     const { valid, input } = this.state
 
     if (!valid) return
@@ -142,7 +141,7 @@ export default class QueryContainer extends React.Component {
         <Breadcrumbs couch={couch} dbName={dbName} docId={'query'} final={queryId} />
 
         {valid
-          ? <a href='#' onClick={this.run}>run (cmd + enter or ctrl + enter)</a>
+          ? <a href='#' onClick={(e) => {e.preventDefault(); this.run}}>run (cmd + enter or ctrl + enter)</a>
           : 'waiting for valid json'
         }
         <Editor

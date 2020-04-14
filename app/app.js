@@ -10,6 +10,7 @@ import ConfigContainer from './containers/ConfigContainer'
 import AdminContainer from './containers/AdminContainer'
 import EditDocContainer from './containers/EditDocContainer'
 import QueryContainer from './containers/QueryContainer'
+import GlobalQueryContainer from './containers/GlobalQueryContainer'
 import Footer from './components/Footer'
 import Login from './components/Login'
 import Loading from './components/Loading'
@@ -188,6 +189,11 @@ class CouchRoutes extends Component {
               exact
               path='/:couch/'
               render={props => (<DatabasesContainer {...props} {...commonProps} />)}
+            />
+            <Route
+              exact
+              path='/:couch/query'
+              render={props => (<GlobalQueryContainer {...props} {...commonProps} />)}
             />
             <Route
               path='/:couch/:dbName'
