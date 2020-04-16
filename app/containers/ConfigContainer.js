@@ -1,13 +1,15 @@
-import React from 'react'
-import Loading from 'components/Loading'
-import Error from 'components/Error'
-import Breadcrumbs from 'components/Breadcrumbs'
-import { copyTextToClipboard } from 'utils/utils'
-import { downloadJSON } from 'utils/download'
+const React = require('react')
+const {
+  Loading,
+  ErrorDisplay,
+  Breadcrumbs
+} = require('components')
+const { copyTextToClipboard } = require('../utils/utils')
+const { downloadJSON } = require('../utils/download')
 
-import './doc-container.css'
+require('./doc-container.css')
 
-export default class ConfigContainer extends React.Component {
+class ConfigContainer extends React.Component {
   state = {
     sections: null,
     loaded: false,
@@ -68,7 +70,7 @@ export default class ConfigContainer extends React.Component {
           <a href='#' onClick={this.download}>download</a>
           <a href='#' onClick={this.copy}>copy to clipboard</a>
         </div>
-        {error && <Error error={error} />}
+        {error && <ErrorDisplay error={error} />}
         {!error && !loaded && (<Loading />)}
         {!error && loaded && (
           <div>
@@ -88,3 +90,5 @@ export default class ConfigContainer extends React.Component {
     )
   }
 }
+
+module.exports = {ConfigContainer}

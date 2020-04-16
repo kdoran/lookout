@@ -1,9 +1,8 @@
-import React from 'react'
-import localStorager from 'utils/localstorager'
-import {RemoteCouchApi} from '../../api/'
-import {parseUrl} from 'utils/utils'
+const React = require('react')
+const {RemoteCouchApi} = require('../../api/')
+const {parseUrl, localStorager} = require('../utils')
 
-export default class SetupCouchContainer extends React.Component {
+class SetupCouchContainer extends React.Component {
   constructor () {
     super()
     let recentCouches = localStorager.getRecent('couchurls').sort()
@@ -19,7 +18,6 @@ export default class SetupCouchContainer extends React.Component {
   tryACouch = async (inputUrl) => {
     inputUrl = parseUrl(inputUrl)
     this.setState({inputUrl, loading: true})
-    console.log(this.props)
     // is the couch reachable? (using session because '/' is sometimes nginxed
     // to a non-couch resource)
     try {
@@ -91,3 +89,5 @@ export default class SetupCouchContainer extends React.Component {
     )
   }
 }
+
+module.exports = {SetupCouchContainer}

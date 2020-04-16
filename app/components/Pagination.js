@@ -1,8 +1,8 @@
-import React from 'react'
-import {Link} from 'react-router-dom'
-import {withCommas} from 'utils/utils'
+const React = require('react')
+const {Link} = require('react-router-dom')
+const {withCommas} = require('../utils/utils')
 
-export default class Pagination extends React.Component {
+class Pagination extends React.Component {
   render () {
     const { total, displayed, path, limit, offset } = this.props
     const startingNumber = 1 + offset
@@ -29,3 +29,5 @@ export default class Pagination extends React.Component {
     )
   }
 }
+
+module.exports = {Pagination}

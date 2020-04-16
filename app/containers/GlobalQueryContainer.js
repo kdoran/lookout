@@ -1,21 +1,35 @@
-import React from 'react'
-import Editor from 'components/Editor'
-import Loading from 'components/Loading'
-import Error from 'components/Error'
-import Breadcrumbs from 'components/Breadcrumbs'
-import QueryResponse from 'components/QueryResponse'
-import AllowEditButton from 'components/AllowEditButton'
-import TypeAhead from 'components/TypeAhead'
-import { getQuery, getAllQueries } from 'utils/queries'
-import { copyTextToClipboard } from 'utils/utils'
-import { encode, decode } from 'utils/url-params'
-import { Link } from 'react-router-dom'
-import { downloadJSON } from 'utils/download'
+const React = require('react')
+const { Link } = require('react-router-dom')
+const {
+  Editor,
+  Loading,
+  ErrorDisplay,
+  Breadcrumbs,
+  AllowEditButton,
+  TypeAhead
+} = require('../components')
 
-export default class GlobalQueryContainer extends React.Component {
+const {
+  getQuery,
+  getAllQueries,
+  copyTextToClipboard,
+  encode,
+  decode,
+  downloadJSON
+ } = require('../utils/queries')
+
+const LIMIT = 100
+
+class GlobalQueryContainer extends React.Component {
   constructor () {
     super()
-    this.state = {dbs: [], selectedDb: 'integrated-data'}
+    this.state = {
+      dbs: [],
+      selectedDb: 'integrated-data',
+      docs: null,
+      error: null,
+      focusEditor: true
+    }
   }
 
   async componentDidMount () {
@@ -25,18 +39,30 @@ export default class GlobalQueryContainer extends React.Component {
 
   run = async (result) => {
     if (!this.state.selectedDb) return
-    const db = this.props.api.getPouchInstance(this.state.selectedDb)
-    const selector = JSON.parse(result)
-    const results = await db.find({selector})
-    console.log(results)
+
+    this.setState({loading: true, docs: null})
+
+    try {
+      const db = this.props.api.getPouchInstance(this.state.selectedDb)
+      const selector = JSON.parse(result)
+      const {docs} = await db.find({selector})
+      this.setState({docs, loading: false})
+    } catch (error) {
+      this.setState({error, loading: false})
+    }
   }
 
   dbSelected = ({name}) => {
     this.setState({selectedDb: name})
   }
 
+  onEscape = () => {
+    console.log('anything')
+    this.setState({focusEditor: !this.state.focusEditor})
+  }
+
   render () {
-    const {dbs, selectedDb} = this.state
+    const {dbs, focusEditor, docs, selectedDb} = this.state
 
     return (
       <div>
@@ -46,7 +72,7 @@ export default class GlobalQueryContainer extends React.Component {
           valueSelected={this.dbSelected}
           label={'Select Database'}
           resourceName={'Database'}
-          autoFocus
+          // autoFocus={!focusEditor}
         />
         <br />
         <br />
@@ -59,12 +85,12 @@ export default class GlobalQueryContainer extends React.Component {
           startColumn={15}
           mode={'json'}
         />
-        <label for='nolimit'>
+        {/* <label>
           <input type='radio' id='nolimit' name='limit' value='nolimit' />
           nolimit
         </label>
-        <label for='25'><input type='radio' id='25' name='limit' value='25' />25</label>
-        <label for='500'><input type='radio' id='500' name='limit' value='500' />500</label>
+        <label><input type='radio' id='25' name='limit' value='25' />25</label>
+        <label><input type='radio' id='500' name='limit' value='500' />500</label> */}
       </div>
     )
   }
@@ -78,3 +104,4 @@ function getDefaultString () {
 }`
 }
 
+module.exports = {GlobalQueryContainer}

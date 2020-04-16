@@ -1,12 +1,14 @@
-import React from 'react'
-import DeleteDocModal from 'components/DeleteDocModal'
-import Breadcrumbs from 'components/Breadcrumbs'
-import Loading from 'components/Loading'
-import Editor from 'components/Editor'
+const React = require('react')
+const {
+  DeleteDocModal,
+  Breadcrumbs,
+  Loading,
+  Editor
+} = require('../components')
 
-import './edit-doc-container.css'
+require('./edit-doc-container.css')
 
-export default class EditDocContainer extends React.Component {
+class EditDocContainer extends React.Component {
   state = {
     valid: true,
     original: '',
@@ -193,3 +195,5 @@ function getSubmitButtonText (valid, changesMade, saving) {
 function neat (obj) {
   return JSON.stringify(obj, null, 2)
 }
+
+module.exports = {EditDocContainer}

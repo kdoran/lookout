@@ -1,11 +1,9 @@
-import React from 'react'
-import Loading from 'components/Loading'
-import Error from 'components/Error'
-import Breadcrumbs from 'components/Breadcrumbs'
-import AllowEditButton from 'components/AllowEditButton'
-import Modal from 'components/Modal'
+const React = require('react')
+const {
+  Loading, ErrorDisplay, Breadcrumbs, AllowEditButton, Modal
+} = require('../components')
 
-export default class AdminContainer extends React.Component {
+class AdminContainer extends React.Component {
   state = {
     loaded: false,
     error: null,
@@ -59,7 +57,7 @@ export default class AdminContainer extends React.Component {
     return (
       <div className='config-container'>
         <Breadcrumbs couch={couch} docId={'_config'} />
-        {error && <Error error={error} />}
+        {error && <ErrorDisplay error={error} />}
         {!error && !loaded && (<Loading />)}
         {!error && loaded && (
           <div>
@@ -112,3 +110,5 @@ export default class AdminContainer extends React.Component {
     )
   }
 }
+
+module.exports = {AdminContainer}

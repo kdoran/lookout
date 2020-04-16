@@ -1,17 +1,19 @@
-import React from 'react'
-import Loading from 'components/Loading'
-import Error from 'components/Error'
-import Pagination from 'components/Pagination'
-import AllowEditButton from 'components/AllowEditButton'
-import Breadcrumbs from 'components/Breadcrumbs'
-import DeleteDatabaseModal from 'components/DeleteDatabaseModal'
-import { Link } from 'react-router-dom'
+const React = require('react')
+const { Link } = require('react-router-dom')
+const {
+  Loading,
+  ErrorDisplay,
+  Pagination,
+  AllowEditButton,
+  Breadcrumbs,
+  DeleteDatabaseModal
+} = require('components')
 
-import './docs-container.css'
+require('./docs-container.css')
 
 const LIMIT = 500
 
-export default class extends React.Component {
+class DocsContainer extends React.Component {
   state = {
     loaded: false,
     rows: null,
@@ -74,7 +76,7 @@ export default class extends React.Component {
     return (
       <div>
         <Breadcrumbs couch={couch} dbName={dbName} />
-        {error && <Error error={error} />}
+        {error && <ErrorDisplay error={error} />}
         {!error && !loaded && (<Loading />)}
         {!error && loaded && (
           <div>
@@ -135,3 +137,5 @@ export default class extends React.Component {
     )
   }
 }
+
+module.exports = {DocsContainer}

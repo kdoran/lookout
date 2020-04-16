@@ -1,17 +1,24 @@
-import React from 'react'
-import Editor from 'components/Editor'
-import Loading from 'components/Loading'
-import Error from 'components/Error'
-import Breadcrumbs from 'components/Breadcrumbs'
-import QueryResponse from 'components/QueryResponse'
-import AllowEditButton from 'components/AllowEditButton'
-import { getQuery, getAllQueries } from 'utils/queries'
-import { copyTextToClipboard } from 'utils/utils'
-import { encode, decode } from 'utils/url-params'
-import { Link } from 'react-router-dom'
-import { downloadJSON } from 'utils/download'
+const React = require('react')
+const {Link} = require('react-router-dom')
+const {
+  Editor,
+  Loading,
+  ErrorDisplay,
+  Breadcrumbs,
+  QueryResponse,
+  AllowEditButton
+} = require('../components')
 
-export default class QueryContainer extends React.Component {
+const {
+  getQuery,
+  getAllQueries,
+  copyTextToClipboard,
+  encode,
+  decode,
+  downloadJSON
+} = require('../utils')
+
+class QueryContainer extends React.Component {
   state = {
     loading: false,
     valid: true,
@@ -153,7 +160,7 @@ export default class QueryContainer extends React.Component {
           startColumn={query.startColumn}
           mode={'javascript'}
         />
-        {error && <Error error={error} />}
+        {error && <ErrorDisplay error={error} />}
         queries: {links}
         <br /><br />
         <a href='' onClick={this.copy}>copy response to clipboard</a>
@@ -177,11 +184,12 @@ export default class QueryContainer extends React.Component {
         {loading
           ? <Loading />
           : result &&
-            <QueryResponse
-              result={result}
-              dbName={dbName}
-              couch={couch}
-            />
+            <div>
+              <section className='docs-controls' />
+              <pre>
+                {JSON.stringify(result, null, 2)}
+              </pre>
+            </div>
         }
       </div>
     )
@@ -191,3 +199,5 @@ export default class QueryContainer extends React.Component {
 function getParams (data) {
   return Object.keys(data).map(key => [key, data[key]].map(encodeURIComponent).join('=')).join('&')
 }
+
+module.exports = {QueryContainer}

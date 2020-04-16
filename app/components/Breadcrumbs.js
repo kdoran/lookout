@@ -1,7 +1,7 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+const React = require('react')
+const {Link} = require('react-router-dom')
 
-export default class extends React.Component {
+class Breadcrumbs extends React.Component {
   render () {
     const { couch, dbName, docId, final } = this.props
 
@@ -47,3 +47,5 @@ export default class extends React.Component {
     )
   }
 }
+
+module.exports = {Breadcrumbs}

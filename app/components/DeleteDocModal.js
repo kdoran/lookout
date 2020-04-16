@@ -1,7 +1,7 @@
-import React from 'react'
-import Modal from 'components/Modal'
+const React = require('react')
+const {Modal} = require('./Modal')
 
-export default class DeteleDocModal extends React.Component {
+class DeleteDocModal extends React.Component {
   state = { confirmed: false, inputText: '' }
 
   onInputChange = (e) => {
@@ -53,3 +53,5 @@ export default class DeteleDocModal extends React.Component {
     )
   }
 }
+
+module.exports = {DeleteDocModal}

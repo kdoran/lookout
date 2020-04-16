@@ -1,4 +1,4 @@
-import React from 'react'
+const React = require('react')
 
 const styles = {
   textAlign: 'center'
@@ -14,4 +14,4 @@ class Loading extends React.Component {
   }
 }
 
-export default Loading
+module.exports = {Loading}

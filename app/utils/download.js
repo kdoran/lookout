@@ -1,5 +1,5 @@
 /* global URL, Blob */
-export function downloadJSON (json, fileName) {
+function downloadJSON (json, fileName) {
   const a = document.createElement('a')
   fileName = `${fileName}-${new Date().toJSON().replace(/\.|:/g, '-')}`
   a.download = fileName.replace(/[\/:*?"<>|]/g, '') + '.json' // eslint-disable-line no-useless-escape
@@ -10,3 +10,5 @@ export function downloadJSON (json, fileName) {
   a.click()
   document.body.removeChild(a)
 }
+
+module.exports = {downloadJSON}

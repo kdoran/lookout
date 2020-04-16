@@ -1,12 +1,12 @@
-import React from 'react'
-import {Link} from 'react-router-dom'
-import { parseUrl } from 'utils/utils'
-import Modal from './Modal'
-import SearchContainer from '../containers/SearchContainer'
+const React = require('react')
+const {Link} = require('react-router-dom')
+const {parseUrl} = require('../utils/utils')
+const {Modal} = require('./Modal')
+const {Search} = require('./Search')
 
-import './nav.css'
+require('./nav.css')
 
-export default class Footer extends React.Component {
+class Footer extends React.Component {
   state = { showSearchModal: false }
 
   toggleSearchModal = (e) => {
@@ -43,7 +43,7 @@ export default class Footer extends React.Component {
           onClose={this.toggleSearchModal}
           className='search-modal'
         >
-          <SearchContainer
+          <Search
             multipleSearch={!dbName}
             db={dbName}
             couchUrl={couchUrl}
@@ -55,3 +55,5 @@ export default class Footer extends React.Component {
     )
   }
 }
+
+module.exports = {Footer}

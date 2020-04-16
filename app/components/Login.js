@@ -1,7 +1,7 @@
-import React from 'react'
-import {Link} from 'react-router-dom'
+const React = require('react')
+const {Link} = require('react-router-dom')
 
-export default class LoginContainer extends React.Component {
+class Login extends React.Component {
   state = { loading: false }
 
   tryLogin = async event => {
@@ -29,3 +29,5 @@ export default class LoginContainer extends React.Component {
     )
   }
 }
+
+module.exports = {Login}

@@ -1,7 +1,5 @@
-import React from 'react'
-import ClickOutHandler from 'react-onclickout'
-// import h from 'utils/helpers'
-
+const React = require('react')
+const ClickOutHandler = require('react-onclickout')
 
 class StaticInput extends React.Component {
   render () {
@@ -22,7 +20,7 @@ class StaticInput extends React.Component {
 
 const LIMIT = 25
 
-export default class TypeAhead extends React.Component {
+class TypeAhead extends React.Component {
   state = {
     showEdit: true,
     inputValue: '',
@@ -145,7 +143,6 @@ export default class TypeAhead extends React.Component {
     const { inputValue, showEdit, currIndex, visibleRows, showSearch } = this.state
     const { value, label, resourceName, rows, onNewSelected, loading, autoFocus, stayOpen } = this.props
     const staticValue = this.displayFunction(value)
-    console.log(staticValue)
     if (rows.find(row => !row.name)) {
       throw new Error(`search drop expects rows with a name property`)
     }
@@ -209,3 +206,5 @@ export default class TypeAhead extends React.Component {
     )
   }
 }
+
+module.exports = {TypeAhead}

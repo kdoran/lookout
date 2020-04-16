@@ -1,24 +1,25 @@
-import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
-import { HashRouter as Router, Route, Switch } from 'react-router-dom'
+const React = require('react')
+const { Component } = require('react')
+const ReactDOM = require('react-dom')
+const {HashRouter, Route, Switch} = require('react-router-dom')
 
-import SetupCouchContainer from './containers/SetupCouchContainer'
-import DatabasesContainer from './containers/DatabasesContainer'
-import DocsContainer from './containers/DocsContainer'
-import DocContainer from './containers/DocContainer'
-import ConfigContainer from './containers/ConfigContainer'
-import AdminContainer from './containers/AdminContainer'
-import EditDocContainer from './containers/EditDocContainer'
-import QueryContainer from './containers/QueryContainer'
-import GlobalQueryContainer from './containers/GlobalQueryContainer'
-import Footer from './components/Footer'
-import Login from './components/Login'
-import Loading from './components/Loading'
-import { parseUrl, getParams } from './utils/utils'
-import {RemoteCouchApi} from '../api/'
+const {RemoteCouchApi} = require('../api/')
 
-import 'app-classes.css'
-import 'app-tags.css'
+const {SetupCouchContainer} = require('./containers/SetupCouchContainer')
+const {DatabasesContainer} = require('./containers/DatabasesContainer')
+const {DocsContainer} = require('./containers/DocsContainer')
+const {DocContainer} = require('./containers/DocContainer')
+const {ConfigContainer} = require('./containers/ConfigContainer')
+const {AdminContainer} = require('./containers/AdminContainer')
+const {EditDocContainer} = require('./containers/EditDocContainer')
+const {QueryContainer} = require('./containers/QueryContainer')
+const {GlobalQueryContainer} = require('./containers/GlobalQueryContainer')
+
+const {Footer, Login, Loading} = require('./components')
+const {parseUrl, getParams} = require('./utils')
+
+require('app-classes.css')
+require('app-tags.css')
 
 // 1. App = if no couch in the URL, return SetupCouchContainer
 // 2. CouchRoutes = routes for "we have couch URL but not a specific database."
@@ -130,11 +131,9 @@ class CouchRoutes extends Component {
     const couchUrl = parseUrl(couch)
     this.api = new RemoteCouchApi(couchUrl)
     window.api = this.api
-    console.log(`
-      remote couch api on ${couchUrl} available in console as window.api,
-      api.PouchDBConstructor is pouch constructor with couchUrl prefix
-      api.GenericPouchDB is Pouch constructor without prefix
-    `)
+    console.log(
+      `window.api.PouchDBConstructor couchUrl \nwindow.api.GenericPouchDB is Pouch constructor without prefix`
+    )
 
     const user = await this.api.getCurrentUser()
     this.setState({loading: false, user})
@@ -213,12 +212,12 @@ class CouchRoutes extends Component {
 class App extends Component {
   render () {
     return (
-      <Router>
+      <HashRouter>
         <div>
           <Route exact path='/' component={SetupCouchContainer} />
           <Route path='/:couch/' component={CouchRoutes} />
         </div>
-      </Router>
+      </HashRouter>
     )
   }
 }

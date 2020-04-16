@@ -1,7 +1,7 @@
 const DEFAULT_LIMIT = 2000
 const DEFAULT_LARGE_LIMIT = 50000000
 
-export function getAllQueries (dbName) {
+function getAllQueries (dbName) {
   return {
     'id-regex': {
       fetchParams: {
@@ -176,7 +176,7 @@ export function getAllQueries (dbName) {
   }
 }
 
-export function getQuery (dbName, queryName) {
+function getQuery (dbName, queryName) {
   const queries = getAllQueries(dbName)
   if (!queries[queryName]) {
     return `${queryName} not found`
@@ -190,3 +190,5 @@ ${queries[queryName].fn.toString().replace(/ {6}/g, '')}
     ...queries[queryName]
   }
 }
+
+module.exports = {getAllQueries, getQuery}

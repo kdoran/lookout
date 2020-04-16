@@ -1,10 +1,11 @@
-import React from 'react'
-import { debounce } from 'utils/utils'
-import Loading from 'components/Loading'
+const React = require('react')
+const ReactDOM = require('react-dom')
+const {Link} = require('react-router-dom')
 
-import { Link } from 'react-router-dom'
-import ReactDOM from 'react-dom'
-import './search-container.css'
+const {debounce} = require('../utils')
+const {Loading} = require('./Loading')
+
+require('./search-container.css')
 
 // TODO: move to utils
 const isExcluded = db => ['_global_changes', '_metadata', '_replicator'].indexOf(db) === -1
@@ -40,7 +41,7 @@ const MultipleView = (props = {}) => {
     </div>)
 }
 
-export default class SearchContainer extends React.Component {
+class Search extends React.Component {
   state = {
     result: {},
     searching: false
@@ -184,3 +185,5 @@ export default class SearchContainer extends React.Component {
     )
   }
 }
+
+module.exports = {Search}

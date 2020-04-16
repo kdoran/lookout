@@ -1,7 +1,7 @@
-import React from 'react'
-import Modal from './Modal'
+const React = require('react')
+const {Modal} = require('./Modal')
 
-export default class extends React.Component {
+class NewDoc extends React.Component {
   state = { showModal: false, inputText: '', allowEdit: false }
 
   toggleModal = () => {
@@ -69,3 +69,5 @@ export default class extends React.Component {
     )
   }
 }
+
+module.exports = {NewDoc}

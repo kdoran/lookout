@@ -1,16 +1,18 @@
-import React from 'react'
-import keyBy from 'lodash/keyBy'
-import Loading from 'components/Loading'
-import NewDatabaseModal from 'components/NewDatabaseModal'
-import Error from 'components/Error'
-import { Link } from 'react-router-dom'
-import AllowEditButton from 'components/AllowEditButton'
-import Breadcrumbs from 'components/Breadcrumbs'
-import { showMBSize, withCommas } from 'utils/utils'
+const React = require('react')
+const { Link } = require('react-router-dom')
+const keyBy = require('lodash/keyBy')
+const {
+  Loading,
+  NewDatabaseModal,
+  ErrorDisplay,
+  AllowEditButton,
+  Breadcrumbs
+} = require('components')
+const { showMBSize, withCommas } = require('../utils/utils')
 
-import './databases-container.css'
+require('./databases-container.css')
 
-export default class extends React.Component {
+class DatabasesContainer extends React.Component {
   state = {
     loaded: false,
     error: null,
@@ -56,7 +58,7 @@ export default class extends React.Component {
     return (
       <div>
         <Breadcrumbs couch={couch} />
-        {loaded ? error ? <Error error={error} /> : (
+        {loaded ? error ? <ErrorDisplay error={error} /> : (
           <div>
             <table>
               <thead>
@@ -123,3 +125,5 @@ export default class extends React.Component {
     )
   }
 }
+
+module.exports = {DatabasesContainer}
