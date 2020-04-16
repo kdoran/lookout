@@ -3,9 +3,9 @@ const { Component } = require('react')
 const ReactDOM = require('react-dom')
 const {HashRouter, Route, Switch} = require('react-router-dom')
 
-const {RemoteCouchApi} = require('../api/')
+const {RemoteCouchApi, lookoutApi} = require('./lookout-api')
 
-const {SetupCouchContainer} = require('./containers/SetupCouchContainer')
+const {SelectCouchContainer} = require('./containers/SelectCouchContainer')
 const {DatabasesContainer} = require('./containers/DatabasesContainer')
 const {DocsContainer} = require('./containers/DocsContainer')
 const {DocContainer} = require('./containers/DocContainer')
@@ -21,7 +21,7 @@ const {parseUrl, getParams} = require('./utils')
 require('app-classes.css')
 require('app-tags.css')
 
-// 1. App = if no couch in the URL, return SetupCouchContainer
+// 1. App = if no couch in the URL, return SelectCouchContainer
 // 2. CouchRoutes = routes for "we have couch URL but not a specific database."
 // 3. OnDatabaseRoutes = we have a couch url and a specific datbase
 
@@ -124,10 +124,13 @@ class CouchRoutes extends Component {
   login = (username, password) => {
     return this.api.login(username, password).then(user => {
       this.setState({user})
+
+      this.saveLink(parseUrl(this.props.match.params.couch))
     })
   }
 
   setupCouch = async (couch) => {
+    const {lookoutApi} = this.props
     const couchUrl = parseUrl(couch)
     this.api = new RemoteCouchApi(couchUrl)
     window.api = this.api
@@ -137,6 +140,17 @@ class CouchRoutes extends Component {
 
     const user = await this.api.getCurrentUser()
     this.setState({loading: false, user})
+
+    this.saveLink(couchUrl)
+  }
+
+  saveLink = async (couchUrl) => {
+    const {lookoutApi} = this.props
+    // save a local link doc for us to list in select couch container
+    const localLink = await lookoutApi.couchLink.findOne({url: {'$eq': couchUrl}})
+    if (!localLink) {
+      await lookoutApi.couchLink.create({name: couchUrl, url: couchUrl})
+    }
   }
 
   render () {
@@ -190,11 +204,6 @@ class CouchRoutes extends Component {
               render={props => (<DatabasesContainer {...props} {...commonProps} />)}
             />
             <Route
-              exact
-              path='/:couch/query'
-              render={props => (<GlobalQueryContainer {...props} {...commonProps} />)}
-            />
-            <Route
               path='/:couch/:dbName'
               render={props => (<OnDatabaseRoutes {...props} {...commonProps} />)}
             />
@@ -213,10 +222,23 @@ class App extends Component {
   render () {
     return (
       <HashRouter>
-        <div>
-          <Route exact path='/' component={SetupCouchContainer} />
-          <Route path='/:couch/' component={CouchRoutes} />
-        </div>
+        <Switch>
+          <Route
+            exact
+            path='/'
+            render={props => (<SelectCouchContainer {...props} lookoutApi={lookoutApi} />)}
+          />
+          <Route
+            exact
+            path='/query'
+            render={props => (<GlobalQueryContainer {...props} lookoutApi={lookoutApi} />)}
+          />
+          <Route
+            exact
+            path='/:couch/'
+            render={props => (<CouchRoutes {...props} lookoutApi={lookoutApi} />)}
+          />
+        </Switch>
       </HashRouter>
     )
   }

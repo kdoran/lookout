@@ -24,66 +24,76 @@ class GlobalQueryContainer extends React.Component {
   constructor () {
     super()
     this.state = {
-      dbs: [],
-      selectedDb: 'integrated-data',
+      databases: [],
+      selectedDb: null,
       docs: null,
       error: null,
-      focusEditor: true
+      focusEditor: false,
+      loaded: false,
+      loading: false,
+      focusTypeAhead: true,
+      editorValue: getDefaultEditorValue()
     }
   }
 
   async componentDidMount () {
-    const dbs = await this.props.api.listDatabases()
-    this.setState({dbs})
+    const allDatabases = await this.props.lookoutApi.listAll()
+    const databases = allDatabases.map(db => ({...db, name: `${db.url}${db.database}`}))
+    this.setState({databases, loaded: true})
   }
 
-  run = async (result) => {
+  run = async (editorValue) => {
     if (!this.state.selectedDb) return
 
     this.setState({loading: true, docs: null})
 
     try {
-      const db = this.props.api.getPouchInstance(this.state.selectedDb)
-      const selector = JSON.parse(result)
+      const db = this.props.lookoutApi.getPouchDB(this.state.couchLink)
+      const selector = JSON.parse(editorValue)
       const {docs} = await db.find({selector})
-      this.setState({docs, loading: false})
+      window.docs = docs
+      console.log('docs available on variable `docs`', docs)
+      this.setState({docs, loading: false, editorValue})
     } catch (error) {
-      this.setState({error, loading: false})
+      this.setState({error, loading: false, editorValue})
     }
   }
 
-  dbSelected = ({name}) => {
-    this.setState({selectedDb: name})
+  dbSelected = (couchLink) => {
+    this.setState({selectedDb: couchLink.name, couchLink})
   }
 
   onEscape = () => {
-    console.log('anything')
-    this.setState({focusEditor: !this.state.focusEditor})
+    this.setState({focusEditor: false, focusTypeAhead: true})
   }
 
   render () {
-    const {dbs, focusEditor, docs, selectedDb} = this.state
+    const {
+      databases, loading, editorValue, focusEditor, docs, selectedDb, focusTypeAhead
+    } = this.state
 
     return (
       <div>
         <TypeAhead
-          rows={dbs.map(name => ({name}))}
+          rows={databases}
           value={{name: selectedDb}}
           valueSelected={this.dbSelected}
           label={'Select Database'}
           resourceName={'Database'}
-          // autoFocus={!focusEditor}
+          searchFilterFunction={filterFunction}
+          autoFocus={focusTypeAhead}
         />
         <br />
         <br />
         <Editor
-          value={getDefaultString()}
+          value={editorValue}
           height='30%'
           onCmdEnter={this.run}
-          focus={!!selectedDb}
+          focus={focusEditor && selectedDb}
           startRow={2}
           startColumn={15}
           mode={'json'}
+          onEscape={this.onEscape}
         />
         {/* <label>
           <input type='radio' id='nolimit' name='limit' value='nolimit' />
@@ -96,12 +106,21 @@ class GlobalQueryContainer extends React.Component {
   }
 }
 
-function getDefaultString () {
+function getDefaultEditorValue () {
   return `{
   "_id": {
     "$regex": ""
   }
 }`
+}
+
+function filterFunction (rows, input) {
+  return rows.filter(row => fuzzyMatch(row.name, input))
+}
+
+function fuzzyMatch (name, input) {
+  const pattern = input.replace(/\s+/g, '').split('').join('.*')
+  return !!name.match(new RegExp(pattern, 'i'))
 }
 
 module.exports = {GlobalQueryContainer}

@@ -1,23 +1,27 @@
 const React = require('react')
+const sortBy = require('lodash/sortBy')
 const {RemoteCouchApi} = require('../../api/')
-const {parseUrl, localStorager} = require('../utils')
+const {parseUrl} = require('../utils')
 
-class SetupCouchContainer extends React.Component {
-  constructor () {
-    super()
-    let recentCouches = localStorager.getRecent('couchurls').sort()
-    recentCouches = recentCouches.length ? recentCouches : ['http://localhost:5984/']
-    this.state = {
-      error: null,
-      inputUrl: '',
-      loading: false,
-      recentCouches
-    }
+class SelectCouchContainer extends React.Component {
+  state = {
+    error: null,
+    inputUrl: '',
+    loading: false,
+    couchLinks: []
+  }
+
+  async componentDidMount () {
+    const {lookoutApi} = this.props
+    const couchLinks = await lookoutApi.couchLink.list()
+    this.setState({couchLinks: sortBy(couchLinks, 'url')})
   }
 
   tryACouch = async (inputUrl) => {
+    const {lookoutApi} = this.props
     inputUrl = parseUrl(inputUrl)
     this.setState({inputUrl, loading: true})
+
     // is the couch reachable? (using session because '/' is sometimes nginxed
     // to a non-couch resource)
     try {
@@ -26,7 +30,6 @@ class SetupCouchContainer extends React.Component {
       // ran into problems in passing router props around
       const api = new RemoteCouchApi(inputUrl)
       await api.getCurrentUser()
-      localStorager.saveRecent('couchurls', inputUrl)
       this.props.history.push(inputUrl.split('//')[1])
     } catch (error) {
       this.setState({ error: error.toString(), loading: false })
@@ -45,7 +48,7 @@ class SetupCouchContainer extends React.Component {
   }
 
   render () {
-    const { inputUrl, recentCouches, error, loading } = this.state
+    const { inputUrl, couchLinks, error, loading } = this.state
 
     return (
       <form onSubmit={this.onSubmit}>
@@ -68,7 +71,7 @@ class SetupCouchContainer extends React.Component {
           <div>
             Recent Couches:
             <br /><br />
-            {recentCouches.map(url => (
+            {couchLinks.map(({url}) => (
               <div key={url}>
                 &nbsp; <a href='#' onClick={(e) => { e.preventDefault(); this.onCouchClick(url) }}>
                   {url}
@@ -90,4 +93,4 @@ class SetupCouchContainer extends React.Component {
   }
 }
 
-module.exports = {SetupCouchContainer}
+module.exports = {SelectCouchContainer}
