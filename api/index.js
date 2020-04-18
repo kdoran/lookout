@@ -1,8 +1,8 @@
 const {RemoteCouchApi} = require('./remote-couch-api')
 const {StoreApi} = require('./store-api')
 const {PouchAdapter, IndexedDBPouchAdapter} = require('./pouch-adapter')
-const {Adapter} = require('./adapter')
+const {EntityApi} = require('./entity-api')
 
 module.exports = {
-  Adapter, StoreApi, RemoteCouchApi, PouchAdapter, IndexedDBPouchAdapter, 
+  EntityApi, StoreApi, RemoteCouchApi, PouchAdapter, IndexedDBPouchAdapter,
 }

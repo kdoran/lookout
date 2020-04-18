@@ -1,14 +1,48 @@
 const keyBy = require('lodash/keyBy')
 const get = require('lodash/get')
+const jjv = require('jjv')
 const {PouchDB} = require('./pouchdb')
-const {Adapter} = require('./adapter')
+const {
+  baseProperties, baseRequired
+} = require('./schema-utils')
 
-class PouchAdapter extends Adapter {
+class PouchAdapter {
   constructor ({
-    name, schema, pouchOptions = {}, relations = {}
+    name, schema, pouchDB, pouchOptions = {}, relations = {}
   }) {
-    super({name, schema, relations})
-    this.pouchDB = new PouchDB(this.name, pouchOptions)
+    if (!name) {
+      throw new Error('EntityApi usage: name is required')
+    }
+    if (!schema) {
+      throw new Error('EntityApi usage: schema is required')
+    }
+
+    this.pouchDB = pouchDB || new PouchDB(name, pouchOptions)
+    this.name = name
+    this.type = name
+    // EntityApi & AdapterApi both save the same schema on default
+    // not sure yet, they could want different schemas?
+    this.schema = schema
+    this.schema.properties = Object.assign({}, baseProperties, schema.properties)
+    this.schema.required = baseRequired.concat(schema.required || [])
+    this.schema.properties.type.default = name
+
+    this.jjvEnv = jjv()
+    this.jjvEnv.addSchema(this.name, this.schema)
+  }
+
+  validate (row) {
+    return this.jjvEnv.validate(this.name, this.toRecord(row))
+  }
+
+  throwIfInvalid (row) {
+    const validationErrors = this.validate(row)
+    if (validationErrors) {
+      const err = new Error()
+      Object.assign(err, validationErrors)
+      err.message = `Validation errors found ${row._id} ${JSON.stringify(validationErrors)}`
+      throw err
+    }
   }
 
   toRecord (doc) {

@@ -204,7 +204,7 @@ class CouchRoutes extends Component {
               render={props => (<DatabasesContainer {...props} {...commonProps} />)}
             />
             <Route
-              path='/:couch/example-entities'
+              path='/:couch/example-entities/:entityName?/:method?'
               render={props => (<ExampleEntities {...props} {...commonProps} />)}
             />
             <Route

@@ -6,9 +6,10 @@ const styles = {
 
 class Loading extends React.Component {
   render () {
+    const {message = ''} = this.props
     return (
       <h3 style={styles}>
-        loading...
+        loading {message}...
       </h3>
     )
   }

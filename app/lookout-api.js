@@ -18,7 +18,7 @@ const couchLink = {
     required: ['name', 'url'],
     additionalProperties: false
   },
-  AdapterConstructor: IndexedDBPouchAdapter
+  AdapterClass: IndexedDBPouchAdapter
 }
 
 class LookoutStoreApi extends StoreApi {

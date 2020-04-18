@@ -1,5 +1,5 @@
 const test = require('../../smalltest')
-const {StoreApi, IndexedDBPouchAdapter} = require('../../../api')
+const {StoreApi, EntityApi, IndexedDBPouchAdapter} = require('../../../api')
 
 const employeeSchema = {
   type: 'object',
@@ -26,10 +26,22 @@ test('store api: constructor with objects', async t => {
   t.end()
 })
 
+test('store api: constructor with default adapter', async t => {
+  const api = new StoreApi(
+    [{name: 'employee', schema: employeeSchema}],
+    IndexedDBPouchAdapter
+  )
+  t.ok(api.employee.list, 'works with a default adapter for all entities')
+  t.end()
+})
+
 test('store api: constructor with instantiated adapters', async t => {
-  class EmployeeApi extends IndexedDBPouchAdapter {
+  class EmployeeApi extends EntityApi {
     constructor () {
-      super({name: 'employee', schema: employeeSchema})
+      const name = 'employee'
+      const schema = employeeSchema
+      const adapter = new IndexedDBPouchAdapter({name, schema})
+      super({name, schema, adapter})
     }
 
     async customList () {

@@ -1,27 +1,28 @@
-const {Adapter} = require('./adapter')
+const {EntityApi} = require('./entity-api')
 
+// TODO: throw if same name registered twice
 class StoreApi {
-  constructor (entities = []) {
+  constructor (entities = [], DefaultAdapterClass) {
     this.entities = []
     for (let i = 0; i < entities.length; i++) {
-      const entity = getEntity(entities[i])
-      this[entity.name] = entity
-      this.entities.push(entity)
+      const entityApi = getEntityApi(entities[i], DefaultAdapterClass)
+      this[entityApi.name] = entityApi
+      this.entities.push(entityApi)
     }
   }
 }
 
-function getEntity (entity) {
-  if (entity instanceof Adapter) {
-    return entity
+function getEntityApi (params, DefaultAdapterClass) {
+  if (params instanceof EntityApi) {
+    return params
   }
 
   const {
     name,
     description,
     schema,
-    AdapterClass
-  } = entity
+    AdapterClass = DefaultAdapterClass
+  } = params
 
   if (!AdapterClass) {
     throw new Error(`
@@ -29,7 +30,8 @@ function getEntity (entity) {
     `)
   }
 
-  return new AdapterClass({name, description, schema})
+  const adapter = new AdapterClass({name, schema})
+  return new EntityApi({name, schema, description, adapter})
 }
 
 module.exports = {StoreApi}

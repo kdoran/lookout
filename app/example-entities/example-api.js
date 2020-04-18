@@ -1,20 +1,41 @@
-const {StoreApi, PouchAdapter} = require('../../api')
+const {StoreApi, IndexedDBPouchAdapter} = require('../../api')
 
-const itemSchema = {
-  type: 'object',
-  properties: {
-    name: {
-      type: 'string',
-      minLength: 1,
-    }
-  },
-  required: ['name'],
-  additionalProperties: false
+const item = {
+  name: 'item',
+  schema: {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+        minLength: 1,
+      }
+    },
+    required: ['name'],
+    additionalProperties: false
+  }
+}
+
+const location = {
+  name: 'location',
+  schema: {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+        minLength: 1,
+      }
+    },
+    required: ['name'],
+    additionalProperties: false
+  }
 }
 
 class ExampleApi extends StoreApi {
   constructor () {
-    super([{name: 'item', schema: itemSchema}])
+    super([
+      item,
+      location
+    ], IndexedDBPouchAdapter)
   }
 }
 
