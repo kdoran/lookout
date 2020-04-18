@@ -1,11 +1,11 @@
 const test = require('../../smalltest')
-const {EntityApi} = require('../../../api')
+const {PouchAdapter} = require('../../../api')
 
 let api
-test('entity api: constructor', async t => {
-  api = new EntityApi(
-    'note',
-    {
+test('pouch adapter: constructor', async t => {
+  api = new PouchAdapter({
+    name: 'note',
+    schema: {
       type: 'object',
       properties: {
         text: {
@@ -15,11 +15,11 @@ test('entity api: constructor', async t => {
       },
       required: ['text']
     }
-  )
-  t.equals(api.name, 'note', 'creates an entity api with a name')
+  })
+  t.equals(api.name, 'note', 'creates an pouch adapter with a name')
 })
 
-test('entity api: create', async t => {
+test('pouch adapter: create', async t => {
   const note = await api.create({text: 'some text'})
   t.equals(note.text, 'some text', 'creates an entity')
   t.equals(note.type, 'note', 'default creates a type')
@@ -27,27 +27,27 @@ test('entity api: create', async t => {
   t.end()
 })
 
-test('entity api: get', async t => {
+test('pouch adapter: get', async t => {
   const note = await api.create({text: 'some text'})
   const noteSecond = await api.get(note.id)
   t.equals(note.text, noteSecond.text, 'gets a note by id')
   t.end()
 })
 
-test('entity api: list', async t => {
+test('pouch adapter: list', async t => {
   const notes = await api.list()
   t.ok(notes.length, 'lists some notes')
   t.end()
 })
 
-test('entity api: update', async t => {
+test('pouch adapter: update', async t => {
   const note = await api.create({text: 'some text'})
   const noteUpdated = await api.update({...note, text: 'changed'})
   t.equals(noteUpdated.text, 'changed', 'updates a note by id')
   t.end()
 })
 
-test('entity api: delete', async t => {
+test('pouch adapter: delete', async t => {
   const note = await api.create({text: 'some text'})
   await api.remove(note.id)
   try {
@@ -59,13 +59,13 @@ test('entity api: delete', async t => {
   t.end()
 })
 
-test('entity api: create many', async t => {
+test('pouch adapter: create many', async t => {
   const notes = await api.createMany([{text: 'some text'}, {text: 'some text again'}])
   t.equals(notes.length, 2, 'creates some notes')
   t.end()
 })
 
-test('entity api: update many', async t => {
+test('pouch adapter: update many', async t => {
   const notes = await api.createMany([{text: 'some text'}, {text: 'some text again'}])
   const updatedNotes = await api.updateMany(notes.map(note => ({...note, text: 'changed'})))
   t.ok(updatedNotes.every(note => note.text === 'changed'), 'bulk updates notes')
@@ -75,8 +75,8 @@ test('entity api: update many', async t => {
   t.end()
 })
 
-test('entity api: destroy / teardown', async t => {
-  await api.defaultAdapter.destroyDatabase()
+test('pouch adapter: destroy / teardown', async t => {
+  await api.destroyDatabase()
   try {
     await api.list()
     t.fail()
