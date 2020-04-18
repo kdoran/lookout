@@ -18,7 +18,9 @@ const {
   downloadJSON
  } = require('../utils/queries')
 
-const LIMIT = 100
+const LIMIT = 50
+
+let resultsInConsoleCount = 1
 
 class GlobalQueryContainer extends React.Component {
   constructor () {
@@ -32,7 +34,7 @@ class GlobalQueryContainer extends React.Component {
       loaded: false,
       loading: false,
       focusTypeAhead: true,
-      editorValue: getDefaultEditorValue()
+      input: getDefaultEditorValue()
     }
   }
 
@@ -42,21 +44,29 @@ class GlobalQueryContainer extends React.Component {
     this.setState({databases, loaded: true})
   }
 
-  run = async (editorValue) => {
+  run = async () => {
     if (!this.state.selectedDb) return
+
+    const { input } = this.state
 
     this.setState({loading: true, docs: null})
 
     try {
       const db = this.props.lookoutApi.getPouchDB(this.state.couchLink)
-      const selector = JSON.parse(editorValue)
-      const {docs} = await db.find({selector})
-      window.docs = docs
-      console.log('docs available on variable `docs`', docs)
-      this.setState({docs, loading: false, editorValue})
+      const selector = JSON.parse(input)
+      const {docs} = await db.find({selector, limit: Number.MAX_SAFE_INTEGER})
+      const varName = `docs${resultsInConsoleCount}`
+      window[varName] = docs
+      resultsInConsoleCount++
+      console.log(`restuls available on variable ${varName}`, docs)
+      this.setState({docs, loading: false})
     } catch (error) {
-      this.setState({error, loading: false, editorValue})
+      this.setState({error, loading: false})
     }
+  }
+
+  onEdit = async (input) => {
+    this.setState({ input, error: '' })
   }
 
   dbSelected = (couchLink) => {
@@ -69,7 +79,7 @@ class GlobalQueryContainer extends React.Component {
 
   render () {
     const {
-      databases, loading, editorValue, focusEditor, docs, selectedDb, focusTypeAhead
+      databases, loading, input, focusEditor, docs, selectedDb, focusTypeAhead
     } = this.state
 
     return (
@@ -86,21 +96,26 @@ class GlobalQueryContainer extends React.Component {
         <br />
         <br />
         <Editor
-          value={editorValue}
+          value={input}
           height='30%'
           onCmdEnter={this.run}
-          focus={focusEditor && selectedDb}
+          onChange={this.onEdit}
+          // focus={focusEditor && selectedDb}
           startRow={2}
           startColumn={15}
           mode={'json'}
           onEscape={this.onEscape}
         />
-        {/* <label>
-          <input type='radio' id='nolimit' name='limit' value='nolimit' />
-          nolimit
-        </label>
-        <label><input type='radio' id='25' name='limit' value='25' />25</label>
-        <label><input type='radio' id='500' name='limit' value='500' />500</label> */}
+        {loading
+          ? <Loading />
+          : docs &&
+            <div>
+              max {LIMIT} docs dislayed on browser
+              <pre>
+                {JSON.stringify(docs.slice(0, LIMIT), null, 2)}
+              </pre>
+            </div>
+        }
       </div>
     )
   }

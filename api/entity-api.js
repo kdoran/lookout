@@ -6,6 +6,7 @@ class EntityApi {
     if (!schema) throw new Error('entity schema required')
 
     this.name = name
+    this.relations = relations
     // TODO: would it help to also/only let this be an instantiated instance?
     this.defaultAdapter = new DefaultAdapter(name, schema, relations)
   }
