@@ -1,7 +1,6 @@
-const {RemoteCouchApi} = require('../api')
-const {StoreApi, EntityApi} = require('../api')
+const {StoreApi, RemoteCouchApi, PouchAdapter} = require('../api')
 
-class CouchLinkApi extends EntityApi {
+class CouchLinkApi extends PouchAdapter {
   constructor () {
     const name = 'couchLink'
     const schema = {
@@ -24,26 +23,6 @@ class CouchLinkApi extends EntityApi {
 }
 
 class LookoutStoreApi extends StoreApi {
-  // for each remote couch the user has accessed,
-  // try and get its list of databases if there is access
-  async listAll () {
-    const allCouchLinks = await this.couchLink.list()
-    const promises = allCouchLinks.map(({url}) => {
-      return (new RemoteCouchApi(url)).listDatabases()
-        .catch(error => {
-          return []
-        })
-    })
-    const databases = await Promise.all(promises)
-    return allCouchLinks
-      .map((couchLink, index) => ({...couchLink, databases: databases[index]}))
-      .reduce((acc, couchLink) => {
-        return acc.concat(
-          couchLink.databases.map(database => ({database, ...couchLink}))
-        )
-      }, [])
-  }
-
   getPouchDB ({name, database, url}) {
     this.databases = this.databases || {}
     if (this.databases[name]) return this.databases[name]

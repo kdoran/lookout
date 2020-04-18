@@ -13,7 +13,6 @@ const {ConfigContainer} = require('./containers/ConfigContainer')
 const {AdminContainer} = require('./containers/AdminContainer')
 const {EditDocContainer} = require('./containers/EditDocContainer')
 const {QueryContainer} = require('./containers/QueryContainer')
-const {GlobalQueryContainer} = require('./containers/GlobalQueryContainer')
 
 const {Footer, Login, Loading} = require('./components')
 const {parseUrl, getParams} = require('./utils')
@@ -229,12 +228,6 @@ class App extends Component {
             render={props => (<SelectCouchContainer {...props} lookoutApi={lookoutApi} />)}
           />
           <Route
-            exact
-            path='/query'
-            render={props => (<GlobalQueryContainer {...props} lookoutApi={lookoutApi} />)}
-          />
-          <Route
-            exact
             path='/:couch/'
             render={props => (<CouchRoutes {...props} lookoutApi={lookoutApi} />)}
           />
