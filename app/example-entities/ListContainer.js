@@ -1,5 +1,7 @@
 const React = require('react')
+const { Link } = require('react-router-dom')
 const {ErrorDisplay, Pagination, Loading} = require('../components')
+require('./list-container.css')
 
 const limit = 500
 
@@ -26,9 +28,10 @@ class ListContainer extends React.Component {
     const {api, entityName} = this.props
     try {
       const rows = await api.list({limit})
+      // TODO: count
       const total = (rows.length < limit)
         ? rows.length
-        : await api.count(entityName)
+        : await api.count()
 
       this.setState({rows, total, loaded: true})
     } catch (error) {
@@ -38,8 +41,7 @@ class ListContainer extends React.Component {
   }
 
   render () {
-    console.log(this.props)
-    const {entityName} = this.props
+    const {entityName, couch} = this.props
     // const {searchParams: {offset = 0}, entityName} = this.props
     const {rows, error, loaded, total} = this.state
 
@@ -56,11 +58,14 @@ class ListContainer extends React.Component {
       />
     )
 
-    const content = !loaded
+    return !loaded
       ? <Loading message={entityName}/>
       : (
         <div>
-          {PaginationComponent}
+          <div className='controls'>
+            {PaginationComponent}
+            <Link to={`/${couch}/example-entities/${entityName}/create`}>add {entityName}</Link>
+          </div>
           <table>
             <thead>
               <tr>
@@ -75,7 +80,7 @@ class ListContainer extends React.Component {
             <tbody>
               {rows.map(row => (
                 <tr key={row.id}>
-                  <td><a href={`#/casfasdfasdfasdf/${entityName}/${row.id}`}>{row.id}</a></td>
+                  <td><Link to={`/${couch}/${entityName}/view/${row.id}`}>{row.id}</Link></td>
                   <td>{row.name}</td>
                   <td>{row.createdAt}</td>
                   <td>{row.createdBy}</td>
@@ -86,19 +91,8 @@ class ListContainer extends React.Component {
             </tbody>
           </table>
           {PaginationComponent}
-          <a href="#/{asdfasdfasdf}/">all entities</a>
         </div>
       )
-
-    return (
-      <div class='page'>
-        <button className='button-link float-right'>
-          <a href='#/{adapter}/{entityName}/create'>add {entityName}</a>
-        </button>
-        <a href="#/{adapter}/">all entities</a>
-        {content}
-      </div>
-    )
   }
 }
 

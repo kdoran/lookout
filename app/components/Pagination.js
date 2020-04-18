@@ -5,7 +5,7 @@ const {withCommas} = require('../utils/utils')
 class Pagination extends React.Component {
   render () {
     const { total, displayed, path, limit, offset } = this.props
-    const startingNumber = 1 + offset
+    const startingNumber = total === 0 ? 0 : 1 + offset
     const previousNumber = offset - limit
     const nextNumber = offset + limit
     return (
@@ -17,9 +17,9 @@ class Pagination extends React.Component {
             <Link to={path + '?offset=' + previousNumber}>previous</Link>
           )}
           {previousNumber === 0 && (
-            <Link to={path}>previous</Link>
+            <Link to={path}>previous </Link>
           )}
-          {previousNumber < 0 && 'previous'}
+          {previousNumber < 0 && 'previous '}
           {offset + displayed < total && (
             <Link to={path + '?offset=' + nextNumber}>next</Link>
           )}
