@@ -1,5 +1,4 @@
 const React = require('react')
-const get = require('lodash/get')
 
 function ErrorDisplay ({error, header}) {
   if (!error) return null
@@ -15,7 +14,7 @@ function ErrorDisplay ({error, header}) {
 
   return (
     <div>
-      <h5 className='error'>{header ? header : 'Error Found'}</h5>
+      <h5 className='error'>{header || 'Error Found'}</h5>
       <pre>
         Url: ${url}
         <br /><br />

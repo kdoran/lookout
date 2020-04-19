@@ -1,6 +1,6 @@
 const React = require('react')
 const AceEditor = require('react-ace').default
-const brace = require('brace') // eslint-disable-line)
+const brace = require('brace') // eslint-disable-line
 
 require('brace/mode/json')
 require('brace/mode/javascript')
@@ -15,7 +15,7 @@ class Editor extends React.Component {
     this.editor.session.setOptions({ tabSize: 2 })
     this.editor.commands.removeCommands(['gotoline', 'find'])
 
-    const {onCmdEnter, onEscape, onSave} = this.props
+    const {onCmdEnter, onSave} = this.props
 
     const commandKeys = [
       onCmdEnter && { // commands is array of key bindings.

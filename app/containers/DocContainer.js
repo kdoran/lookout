@@ -26,7 +26,7 @@ class DocContainer extends React.Component {
   }
 
   componentDidUpdate (prevProps) {
-    const {dbUrl, searchParams: {offset}, match: {params: {docId}}} = this.props
+    const {dbUrl, match: {params: {docId}}} = this.props
     const {match: {params: {rev}}} = this.props
     if (prevProps.dbUrl !== dbUrl ||
         prevProps.match.params.docId !== docId ||

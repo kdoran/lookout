@@ -3,7 +3,7 @@ const { Component } = require('react')
 const ReactDOM = require('react-dom')
 const {HashRouter, Route, Switch} = require('react-router-dom')
 
-const {RemoteCouchApi, lookoutApi} = require('./lookout-api')
+const {RemoteCouchApi, couchLinkApi} = require('./api')
 
 const {SelectCouchContainer} = require('./containers/SelectCouchContainer')
 const {DatabasesContainer} = require('./containers/DatabasesContainer')
@@ -130,7 +130,6 @@ class CouchRoutes extends Component {
   }
 
   setupCouch = async (couch) => {
-    const {lookoutApi} = this.props
     const couchUrl = parseUrl(couch)
     this.api = new RemoteCouchApi(couchUrl)
     window.api = this.api
@@ -145,11 +144,11 @@ class CouchRoutes extends Component {
   }
 
   saveLink = async (couchUrl) => {
-    const {lookoutApi} = this.props
+    const {couchLinkApi} = this.props
     // save a local link doc for us to list in select couch container
-    const localLink = await lookoutApi.couchLink.findOne({url: {'$eq': couchUrl}})
+    const localLink = await couchLinkApi.findOne({url: {'$eq': couchUrl}})
     if (!localLink) {
-      await lookoutApi.couchLink.create({name: couchUrl, url: couchUrl})
+      await couchLinkApi.create({name: couchUrl, url: couchUrl})
     }
   }
 
@@ -230,11 +229,11 @@ class App extends Component {
           <Route
             exact
             path='/'
-            render={props => (<SelectCouchContainer {...props} lookoutApi={lookoutApi} />)}
+            render={props => (<SelectCouchContainer {...props} couchLinkApi={couchLinkApi} />)}
           />
           <Route
             path='/:couch/'
-            render={props => (<CouchRoutes {...props} lookoutApi={lookoutApi} />)}
+            render={props => (<CouchRoutes {...props} couchLinkApi={couchLinkApi} />)}
           />
         </Switch>
       </HashRouter>

@@ -1,32 +1,25 @@
-class EntityApi {
+const {SchemaInterface} = require('./schema-interface')
+
+class EntityApi extends SchemaInterface {
   constructor ({
-    name, schema, adapter, user, relations = {}, description = ''
+    schema, adapter, user, relations = {}, description = ''
   }) {
-    if (!name) {
-      throw new Error('EntityApi usage: name is required')
-    }
-    if (!schema) {
-      throw new Error('EntityApi usage: schema is required')
+    if (typeof user !== 'object' || !user.name) {
+      throw new Error('EntityApi usage: user object with name is requred')
     }
     if (!adapter) {
       throw new Error('EntityApi usage: adapter is required')
     }
 
+    super(schema)
+
     this.adapter = adapter
-    this.type = name
-    this.name = name
+    this.name = schema.name
     this.relations = relations
     this.description = description
-    this.schema = schema
+    // done in schema interface
+    // this.schema = schema
     this.user = user
-  }
-
-  createTemplate () {
-    return Object.keys(this.schema.properties)
-      .reduce((acc, propetyName) => {
-        acc[propetyName] = ''
-        return acc
-      }, {})
   }
 
   async list (...params) {

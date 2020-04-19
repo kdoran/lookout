@@ -11,7 +11,6 @@ const {Modal} = require('./Modal')
 const {NewDatabaseModal} = require('./NewDatabaseModal')
 const {NewDoc} = require('./NewDoc')
 const {Pagination} = require('./Pagination')
-const {TypeAhead} = require('./TypeAhead')
 
 module.exports = {
   AllowEditButton,
@@ -26,6 +25,5 @@ module.exports = {
   Modal,
   NewDatabaseModal,
   NewDoc,
-  Pagination,
-  TypeAhead
+  Pagination
 }

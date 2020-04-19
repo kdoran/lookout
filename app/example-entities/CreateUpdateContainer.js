@@ -7,17 +7,19 @@ const {
 
 require('../containers/edit-doc-container.css')
 
+const defaultState = {
+  valid: true,
+  original: '',
+  input: '',
+  changesMade: false,
+  error: null,
+  saving: false,
+  showDeleteModal: false,
+  loaded: false
+}
+
 class CreateUpdateContainer extends React.Component {
-  state = {
-    valid: true,
-    original: '',
-    input: '',
-    changesMade: false,
-    error: null,
-    saving: false,
-    showDeleteModal: false,
-    loaded: false
-  }
+  state = defaultState
 
   componentDidMount () {
     this.load()
@@ -28,15 +30,15 @@ class CreateUpdateContainer extends React.Component {
     if (prevProps.entityName !== entityName ||
         prevProps.match.params.entityId !== entityId
     ) {
+      console.log('wtf')
       this.load()
     }
   }
 
   load = async () => {
-    const {entityName, api, match: {params: {entityId}}} = this.props
+    const {api, match: {params: {entityId}}} = this.props
     if (!entityId) {
-      this.setState({input: asString(api.createTemplate()), loaded: true})
-      return
+      this.setState({...defaultState, input: asString(api.createTemplate()), loaded: true})
     }
 
     // if (!docId) {
@@ -75,7 +77,7 @@ class CreateUpdateContainer extends React.Component {
     const docId = isNew ? jsObjectInput._id : this.state.docId
 
     try {
-      const {id} = await this.props.api.create(jsObjectInput)
+      await this.props.api.create(jsObjectInput)
       // this.props.history.push(`/${couch}/${dbName}/${id}`)
     } catch (error) {
       if (error.status === 400 && docId === '_security') {
@@ -100,7 +102,7 @@ class CreateUpdateContainer extends React.Component {
   }
 
   render () {
-    const { couch, couchUrl, dbName } = this.props
+    const { couchUrl, dbName } = this.props
     const {
       loaded,
       valid,

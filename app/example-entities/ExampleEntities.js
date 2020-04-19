@@ -25,6 +25,7 @@ class ExampleEntities extends React.Component {
       entityName,
       api: this.api ? this.api[entityName] : null
     }
+    console.log(entityName)
     return (
       <div>
         <h2>Example Entities</h2>

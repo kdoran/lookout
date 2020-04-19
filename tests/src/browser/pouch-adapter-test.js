@@ -4,19 +4,20 @@ const {PouchAdapter} = require('../../../api')
 let api
 test('pouch adapter: constructor', async t => {
   api = new PouchAdapter({
-    name: 'note',
+    pouchDBName: 'some-global-legacy-database',
     schema: {
+      name: 'note',
       type: 'object',
       properties: {
         text: {
           type: 'string',
-          minLength: 1,
+          minLength: 1
         }
       },
       required: ['text']
     }
   })
-  t.equals(api.name, 'note', 'creates an pouch adapter with a name')
+  t.equals(api.type, 'note', 'creates an pouch adapter with a type')
 })
 
 test('pouch adapter: create', async t => {

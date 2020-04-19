@@ -12,13 +12,12 @@ class SelectCouchContainer extends React.Component {
   }
 
   async componentDidMount () {
-    const {lookoutApi} = this.props
-    const couchLinks = await lookoutApi.couchLink.list()
+    const {couchLinkApi} = this.props
+    const couchLinks = await couchLinkApi.list()
     this.setState({couchLinks: sortBy(couchLinks, 'url')})
   }
 
   tryACouch = async (inputUrl) => {
-    const {lookoutApi} = this.props
     inputUrl = parseUrl(inputUrl)
     this.setState({inputUrl, loading: true})
 

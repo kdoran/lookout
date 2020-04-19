@@ -25,7 +25,7 @@ class ListContainer extends React.Component {
   }
 
   load = async () => {
-    const {api, entityName} = this.props
+    const {api} = this.props
     try {
       const rows = await api.list({limit})
       // TODO: count
@@ -59,7 +59,7 @@ class ListContainer extends React.Component {
     )
 
     return !loaded
-      ? <Loading message={entityName}/>
+      ? <Loading message={entityName} />
       : (
         <div>
           <div className='controls'>
