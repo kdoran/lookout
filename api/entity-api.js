@@ -1,6 +1,6 @@
 class EntityApi {
   constructor ({
-    name, schema, adapter, relations = {}, description = ''
+    name, schema, adapter, user, relations = {}, description = ''
   }) {
     if (!name) {
       throw new Error('EntityApi usage: name is required')
@@ -18,6 +18,7 @@ class EntityApi {
     this.relations = relations
     this.description = description
     this.schema = schema
+    this.user = user
   }
 
   createTemplate () {
