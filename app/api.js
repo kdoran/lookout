@@ -1,4 +1,4 @@
-const {EntityApi, RemoteCouchApi, IndexedDBPouchAdapter} = require('../api')
+const {EntityApi, PouchDB, RemoteCouchApi, IndexedDBPouchAdapter} = require('../api')
 
 const couchLinkProps = {
   description: 'a local only cache of remote couchdb urls the user has visited',
@@ -24,4 +24,4 @@ const adapter = new IndexedDBPouchAdapter({...couchLinkProps, pouchDBName: 'couc
 // TODO: username pass
 const couchLinkApi = new EntityApi({...couchLinkProps, user: {name: 'lookout-todo'}, adapter})
 
-module.exports = {RemoteCouchApi, couchLinkApi}
+module.exports = {RemoteCouchApi, couchLinkApi, PouchDB}

@@ -78,7 +78,8 @@ class DocContainer extends React.Component {
   render () {
     const { rev } = this.props.match.params
     const { couchUrl, dbName, couch } = this.props
-    const { loaded, error, doc, _revs_info, _conflicts, docId } = this.state // eslint-disable-line
+    const {docId} = this.props.match.params
+    const { loaded, error, doc, _revs_info, _conflicts } = this.state // eslint-disable-line
 
     return (
       <div>

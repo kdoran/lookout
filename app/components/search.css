@@ -1,10 +1,10 @@
-.search-drop-results {
+.search--results {
   position: relative;
   height: 80%;
   overflow-y: scroll;
 }
 
-.search-drop-results a {
+.search--results a {
     display: block;
     padding: 10px;
     text-decoration: none;
@@ -15,9 +15,7 @@
     text-align: left;
 }
 
-.search-drop-results .active {
+.search--results .active {
     background-color: #2196F3;
     color: white;
 }
-
-

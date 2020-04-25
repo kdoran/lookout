@@ -8,6 +8,8 @@ class Breadcrumbs extends React.Component {
     if (final) {
       return (
         <div className='breadcrumbs'>
+          <Link to={`/`}>home</Link>
+          <span> / </span>
           <Link to={`/${couch}/`}>{couch}</Link>
           <span> / </span>
           <Link to={`/${couch}/${dbName}/`}>{dbName}</Link>
@@ -22,6 +24,8 @@ class Breadcrumbs extends React.Component {
     if (docId) {
       return (
         <div className='breadcrumbs'>
+          <Link to={`/`}>home</Link>
+          <span> / </span>
           <Link to={`/${couch}/`}>{couch}</Link>
           <span> / </span>
           {dbName && <span><Link to={`/${couch}/${dbName}/`}>{dbName}</Link><span> / </span></span>}
@@ -33,6 +37,8 @@ class Breadcrumbs extends React.Component {
     if (dbName) {
       return (
         <div className='breadcrumbs'>
+          <Link to={`/`}>home</Link>
+          <span> / </span>
           <Link to={`/${couch}/`}>{couch}</Link>
           <span> / </span>
           <span>{dbName}</span>
@@ -42,6 +48,8 @@ class Breadcrumbs extends React.Component {
 
     return (
       <div className='breadcrumbs'>
+        <Link to={`/`}>home</Link>
+        <span> / </span>
         <span>{couch}</span>
       </div>
     )

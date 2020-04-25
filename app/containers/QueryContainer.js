@@ -17,6 +17,9 @@ const {
   downloadJSON
 } = require('../utils')
 
+const RENDER_LIMIT = 500000
+let resultsLength = 1
+
 class QueryContainer extends React.Component {
   state = {
     loading: false,
@@ -54,8 +57,7 @@ class QueryContainer extends React.Component {
     this.setState({ input, error: '' })
   }
 
-  run = async (event) => {
-    if (event) event.preventDefault()
+  run = async () => {
     const { valid, input } = this.state
 
     if (!valid) return
@@ -81,6 +83,12 @@ class QueryContainer extends React.Component {
     try {
       const response = await this.props.api.fetcher(url, fetchParams)
       const result = parse(response)
+
+      const varName = `r${resultsLength}`
+      window[varName] = result
+      resultsLength++
+      console.log(`restuls available on variable ${varName}`, result)
+
       this.setState({ response, result, loading: false })
     } catch (error) {
       this.setState({ error, loading: false })
@@ -138,9 +146,25 @@ class QueryContainer extends React.Component {
 
     if (!setup) return null
 
+    const resultsLength = result && result.length !== undefined
+      ? result.length
+      : null
+
+    let displayedResults = JSON.stringify(result, null, 2)
+    let warning
+    if (displayedResults.length > RENDER_LIMIT) {
+      warning = 'Response too large to render, see console for results.'
+      displayedResults = ''
+
+      if (resultsLength) {
+        displayedResults = JSON.stringify(result.slice(0,10), null, 2)
+        warning += ' Previwing first 10 rows.'
+      }
+    }
+
     const links = Object.keys(queries).map(query => (
       <span key={query}>
-        <Link to={`/${couch}/${dbName}/query/${query}`}>{query}</Link>
+        <span><Link to={`/${couch}/${dbName}/query/${query}`}>{query}</Link> </span>
       </span>
     ))
     return (
@@ -148,13 +172,13 @@ class QueryContainer extends React.Component {
         <Breadcrumbs couch={couch} dbName={dbName} docId={'query'} final={queryId} />
 
         {valid
-          ? <a href='#' onClick={this.run}>run (cmd + enter or ctrl + enter)</a>
+          ? <a href='#' onClick={e => {e.preventDefault(); this.run()}}>run (cmd + enter or ctrl + enter)</a>
           : 'waiting for valid json'
         }
         <Editor
           onChange={this.onEdit}
           value={input}
-          height='50%'
+          height='40%'
           onCmdEnter={this.run}
           startRow={query.startRow}
           startColumn={query.startColumn}
@@ -163,31 +187,33 @@ class QueryContainer extends React.Component {
         {error && <ErrorDisplay error={error} />}
         queries: {links}
         <br /><br />
-        <a href='' onClick={this.copy}>copy response to clipboard</a>
-        <a href='' onClick={e => { e.preventDefault(); this.download() }}>download response</a>
-        <a href='' onClick={this.getUrl}>copy sharable url to clipboard</a>
-
-        <AllowEditButton
-          dbName={dbName}
-          type='link'
-          couchUrl={couchUrl}
-          onConfirm={this.handleConfirmDelete}
-          infoMessage={`
-              This will {_deleted: true} 'docs' found in the
-              response object (not the results of your 'parse' function!).
-              It downloads them first, keep that as your backup as couch
-              revisions are not guaranteed to stick around.
-            `}
-        >
-          delete response
-        </AllowEditButton>
         {loading
           ? <Loading />
           : result &&
             <div>
-              <section className='docs-controls' />
+              <section className='docs-controls'>
+                {resultsLength !== undefined && <span>length: {resultsLength}</span>}
+                <a href='' onClick={this.copy}>copy response to clipboard</a>
+                <a href='' onClick={e => {e.preventDefault(); this.download()}}>download response</a>
+                <a href='' onClick={this.getUrl}>copy sharable url to clipboard</a>
+                <AllowEditButton
+                  dbName={dbName}
+                  type='link'
+                  couchUrl={couchUrl}
+                  onConfirm={this.handleConfirmDelete}
+                  infoMessage={`
+                      This will {_deleted: true} 'docs' found in the
+                      response object (not the results of your 'parse' function!).
+                      It downloads them first, keep that as your backup as couch
+                      revisions are not guaranteed to stick around.
+                    `}
+                >
+                  delete response
+                </AllowEditButton>
+              </section>
+              {warning && <div className='warning'>{warning}</div>}
               <pre>
-                {JSON.stringify(result, null, 2)}
+                {displayedResults}
               </pre>
             </div>
         }

@@ -3,7 +3,7 @@ const { Component } = require('react')
 const ReactDOM = require('react-dom')
 const {HashRouter, Route, Switch} = require('react-router-dom')
 
-const {RemoteCouchApi, couchLinkApi} = require('./api')
+const {RemoteCouchApi, PouchDB: PouchDBConstructor, couchLinkApi} = require('./api')
 
 const {SelectCouchContainer} = require('./containers/SelectCouchContainer')
 const {DatabasesContainer} = require('./containers/DatabasesContainer')
@@ -45,8 +45,8 @@ class OnDatabaseRoutes extends Component {
 
   setupDatabase = async (dbName) => {
     this.pouchDB = this.props.api.getPouchInstance(dbName)
-    window.pouchDB = this.pouchDB
-    console.log(`${dbName} available in console as window.pouchDB`)
+    window.db = this.pouchDB
+    console.log(`Pouch for ${dbName} available in console as 'db'`)
     this.setState({loading: false})
   }
 
@@ -113,6 +113,7 @@ class CouchRoutes extends Component {
 
   async componentDidMount () {
     this.setupCouch(this.props.match.params.couch)
+    window.PouchDB = PouchDBConstructor
   }
 
   componentDidUpdate (prevProps) {
@@ -133,9 +134,6 @@ class CouchRoutes extends Component {
     const couchUrl = parseUrl(couch)
     this.api = new RemoteCouchApi(couchUrl)
     window.api = this.api
-    console.log(
-      `window.api.PouchDBConstructor couchUrl \nwindow.api.GenericPouchDB is Pouch constructor without prefix`
-    )
 
     const user = await this.api.getCurrentUser()
     this.setState({loading: false, user})
@@ -214,7 +212,7 @@ class CouchRoutes extends Component {
         </div>
         <Route
           path='/:couch/:dbName?/:docId?'
-          render={props => (<Footer {...props} api={this.api} dbs={[]} user={user} />)}
+          render={props => (<Footer {...props} {...commonProps} />)}
         />
       </div>
     )

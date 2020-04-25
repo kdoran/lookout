@@ -1,6 +1,5 @@
 const React = require('react')
 const {Link} = require('react-router-dom')
-const {parseUrl} = require('../utils/utils')
 const {Modal} = require('./Modal')
 const {Search} = require('./Search')
 
@@ -14,23 +13,29 @@ class Footer extends React.Component {
     this.setState({ showSearchModal: !this.state.showSearchModal })
   }
 
+  onSelect = (id) => {
+    const { match: { params: { couch, dbName } } } = this.props
+    const url = `/${couch}/${dbName}/${encodeURIComponent(id)}`
+    this.props.history.push(url)
+    this.setState({showSearchModal: false})
+  }
+
   logout = async (event) => {
     event.preventDefault()
+    const { user, match: { params: { couch, dbName } } } = this.props
     await this.props.api.logout()
-    window.location.href = '#/'
     window.location.reload()
   }
 
   render () {
     const { user, match: { params: { couch, dbName } } } = this.props
     const { showSearchModal } = this.state
-    const couchUrl = parseUrl(couch)
 
     return (
       <div className='nav-container'>
         <div className='nav'>
           <span className='nav-left'>
-            CouchDB Lookout | <Link to='/'>change couch</Link>
+            CouchDB Lookout
             {dbName && <span> | <a href='' onClick={this.toggleSearchModal}>search</a></span>}
           </span>
           <span className='nav-right'>
@@ -44,11 +49,11 @@ class Footer extends React.Component {
           className='search-modal'
         >
           <Search
-            multipleSearch={!dbName}
-            db={dbName}
-            couchUrl={couchUrl}
+            dbName={dbName}
+            couch={couch}
             api={this.props.api}
             onClose={this.toggleSearchModal}
+            onSelect={this.onSelect}
           />
         </Modal>
       </div>

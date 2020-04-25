@@ -82,38 +82,11 @@ function copyTextToClipboard (text) {
   document.body.removeChild(textArea)
 }
 
-function keyMap (keyCode) {
-  const keys = {
-    13: 'ENTER',
-    27: 'ESCAPE',
-    38: 'ARROW_UP',
-    40: 'ARROW_DOWN',
-    191: 'FORWARD_SLASH'
-  }
-  return keys[keyCode]
-}
-
-// https://gist.github.com/nmsdvid/8807205#gistcomment-2313801
-const debounce = (callback, time = 950) => {
-  let interval
-  return (...args) => {
-    clearTimeout(interval)
-    interval = setTimeout(() => {
-      interval = null
-
-      // eslint-disable-next-line
-      callback(...args)
-    }, time)
-  }
-}
-
 module.exports = {
   parseUrl,
   showMBSize,
   showSize,
   withCommas,
   getParams,
-  copyTextToClipboard,
-  keyMap,
-  debounce
+  copyTextToClipboard
 }
