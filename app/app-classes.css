@@ -58,3 +58,8 @@
 .search-modal {
   height: 80%;
 }
+
+.server-info {
+  font-size: .7em;
+  margin-bottom: 20px;
+}

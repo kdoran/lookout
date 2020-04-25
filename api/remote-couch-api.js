@@ -107,6 +107,10 @@ class RemoteCouchApi {
     return this.fetcher(databaseName)
   }
 
+  async getServer () {
+    return this.fetcher('/')
+  }
+
   async destroyDatabase (databaseName) {
     return this.fetcher(databaseName, {method: 'DELETE'})
   }
