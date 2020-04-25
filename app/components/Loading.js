@@ -1,4 +1,4 @@
-import React from 'react'
+const React = require('react')
 
 const styles = {
   textAlign: 'center'
@@ -6,12 +6,13 @@ const styles = {
 
 class Loading extends React.Component {
   render () {
+    const {message = ''} = this.props
     return (
       <h3 style={styles}>
-        loading...
+        loading {message}...
       </h3>
     )
   }
 }
 
-export default Loading
+module.exports = {Loading}

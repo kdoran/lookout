@@ -1,12 +1,11 @@
-import React from 'react'
-import {Link} from 'react-router-dom'
-import { parseUrl } from 'utils/utils'
-import Modal from './Modal'
-import SearchContainer from '../containers/SearchContainer'
+const React = require('react')
+const {Link} = require('react-router-dom')
+const {Modal} = require('./Modal')
+const {Search} = require('./Search')
 
-import './nav.css'
+require('./nav.css')
 
-export default class Footer extends React.Component {
+class Footer extends React.Component {
   state = { showSearchModal: false }
 
   toggleSearchModal = (e) => {
@@ -14,23 +13,28 @@ export default class Footer extends React.Component {
     this.setState({ showSearchModal: !this.state.showSearchModal })
   }
 
+  onSelect = (id) => {
+    const { match: { params: { couch, dbName } } } = this.props
+    const url = `/${couch}/${dbName}/${encodeURIComponent(id)}`
+    this.props.history.push(url)
+    this.setState({showSearchModal: false})
+  }
+
   logout = async (event) => {
     event.preventDefault()
     await this.props.api.logout()
-    window.location.href = '#/'
     window.location.reload()
   }
 
   render () {
     const { user, match: { params: { couch, dbName } } } = this.props
     const { showSearchModal } = this.state
-    const couchUrl = parseUrl(couch)
 
     return (
       <div className='nav-container'>
         <div className='nav'>
           <span className='nav-left'>
-            CouchDB Lookout | <Link to='/'>change couch</Link>
+            CouchDB Lookout
             {dbName && <span> | <a href='' onClick={this.toggleSearchModal}>search</a></span>}
           </span>
           <span className='nav-right'>
@@ -43,15 +47,17 @@ export default class Footer extends React.Component {
           onClose={this.toggleSearchModal}
           className='search-modal'
         >
-          <SearchContainer
-            multipleSearch={!dbName}
-            db={dbName}
-            couchUrl={couchUrl}
+          <Search
+            dbName={dbName}
+            couch={couch}
             api={this.props.api}
             onClose={this.toggleSearchModal}
+            onSelect={this.onSelect}
           />
         </Modal>
       </div>
     )
   }
 }
+
+module.exports = {Footer}

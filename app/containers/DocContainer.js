@@ -1,15 +1,17 @@
-import React from 'react'
-import Loading from 'components/Loading'
-import Error from 'components/Error'
-import AllowEditButton from 'components/AllowEditButton'
-import Breadcrumbs from 'components/Breadcrumbs'
-import { Link } from 'react-router-dom'
-import { downloadJSON } from 'utils/download'
-import { copyTextToClipboard } from 'utils/utils'
+const React = require('react')
+const {
+  Loading,
+  ErrorDisplay,
+  AllowEditButton,
+  Breadcrumbs
+} = require('components')
+const { Link } = require('react-router-dom')
+const { downloadJSON } = require('../utils/download')
+const { copyTextToClipboard } = require('../utils/utils')
 
-import './doc-container.css'
+require('./doc-container.css')
 
-export default class extends React.Component {
+class DocContainer extends React.Component {
   state = {
     doc: null,
     loaded: false,
@@ -19,21 +21,15 @@ export default class extends React.Component {
     docId: null
   }
 
-  static getDerivedStateFromProps (nextProps, prevState) {
-    const docId = decodeURIComponent(nextProps.match.params.docId)
-    return { ...prevState, docId }
-  }
-
   componentDidMount () {
     this.load()
   }
 
   componentDidUpdate (prevProps) {
-    const {dbUrl, docId, searchParams: {offset}} = this.props
+    const {dbUrl, match: {params: {docId}}} = this.props
     const {match: {params: {rev}}} = this.props
     if (prevProps.dbUrl !== dbUrl ||
-        prevProps.searchParams.offset !== offset ||
-        prevProps.docId !== docId ||
+        prevProps.match.params.docId !== docId ||
         prevProps.match.params.rev !== rev
     ) {
       this.load()
@@ -41,9 +37,10 @@ export default class extends React.Component {
   }
 
   load = async () => {
+    this.setState({loaded: false, error: null})
     const { pouchDB } = this.props
     const { rev } = this.props.match.params
-    const { docId } = this.state
+    const docId = decodeURIComponent(this.props.match.params.docId)
     try {
       // _revs_info & _conflicts are not returned if rev option is present,
       // so we always fetch those and if there's a rev url param, get the specific rev
@@ -81,12 +78,13 @@ export default class extends React.Component {
   render () {
     const { rev } = this.props.match.params
     const { couchUrl, dbName, couch } = this.props
-    const { loaded, error, doc, _revs_info, _conflicts, docId } = this.state // eslint-disable-line
+    const {docId} = this.props.match.params
+    const { loaded, error, doc, _revs_info, _conflicts } = this.state // eslint-disable-line
 
     return (
       <div>
         <Breadcrumbs couch={couch} dbName={dbName} docId={docId} final={rev} />
-        {error && <Error error={error} />}
+        {error && <ErrorDisplay error={error} />}
         {!error && !loaded && (<Loading />)}
         {!error && loaded && (
           <div>
@@ -136,3 +134,5 @@ export default class extends React.Component {
     )
   }
 }
+
+module.exports = {DocContainer}

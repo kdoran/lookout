@@ -9,10 +9,10 @@
   width: 100%;
   display: flex;
   justify-content: space-between;
-  font-size: 1.4em;
+  font-size: 1em;
   margin: 0 auto;
   border-top: 1px solid #ccc;
-  padding: 20px 0 20px 0;
+  padding: 10px 0 22px 0;
   background-color: #fff;
   z-index: 999;
 }

@@ -1,60 +1,60 @@
 const React = require('react')
 const {
   DeleteDocModal,
-  Breadcrumbs,
   Loading,
   Editor
 } = require('../components')
 
-require('./edit-doc-container.css')
+require('../containers/edit-doc-container.css')
 
-class EditDocContainer extends React.Component {
-  state = {
-    valid: true,
-    original: '',
-    input: '',
-    changesMade: false,
-    error: null,
-    saving: false,
-    showDeleteModal: false,
-    loaded: false
-  }
+const defaultState = {
+  valid: true,
+  original: '',
+  input: '',
+  changesMade: false,
+  error: null,
+  saving: false,
+  showDeleteModal: false,
+  loaded: false
+}
 
-  static getDerivedStateFromProps (nextProps, prevState) {
-    const docId = decodeURIComponent(nextProps.match.params.docId)
-    return { ...prevState, docId, isNew: docId === 'new' }
-  }
+class CreateUpdateContainer extends React.Component {
+  state = defaultState
 
   componentDidMount () {
     this.load()
   }
 
   componentDidUpdate (prevProps) {
-    const {dbUrl, match: {params: {docId}}} = this.props
-    if (prevProps.dbUrl !== dbUrl ||
-        prevProps.match.params.docId !== docId
+    const {entityName, match: {params: {entityId}}} = this.props
+    if (prevProps.entityName !== entityName ||
+        prevProps.match.params.entityId !== entityId
     ) {
+      console.log('wtf')
       this.load()
     }
   }
 
   load = async () => {
-    const { docId, isNew } = this.state
-
-    if (isNew) {
-      this.setState({ loaded: true, original: '{}', input: neat({ _id: '' }) })
-      return
+    const {api, match: {params: {entityId}}} = this.props
+    if (!entityId) {
+      this.setState({...defaultState, input: asString(api.createTemplate()), loaded: true})
     }
 
-    try {
-      const doc = await this.props.pouchDB.get(docId)
-      const original = neat(doc)
-      const input = original
-      this.setState({ doc, input, original, loaded: true })
-    } catch (error) {
-      this.setState({ error, loaded: true })
-      console.error(error)
-    }
+    // if (!docId) {
+    //   this.setState({ loaded: true, original: '{}', input: asString({ _id: '' }) })
+    //   return
+    // }
+    //
+    // try {
+    //   const doc = await this.props.api.get(docId)
+    //   const original = asString(doc)
+    //   const input = original
+    //   this.setState({ doc, input, original, loaded: true })
+    // } catch (error) {
+    //   this.setState({ error, loaded: true })
+    //   console.error(error)
+    // }
   }
 
   onEdit = input => {
@@ -77,8 +77,8 @@ class EditDocContainer extends React.Component {
     const docId = isNew ? jsObjectInput._id : this.state.docId
 
     try {
-      const {id} = await this.props.pouchDB.put(jsObjectInput)
-      this.props.history.push(`/${couch}/${dbName}/${id}`)
+      await this.props.api.create(jsObjectInput)
+      // this.props.history.push(`/${couch}/${dbName}/${id}`)
     } catch (error) {
       if (error.status === 400 && docId === '_security') {
         const body = JSON.stringify(jsObjectInput)
@@ -90,30 +90,19 @@ class EditDocContainer extends React.Component {
     }
   }
 
-  deleteDoc = () => {
+  onDelete = () => {
     const { valid, input } = this.state
     if (valid) {
       const jsObjectInput = JSON.parse(input)
       jsObjectInput._deleted = true
-      this.setState({ input: neat(jsObjectInput) }, () => {
+      this.setState({ input: asString(jsObjectInput) }, () => {
         this.onSubmit()
       })
     }
   }
 
-  back = () => {
-    const { couch, dbName } = this.props
-    const { docId } = this.state
-
-    if (docId === 'new') {
-      this.props.history.push(`/${couch}/${dbName}`)
-    } else {
-      this.props.history.push(`/${couch}/${dbName}/${docId}`)
-    }
-  }
-
   render () {
-    const { couch, couchUrl, dbName } = this.props
+    const { couchUrl, dbName } = this.props
     const {
       loaded,
       valid,
@@ -130,11 +119,9 @@ class EditDocContainer extends React.Component {
 
     return (
       <div>
-        <Breadcrumbs couch={couch} dbName={dbName} docId={docId} final={'edit'} />
-
         {loaded ? (
           <div>
-            <div className='controls'>
+            <div className='right-controls'>
               <button
                 disabled={!canSave}
                 className={canSave ? 'action-button' : ''}
@@ -145,17 +132,11 @@ class EditDocContainer extends React.Component {
               {!isNew && (
                 <button
                   disabled={canSave}
-                  onClick={() => this.setState({ showDeleteModal: true })}
+                  onClick={this.onDelete}
                 >
-                  delete doc
+                  delete entity
                 </button>
               )}
-              <button
-                className='cancel-button'
-                onClick={() => this.back(this.state.docId)}
-              >
-                {changesMade ? 'cancel' : 'back'}
-              </button>
             </div>
             {error && (<div className='error'>{JSON.stringify(error, null, 2)}</div>)}
             <Editor
@@ -191,8 +172,8 @@ function getSubmitButtonText (valid, changesMade, saving) {
   }
 }
 
-function neat (obj) {
+function asString (obj) {
   return JSON.stringify(obj, null, 2)
 }
 
-module.exports = {EditDocContainer}
+module.exports = {CreateUpdateContainer}

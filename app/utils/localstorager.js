@@ -3,7 +3,7 @@
 const lookoutPrefix = 'couchlookout::'
 const limit = 50
 
-export default {
+const localStorager = {
   getRecent (id) {
     let recent
     try {
@@ -41,3 +41,5 @@ export default {
     localStorage.removeItem(lookoutPrefix + id)
   }
 }
+
+module.exports = {localStorager}

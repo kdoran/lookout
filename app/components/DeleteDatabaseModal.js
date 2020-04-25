@@ -1,7 +1,7 @@
-import React from 'react'
-import Modal from 'components/Modal'
+const React = require('react')
+const {Modal} = require('./Modal')
 
-export default class DeleteDatabaseModal extends React.Component {
+class DeleteDatabaseModal extends React.Component {
   state = { dbNameConfirmed: false, inputText: '' }
 
   onInputChange = (e) => {
@@ -54,3 +54,5 @@ export default class DeleteDatabaseModal extends React.Component {
     )
   }
 }
+
+module.exports = {DeleteDatabaseModal}

@@ -18,7 +18,7 @@ function smalltest (name, func) {
         const {name, func} = testsToRun[i]
         await runTest(name, func)
       }
-      console.log('done running tests?')
+      console.log('done running tests')
     }, 10)
   }
 }
@@ -36,7 +36,8 @@ function runTest (name, func) {
     },
     ok: (a, message = '') => console.assert(a, `${name} ok ${message}`),
     notOk: (a, message = '') => console.assert(!a, `${name} not ok ${message}`),
-    fail: (message = '') => console.assert(false, `${name} fail ${message}`)
+    fail: (message = '') => console.assert(false, `${name} fail ${message}`),
+    end: () => {} // placeholder to make switching to tape easier
   }
 
   const result = func(testTypes)

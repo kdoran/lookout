@@ -1,25 +1,27 @@
-import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
-import { HashRouter as Router, Route, Switch } from 'react-router-dom'
+const React = require('react')
+const { Component } = require('react')
+const ReactDOM = require('react-dom')
+const {HashRouter, Route, Switch} = require('react-router-dom')
 
-import SetupCouchContainer from './containers/SetupCouchContainer'
-import DatabasesContainer from './containers/DatabasesContainer'
-import DocsContainer from './containers/DocsContainer'
-import DocContainer from './containers/DocContainer'
-import ConfigContainer from './containers/ConfigContainer'
-import AdminContainer from './containers/AdminContainer'
-import EditDocContainer from './containers/EditDocContainer'
-import QueryContainer from './containers/QueryContainer'
-import Footer from './components/Footer'
-import Login from './components/Login'
-import Loading from './components/Loading'
-import { parseUrl, getParams } from './utils/utils'
-import {RemoteCouchApi} from '../api/'
+const {RemoteCouchApi, PouchDB: PouchDBConstructor, couchLinkApi} = require('./api')
 
-import 'app-classes.css'
-import 'app-tags.css'
+const {SelectCouchContainer} = require('./containers/SelectCouchContainer')
+const {DatabasesContainer} = require('./containers/DatabasesContainer')
+const {DocsContainer} = require('./containers/DocsContainer')
+const {DocContainer} = require('./containers/DocContainer')
+const {ConfigContainer} = require('./containers/ConfigContainer')
+const {AdminContainer} = require('./containers/AdminContainer')
+const {EditDocContainer} = require('./containers/EditDocContainer')
+const {QueryContainer} = require('./containers/QueryContainer')
+const {ExampleEntities} = require('./example-entities/ExampleEntities')
 
-// 1. App = if no couch in the URL, return SetupCouchContainer
+const {Footer, Login, Loading} = require('./components')
+const {parseUrl, getParams} = require('./utils')
+
+require('app-classes.css')
+require('app-tags.css')
+
+// 1. App = if no couch in the URL, return SelectCouchContainer
 // 2. CouchRoutes = routes for "we have couch URL but not a specific database."
 // 3. OnDatabaseRoutes = we have a couch url and a specific datbase
 
@@ -43,8 +45,8 @@ class OnDatabaseRoutes extends Component {
 
   setupDatabase = async (dbName) => {
     this.pouchDB = this.props.api.getPouchInstance(dbName)
-    window.pouchDB = this.pouchDB
-    console.log(`${dbName} available in console as window.pouchDB`)
+    window.db = this.pouchDB
+    console.log(`Pouch for ${dbName} available in console as 'db'`)
     this.setState({loading: false})
   }
 
@@ -111,6 +113,7 @@ class CouchRoutes extends Component {
 
   async componentDidMount () {
     this.setupCouch(this.props.match.params.couch)
+    window.PouchDB = PouchDBConstructor
   }
 
   componentDidUpdate (prevProps) {
@@ -122,6 +125,8 @@ class CouchRoutes extends Component {
   login = (username, password) => {
     return this.api.login(username, password).then(user => {
       this.setState({user})
+
+      this.saveLink(parseUrl(this.props.match.params.couch))
     })
   }
 
@@ -129,14 +134,20 @@ class CouchRoutes extends Component {
     const couchUrl = parseUrl(couch)
     this.api = new RemoteCouchApi(couchUrl)
     window.api = this.api
-    console.log(`
-      remote couch api on ${couchUrl} available in console as window.api,
-      api.PouchDBConstructor is pouch constructor with couchUrl prefix
-      api.GenericPouchDB is Pouch constructor without prefix
-    `)
 
     const user = await this.api.getCurrentUser()
     this.setState({loading: false, user})
+
+    this.saveLink(couchUrl)
+  }
+
+  saveLink = async (couchUrl) => {
+    const {couchLinkApi} = this.props
+    // save a local link doc for us to list in select couch container
+    const localLink = await couchLinkApi.findOne({url: {'$eq': couchUrl}})
+    if (!localLink) {
+      await couchLinkApi.create({name: couchUrl, url: couchUrl})
+    }
   }
 
   render () {
@@ -190,6 +201,10 @@ class CouchRoutes extends Component {
               render={props => (<DatabasesContainer {...props} {...commonProps} />)}
             />
             <Route
+              path='/:couch/example-entities/:entityName?/:method?'
+              render={props => (<ExampleEntities {...props} {...commonProps} />)}
+            />
+            <Route
               path='/:couch/:dbName'
               render={props => (<OnDatabaseRoutes {...props} {...commonProps} />)}
             />
@@ -197,7 +212,7 @@ class CouchRoutes extends Component {
         </div>
         <Route
           path='/:couch/:dbName?/:docId?'
-          render={props => (<Footer {...props} api={this.api} dbs={[]} user={user} />)}
+          render={props => (<Footer {...props} {...commonProps} />)}
         />
       </div>
     )
@@ -207,12 +222,19 @@ class CouchRoutes extends Component {
 class App extends Component {
   render () {
     return (
-      <Router>
-        <div>
-          <Route exact path='/' component={SetupCouchContainer} />
-          <Route path='/:couch/' component={CouchRoutes} />
-        </div>
-      </Router>
+      <HashRouter>
+        <Switch>
+          <Route
+            exact
+            path='/'
+            render={props => (<SelectCouchContainer {...props} couchLinkApi={couchLinkApi} />)}
+          />
+          <Route
+            path='/:couch/'
+            render={props => (<CouchRoutes {...props} couchLinkApi={couchLinkApi} />)}
+          />
+        </Switch>
+      </HashRouter>
     )
   }
 }

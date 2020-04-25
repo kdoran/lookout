@@ -1,17 +1,26 @@
-import React from 'react'
-import Editor from 'components/Editor'
-import Loading from 'components/Loading'
-import Error from 'components/Error'
-import Breadcrumbs from 'components/Breadcrumbs'
-import QueryResponse from 'components/QueryResponse'
-import AllowEditButton from 'components/AllowEditButton'
-import { getQuery, getAllQueries } from 'utils/queries'
-import { copyTextToClipboard } from 'utils/utils'
-import { encode, decode } from 'utils/url-params'
-import { Link } from 'react-router-dom'
-import { downloadJSON } from 'utils/download'
+const React = require('react')
+const {Link} = require('react-router-dom')
+const {
+  Editor,
+  Loading,
+  ErrorDisplay,
+  Breadcrumbs,
+  AllowEditButton
+} = require('../components')
 
-export default class QueryContainer extends React.Component {
+const {
+  getQuery,
+  getAllQueries,
+  copyTextToClipboard,
+  encode,
+  decode,
+  downloadJSON
+} = require('../utils')
+
+const RENDER_LIMIT = 500000
+let resultsLength = 1
+
+class QueryContainer extends React.Component {
   state = {
     loading: false,
     valid: true,
@@ -48,8 +57,7 @@ export default class QueryContainer extends React.Component {
     this.setState({ input, error: '' })
   }
 
-  run = async event => {
-    if (event) event.preventDefault()
+  run = async () => {
     const { valid, input } = this.state
 
     if (!valid) return
@@ -75,6 +83,12 @@ export default class QueryContainer extends React.Component {
     try {
       const response = await this.props.api.fetcher(url, fetchParams)
       const result = parse(response)
+
+      const varName = `r${resultsLength}`
+      window[varName] = result
+      resultsLength++
+      console.log(`restuls available on variable ${varName}`, result)
+
       this.setState({ response, result, loading: false })
     } catch (error) {
       this.setState({ error, loading: false })
@@ -132,9 +146,25 @@ export default class QueryContainer extends React.Component {
 
     if (!setup) return null
 
+    const resultsLength = result && result.length !== undefined
+      ? result.length
+      : null
+
+    let displayedResults = JSON.stringify(result, null, 2)
+    let warning
+    if (displayedResults.length > RENDER_LIMIT) {
+      warning = 'Response too large to render, see console for results.'
+      displayedResults = ''
+
+      if (resultsLength) {
+        displayedResults = JSON.stringify(result.slice(0, 10), null, 2)
+        warning += ' Previwing first 10 rows.'
+      }
+    }
+
     const links = Object.keys(queries).map(query => (
       <span key={query}>
-        <Link to={`/${couch}/${dbName}/query/${query}`}>{query}</Link>
+        <span><Link to={`/${couch}/${dbName}/query/${query}`}>{query}</Link> </span>
       </span>
     ))
     return (
@@ -142,47 +172,50 @@ export default class QueryContainer extends React.Component {
         <Breadcrumbs couch={couch} dbName={dbName} docId={'query'} final={queryId} />
 
         {valid
-          ? <a href='#' onClick={this.run}>run (cmd + enter or ctrl + enter)</a>
+          ? <a href='#' onClick={e => { e.preventDefault(); this.run() }}>run (cmd + enter or ctrl + enter)</a>
           : 'waiting for valid json'
         }
         <Editor
           onChange={this.onEdit}
           value={input}
-          height='50%'
+          height='40%'
           onCmdEnter={this.run}
           startRow={query.startRow}
           startColumn={query.startColumn}
           mode={'javascript'}
         />
-        {error && <Error error={error} />}
+        {error && <ErrorDisplay error={error} />}
         queries: {links}
         <br /><br />
-        <a href='' onClick={this.copy}>copy response to clipboard</a>
-        <a href='' onClick={e => { e.preventDefault(); this.download() }}>download response</a>
-        <a href='' onClick={this.getUrl}>copy sharable url to clipboard</a>
-
-        <AllowEditButton
-          dbName={dbName}
-          type='link'
-          couchUrl={couchUrl}
-          onConfirm={this.handleConfirmDelete}
-          infoMessage={`
-              This will {_deleted: true} 'docs' found in the
-              response object (not the results of your 'parse' function!).
-              It downloads them first, keep that as your backup as couch
-              revisions are not guaranteed to stick around.
-            `}
-        >
-          delete response
-        </AllowEditButton>
         {loading
           ? <Loading />
           : result &&
-            <QueryResponse
-              result={result}
-              dbName={dbName}
-              couch={couch}
-            />
+            <div>
+              <section className='docs-controls'>
+                {resultsLength !== undefined && <span>length: {resultsLength}</span>}
+                <a href='' onClick={this.copy}>copy response to clipboard</a>
+                <a href='' onClick={e => { e.preventDefault(); this.download() }}>download response</a>
+                <a href='' onClick={this.getUrl}>copy sharable url to clipboard</a>
+                <AllowEditButton
+                  dbName={dbName}
+                  type='link'
+                  couchUrl={couchUrl}
+                  onConfirm={this.handleConfirmDelete}
+                  infoMessage={`
+                      This will {_deleted: true} 'docs' found in the
+                      response object (not the results of your 'parse' function!).
+                      It downloads them first, keep that as your backup as couch
+                      revisions are not guaranteed to stick around.
+                    `}
+                >
+                  delete response
+                </AllowEditButton>
+              </section>
+              {warning && <div className='warning'>{warning}</div>}
+              <pre>
+                {displayedResults}
+              </pre>
+            </div>
         }
       </div>
     )
@@ -192,3 +225,5 @@ export default class QueryContainer extends React.Component {
 function getParams (data) {
   return Object.keys(data).map(key => [key, data[key]].map(encodeURIComponent).join('=')).join('&')
 }
+
+module.exports = {QueryContainer}

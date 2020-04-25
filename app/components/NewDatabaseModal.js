@@ -1,7 +1,7 @@
-import React from 'react'
-import Modal from 'components/Modal'
+const React = require('react')
+const {Modal} = require('./Modal')
 
-export default class NewDatabaseModal extends React.Component {
+class NewDatabaseModal extends React.Component {
   state = { validDBName: false, inputText: '' }
 
   onInputChange = (e) => {
@@ -65,3 +65,5 @@ function isValidDBName (input) {
   const safeDBNameRegex = /^[a-z][a-z0-9_$()+-]*$/
   return safeDBNameRegex.test(input)
 }
+
+module.exports = {NewDatabaseModal}

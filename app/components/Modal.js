@@ -1,8 +1,8 @@
-import React from 'react'
-import ClickOutHandler from 'react-onclickout'
-import './modal.css'
+const React = require('react')
+const ClickOutHandler = require('react-onclickout')
+require('./modal.css')
 
-export default function Modal ({ show, onClose, heading, children, className }) {
+function Modal ({ show, onClose, heading, children, className }) {
   const classes = 'modal ' + (className || '')
 
   const handleOnKeyDown = event => {
@@ -25,3 +25,5 @@ export default function Modal ({ show, onClose, heading, children, className }) 
     </ClickOutHandler>
     : null
 }
+
+module.exports = {Modal}

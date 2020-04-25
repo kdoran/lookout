@@ -1,0 +1,11 @@
+.controls {
+  display: flex;
+  justify-content: space-between;
+  text-align: left;
+}
+
+.right-controls {
+  display: flex;
+  justify-content: flex-end;
+  text-align: right;
+}

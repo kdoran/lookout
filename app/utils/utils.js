@@ -3,7 +3,7 @@ const MB = Math.pow(KB, 2)
 const GB = Math.pow(KB, 3)
 const TB = Math.pow(KB, 4)
 
-export function parseUrl (url) {
+function parseUrl (url) {
   if (!url) return
   if (!url.includes('http')) {
     url = url.includes('localhost') ? 'http://' + url : 'https://' + url
@@ -14,7 +14,7 @@ export function parseUrl (url) {
   return url
 }
 
-export function showMBSize (num) {
+function showMBSize (num) {
   if (!num) return ''
   if (num < MB) {
     return '< 1 MB'
@@ -23,7 +23,7 @@ export function showMBSize (num) {
   }
 }
 
-export function showSize (num) {
+function showSize (num) {
   if (!num) return ''
   if (num < KB) {
     return num + ' B'
@@ -43,12 +43,12 @@ function precisionRound (number, precision) {
   return Math.round(number * factor) / factor
 }
 
-export function withCommas (num) {
+function withCommas (num) {
   if (typeof num !== 'number') return num
   return ('' + (Math.round(num * 100) / 100)).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
-export function getParams (searchParams) {
+function getParams (searchParams) {
   const result = {}
   if (!searchParams) return result
   const split = searchParams.split('?')
@@ -64,7 +64,7 @@ export function getParams (searchParams) {
   return result
 }
 
-export function copyTextToClipboard (text) {
+function copyTextToClipboard (text) {
   const textArea = document.createElement('textarea')
   textArea.value = text
   document.body.appendChild(textArea)
@@ -82,27 +82,11 @@ export function copyTextToClipboard (text) {
   document.body.removeChild(textArea)
 }
 
-export function keyMap (keyCode) {
-  const keys = {
-    13: 'ENTER',
-    27: 'ESCAPE',
-    38: 'ARROW_UP',
-    40: 'ARROW_DOWN',
-    191: 'FORWARD_SLASH'
-  }
-  return keys[keyCode]
-}
-
-// https://gist.github.com/nmsdvid/8807205#gistcomment-2313801
-export const debounce = (callback, time = 950) => {
-  let interval
-  return (...args) => {
-    clearTimeout(interval)
-    interval = setTimeout(() => {
-      interval = null
-
-      // eslint-disable-next-line
-      callback(...args)
-    }, time)
-  }
+module.exports = {
+  parseUrl,
+  showMBSize,
+  showSize,
+  withCommas,
+  getParams,
+  copyTextToClipboard
 }
