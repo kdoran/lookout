@@ -170,8 +170,8 @@ class PouchAdapter extends SchemaInterface {
   async findOne (selector) {
     const [doc] = await this.find(selector)
     return doc
-     ? this.toEntity(doc)
-     : undefined
+      ? this.toEntity(doc)
+      : undefined
   }
 
   destroyDatabase () {

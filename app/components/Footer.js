@@ -22,7 +22,6 @@ class Footer extends React.Component {
 
   logout = async (event) => {
     event.preventDefault()
-    const { user, match: { params: { couch, dbName } } } = this.props
     await this.props.api.logout()
     window.location.reload()
   }

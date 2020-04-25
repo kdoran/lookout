@@ -1,5 +1,4 @@
 const React = require('react')
-const ReactDOM = require('react-dom')
 const {Link} = require('react-router-dom')
 
 const debounce = require('lodash/debounce')

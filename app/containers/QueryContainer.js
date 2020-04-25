@@ -157,7 +157,7 @@ class QueryContainer extends React.Component {
       displayedResults = ''
 
       if (resultsLength) {
-        displayedResults = JSON.stringify(result.slice(0,10), null, 2)
+        displayedResults = JSON.stringify(result.slice(0, 10), null, 2)
         warning += ' Previwing first 10 rows.'
       }
     }
@@ -172,7 +172,7 @@ class QueryContainer extends React.Component {
         <Breadcrumbs couch={couch} dbName={dbName} docId={'query'} final={queryId} />
 
         {valid
-          ? <a href='#' onClick={e => {e.preventDefault(); this.run()}}>run (cmd + enter or ctrl + enter)</a>
+          ? <a href='#' onClick={e => { e.preventDefault(); this.run() }}>run (cmd + enter or ctrl + enter)</a>
           : 'waiting for valid json'
         }
         <Editor
@@ -194,7 +194,7 @@ class QueryContainer extends React.Component {
               <section className='docs-controls'>
                 {resultsLength !== undefined && <span>length: {resultsLength}</span>}
                 <a href='' onClick={this.copy}>copy response to clipboard</a>
-                <a href='' onClick={e => {e.preventDefault(); this.download()}}>download response</a>
+                <a href='' onClick={e => { e.preventDefault(); this.download() }}>download response</a>
                 <a href='' onClick={this.getUrl}>copy sharable url to clipboard</a>
                 <AllowEditButton
                   dbName={dbName}

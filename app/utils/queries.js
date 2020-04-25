@@ -57,14 +57,14 @@ function getAllQueries (dbName) {
         }
       },
       fn: function parse (response) {
-        // _changes endpoint in couchdb is not what you might expect, it is for syncing.
-        // - It does not return a list of historical changes to the database, results are unique on doc id.
-        // - `since` param is exclusive and it does not work with descending: true.
-        // - revs aren't a list of revs that have changed since zero.
-        // - `_deleted` docs do appear, but you don't see what they were before deleted.
-        // it's more like _latest_sequences than _changes, unless you're listening to it.
-        // https://gist.github.com/nolanlawson/44385bb80990077c30de
-        // https://docs.couchdb.org/en/3.0.0/api/database/changes.html
+        /* _changes endpoint in couchdb is not what you might expect, it is for syncing.
+        It does not return a list of historical changes to the database, results are unique on doc id.
+        since param is exclusive and it does not work with descending: true.
+        revs aren't a list of revs that have changed since zero.
+        `_deleted` docs do appear, but you don't see what they were before deleted.
+        it's more like _latest_sequences than _changes, unless you're listening to it.
+        https://gist.github.com/nolanlawson/44385bb80990077c30de
+        https://docs.couchdb.org/en/3.0.0/api/database/changes.html */
         return response.results
       },
       startRow: 5,
