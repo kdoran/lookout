@@ -28,7 +28,6 @@ class ListDocsContainer extends React.Component {
     const {api} = this.props
     try {
       const rows = await api.list({limit})
-      // TODO: count
       const total = (rows.length < limit)
         ? rows.length
         : await api.count()
@@ -64,7 +63,7 @@ class ListDocsContainer extends React.Component {
         <div>
           <div className='controls'>
             {PaginationComponent}
-            <Link to={`/${couch}/example-entities/${entityName}/create`}>add {entityName}</Link>
+            <Link to='create'>create {entityName}</Link>
           </div>
           <table>
             <thead>

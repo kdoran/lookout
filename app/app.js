@@ -198,7 +198,7 @@ class CouchRoutes extends Component {
               render={props => (<DatabasesContainer {...props} {...commonProps} />)}
             />
             <Route
-              path='/:couch/models/'
+              path='/:couch/models/:modelType?'
               render={props => (<ModelsApp {...props} {...commonProps} />)}
             />
             <Route

@@ -49,10 +49,10 @@ class Editor extends React.Component {
   }
 
   render () {
-    const {focus = true} = this.props
+    const {mode = 'json', focus = true} = this.props
     return (
       <AceEditor
-        mode='json'
+        mode={mode}
         theme='github'
         ref='aceEditor'
         width={ACE_WIDTH}

@@ -72,6 +72,10 @@ class PouchAdapter extends SchemaInterface {
     return this.toModel(doc)
   }
 
+  createTemplate () {
+    return this.getSchemaDefaults()
+  }
+
   async create (model) {
     const doc = this.beforeCreate(model)
 

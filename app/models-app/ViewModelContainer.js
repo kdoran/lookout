@@ -18,42 +18,42 @@ const defaultState = {
   loaded: false
 }
 
-class ViewModelDefinitionContainer extends React.Component {
+class ViewModelContainer extends React.Component {
   state = defaultState
 
   componentDidMount () {
     this.load()
   }
 
-  componentDidUpdate (prevProps) {
-    const {entityName, match: {params: {entityId}}} = this.props
-    if (prevProps.entityName !== entityName ||
-        prevProps.match.params.entityId !== entityId
-    ) {
-      console.log('wtf')
-      this.load()
-    }
-  }
+  // componentDidUpdate (prevProps) {
+  //   const {entityName, match: {params: {id}}} = this.props
+  //   if (prevProps.entityName !== entityName ||
+  //       prevProps.match.params.id !== id
+  //   ) {
+  //     console.log('wtf')
+  //     this.load()
+  //   }
+  // }
 
   load = async () => {
-    const {api, match: {params: {modelType}}} = this.props
-    this.setState({loaded: true, original: '{}', input: asString({ modelType: '' })})
+    const {api, match: {params: {id}}} = this.props
+    // TODO: ace editor javascript mode wasn't working try upgrade
+    // const input = api.createTemplateAsString()
+    if (id === 'create') {
+      const input = asString(api.createTemplate())
+      this.setState({loaded: true, original: '{}', input})
+      return
+    }
 
-
-    // if (!docId) {
-    //   this.setState({ loaded: true, original: '{}', input: asString({ _id: '' }) })
-    //   return
-    // }
-    //
-    // try {
-    //   const doc = await this.props.api.get(docId)
-    //   const original = asString(doc)
-    //   const input = original
-    //   this.setState({ doc, input, original, loaded: true })
-    // } catch (error) {
-    //   this.setState({ error, loaded: true })
-    //   console.error(error)
-    // }
+    try {
+      const doc = await this.props.api.get(id)
+      const original = asString(doc)
+      const input = original
+      this.setState({ doc, input, original, loaded: true })
+    } catch (error) {
+      this.setState({ error, loaded: true })
+      console.error(error)
+    }
   }
 
   onEdit = input => {
@@ -68,23 +68,18 @@ class ViewModelDefinitionContainer extends React.Component {
   }
 
   onSubmit = async () => {
-    const { dbName, couch } = this.props
-    const { input, isNew } = this.state
+    const {api, match: {params: {id}}} = this.props
+    const { input } = this.state
     this.setState({saving: true})
+
     const jsObjectInput = JSON.parse(input)
     // New documents will get ID from input
-    const docId = isNew ? jsObjectInput._id : this.state.docId
 
     try {
-      await this.props.api.create(jsObjectInput)
+      await (id === 'create') ? api.create(jsObjectInput) : api.update(jsObjectInput)
       // this.props.history.push(`/${couch}/${dbName}/${id}`)
     } catch (error) {
-      if (error.status === 400 && docId === '_security') {
-        const body = JSON.stringify(jsObjectInput)
-        await this.props.api.fetcher(`${dbName}/_security`, {method: 'PUT', body})
-        this.props.history.push(`/${couch}/${dbName}/_security`)
-        return
-      }
+      console.error(error)
       this.setState({ error, saving: false })
     }
   }
@@ -113,8 +108,9 @@ class ViewModelDefinitionContainer extends React.Component {
       docId,
       showDeleteModal
     } = this.state
+    console.log(saving)
     const buttonText = getSubmitButtonText(valid, changesMade, saving)
-    const canSave = (valid && changesMade && !saving)
+    const canSave = changesMade && !saving
 
     return (
       <div>
@@ -175,4 +171,4 @@ function asString (obj) {
   return JSON.stringify(obj, null, 2)
 }
 
-module.exports = ViewModelDefinitionContainer
+module.exports = ViewModelContainer

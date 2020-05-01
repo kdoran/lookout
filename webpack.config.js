@@ -23,10 +23,12 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
-          options: {
-            presets: ['stage-0', 'react'],
-            plugins: ['transform-async-to-generator']
-          }
+          // options: {
+          //   presets: [
+          //     ['stage-0', {exclude: ['transform-regenerator']}],
+          //     'react'
+          //   ]
+          // }
         }
       },
       {

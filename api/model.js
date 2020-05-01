@@ -55,6 +55,10 @@ class Model extends SchemaInterface {
   async count () {
     return this.adapter.count()
   }
+
+  createTemplate (...params) {
+    return this.adapter.createTemplate(...params)
+  }
 }
 
 module.exports = Model
