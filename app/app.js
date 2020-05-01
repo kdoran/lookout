@@ -13,7 +13,7 @@ const {ConfigContainer} = require('./containers/ConfigContainer')
 const {AdminContainer} = require('./containers/AdminContainer')
 const {EditDocContainer} = require('./containers/EditDocContainer')
 const {QueryContainer} = require('./containers/QueryContainer')
-const {ExampleEntities} = require('./example-entities/ExampleEntities')
+const ModelsApp = require('./models-app/ModelsApp')
 
 const {Footer, Login, Loading} = require('./components')
 const {parseUrl, getParams} = require('./utils')
@@ -198,8 +198,8 @@ class CouchRoutes extends Component {
               render={props => (<DatabasesContainer {...props} {...commonProps} />)}
             />
             <Route
-              path='/:couch/example-entities/:entityName?/:method?'
-              render={props => (<ExampleEntities {...props} {...commonProps} />)}
+              path='/:couch/models/'
+              render={props => (<ModelsApp {...props} {...commonProps} />)}
             />
             <Route
               path='/:couch/:dbName'

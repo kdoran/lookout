@@ -1,11 +1,11 @@
 const React = require('react')
 const { Link } = require('react-router-dom')
 const {ErrorDisplay, Pagination, Loading} = require('../components')
-require('./list-container.css')
+require('./list-models-container.css')
 
 const limit = 500
 
-class ListContainer extends React.Component {
+class ListDocsContainer extends React.Component {
   constructor () {
     super()
     this.state = {
@@ -96,4 +96,4 @@ class ListContainer extends React.Component {
   }
 }
 
-module.exports = {ListContainer}
+module.exports = ListDocsContainer

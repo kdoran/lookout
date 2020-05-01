@@ -18,7 +18,7 @@ const defaultState = {
   loaded: false
 }
 
-class CreateUpdateContainer extends React.Component {
+class ViewDocContainer extends React.Component {
   state = defaultState
 
   componentDidMount () {
@@ -176,4 +176,4 @@ function asString (obj) {
   return JSON.stringify(obj, null, 2)
 }
 
-module.exports = {CreateUpdateContainer}
+module.exports = ViewDocContainer
