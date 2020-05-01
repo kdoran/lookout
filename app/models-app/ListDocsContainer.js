@@ -1,6 +1,6 @@
 const React = require('react')
 const { Link } = require('react-router-dom')
-const {ErrorDisplay, Pagination, Loading} = require('../components')
+const {ErrorDisplay, ButtonLink, Pagination, Loading} = require('../components')
 require('./list-models-container.css')
 
 const limit = 500
@@ -58,9 +58,10 @@ class ListDocsContainer extends React.Component {
       ? <Loading message={modelType} />
       : (
         <div>
+          <Link to={`/${couch}/models/`}>back</Link>
+          {PaginationComponent}
           <div className='controls'>
-            {PaginationComponent}
-            <Link to='create'>create {modelType}</Link>
+            <ButtonLink to={`/${couch}/models/${modelType}/docs/create`}>create {modelType}</ButtonLink>
           </div>
           <table>
             <thead>
@@ -76,7 +77,7 @@ class ListDocsContainer extends React.Component {
             <tbody>
               {rows.map(row => (
                 <tr key={row.id}>
-                  <td><Link to={`/${couch}/${modelType}/view/${row.id}`}>{row.id}</Link></td>
+                  <td><Link to={`/${couch}/models/${modelType}/docs/${row.id}`}>{row.id}</Link></td>
                   <td>{row.name}</td>
                   <td>{row.createdAt}</td>
                   <td>{row.createdBy}</td>

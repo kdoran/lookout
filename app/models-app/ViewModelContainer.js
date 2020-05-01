@@ -11,9 +11,7 @@ const defaultState = {
   valid: true,
   original: '',
   input: '',
-  changesMade: false,
   error: null,
-  saving: false,
   loaded: false
 }
 
@@ -60,20 +58,21 @@ class ViewModelContainer extends React.Component {
     } catch (e) {
       valid = false
     }
-    this.setState({ valid, input, changesMade: (original !== input) })
+    this.setState({ valid, error: null, input })
   }
 
   onSubmit = async () => {
     const {api, match: {params: {couch, id}}} = this.props
     const { input } = this.state
-    this.setState({saving: true})
 
     const jsObjectInput = JSON.parse(input)
-    // New documents will get ID from input
-
     try {
-      const resp = (id === 'create') ? await api.create(jsObjectInput) : await api.update(jsObjectInput)
-      this.props.history.push(`/${couch}/models/${resp.id}`)
+      const resp = (id === 'create')
+        ? await api.create(jsObjectInput)
+        : await api.update(jsObjectInput)
+
+      window.alert(`Model ${jsObjectInput.type} saved.`)
+      this.props.history.push(`/${couch}/models/`)
     } catch (error) {
       console.error(error)
       this.setState({ error, saving: false })
@@ -95,13 +94,10 @@ class ViewModelContainer extends React.Component {
       loaded,
       valid,
       input,
-      changesMade,
-      error,
-      saving
+      error
     } = this.state
 
-    const buttonText = getSubmitButtonText(valid, changesMade, saving)
-    const canSave = changesMade && !saving
+    const canSave = valid
 
     if (!loaded) return <Loading message='model definition' />
 
@@ -114,14 +110,14 @@ class ViewModelContainer extends React.Component {
             className={canSave ? 'action-button' : ''}
             onClick={canSave ? this.onSubmit : null}
           >
-            {buttonText}
+            save
           </button>
           {!isNew && (
             <button
               disabled={canSave}
               onClick={this.onDelete}
             >
-              delete entity
+              delete model definition
             </button>
           )}
         </div>
@@ -132,20 +128,6 @@ class ViewModelContainer extends React.Component {
         />
       </div>
     )
-  }
-}
-
-function getSubmitButtonText (valid, changesMade, saving) {
-  if (!valid) {
-    return 'waiting for valid json...'
-  } else if (changesMade) {
-    if (saving) {
-      return 'saving...'
-    } else {
-      return 'save changes?'
-    }
-  } else {
-    return 'no changes made'
   }
 }
 

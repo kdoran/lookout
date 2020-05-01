@@ -9,17 +9,16 @@ const dynamicModelSchema = {
       minLength: 1
     },
     // databaseName: {
-    //   type: 'string',
-    //   minLength: 1
+    //   type: 'string'
     // },
     schema: {
       type: 'object'
     },
-    // relations: {
-    //   type: 'object'
-    // }
+    relations: {
+      type: 'object'
+    }
   },
-  required: ['name'],
+  required: ['name', 'schema'],
   additionalProperties: false
 }
 
@@ -49,9 +48,14 @@ class DynamicModels extends Model {
   createTemplate () {
     return {
       name: '',
+      relations: {},
       schema: {
         type: 'object',
-        properties: {}
+        properties: {
+          name: {
+            type: 'string',
+          }
+        }
       }
     }
   }

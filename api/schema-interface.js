@@ -28,24 +28,41 @@ class SchemaInterface {
   getSchemaDefaults () {
     return Object.keys(this.schema.properties)
       .reduce((acc, propName) => {
+        if (propName === '_id' || propName === '_rev') return acc
         acc[propName] = this.getFieldDefault(propName)
         return acc
       }, {})
   }
 
-  // this could be a whole bag of games like "type number ? 0, type Object ? {} "
-  // but not clear if it's worth the clutter
+  // this could go wayyy further if really needed
   getFieldDefault (propName) {
-    const propDefault = this.schema.properties[propName].default
-    if (!propDefault && propName !== '_id') {
-      return ''
-    }
+    const {default: propDefault, type} = this.schema.properties[propName]
 
     if (typeof propDefault === 'function') {
       return propDefault(this)
     }
 
-    return propDefault
+    if (propDefault !== undefined) {
+      return propDefault
+    }
+
+    if (type === 'object') {
+      return {}
+    }
+
+    if (type === 'boolean') {
+      return true
+    }
+
+    if (type === 'string') {
+      return ''
+    }
+
+    if (type === 'array') {
+      return []
+    }
+
+    return 0
   }
 }
 

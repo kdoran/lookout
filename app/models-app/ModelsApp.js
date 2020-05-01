@@ -34,7 +34,7 @@ class ModelsApp extends React.Component {
         />
         <Route
           exact
-          path='/:couch/models/:modelType/docs/:docId'
+          path='/:couch/models/:modelType/docs/:id'
           render={props => (<ViewDocContainer {...props}  api={this.api} />)}
         />
       </Switch>
