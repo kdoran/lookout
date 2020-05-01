@@ -24,8 +24,16 @@ const baseProperties = {
 
 const baseRequired = ['type', 'createdAt', 'createdBy']
 
-function addSchemaDefaults (schema) {
-  const properties = Object.assign({}, baseProperties, schema.properties)
+function addSchemaDefaults (schema, relations = {}) {
+  // TODO: throw if duplicates between the two
+  const relationsSchemaProperties = Object.keys(relations.hasOne || {})
+    .concat(Object.keys(relations.hasMany || {}))
+      .reduce((acc, relationName) => {
+        acc[`${relationName}Id`] = {type: 'string'}
+        return acc
+      }, {})
+
+  const properties = Object.assign({}, baseProperties, relationsSchemaProperties, schema.properties)
   properties.type.default = schema.name
 
   const required = baseRequired.concat(schema.required || [])

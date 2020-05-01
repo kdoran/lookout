@@ -5,15 +5,26 @@ const SchemaInterface = require('./schema-interface')
 const addSchemaDefaults = require('./pouch-schema-defaults')
 
 class PouchAdapter extends SchemaInterface {
-  constructor (schema, pouchDB, user) {
+  constructor (schema, pouchDB, user, relations = {}) {
     if (typeof schema !== 'object' || !schema.properties || !schema.name) {
       throw new Error('PouchAdapter usage: schema object with {properties: {}, name} is required')
     }
-    const withDefaults = addSchemaDefaults(schema)
+
+    const withDefaults = addSchemaDefaults(schema, relations)
     super(withDefaults)
     this.type = schema.name
     this.user = user
     this.pouchDB = pouchDB
+    this.relations = relations
+  }
+
+  get relationKeys () {
+    return Object.keys(this.relations.hasOne || {}).concat(this.relations.hasMany || {})
+  }
+
+  get hasRelations () {
+    console.log(this.relationKeys)
+    return !!this.relationKeys.length
   }
 
   toModel (doc) {
@@ -67,8 +78,14 @@ class PouchAdapter extends SchemaInterface {
     return docs.map(this.toModel)
   }
 
-  async get (id) {
+  async get (id, options) {
+    const withRelations = get(options, 'withRelations', true) && this.hasRelations
+    console.log(withRelations)
     const doc = await this.pouchDB.get(id)
+    if (!withRelations) {
+      return this.toModel(doc)
+    }
+
     return this.toModel(doc)
   }
 
@@ -83,8 +100,7 @@ class PouchAdapter extends SchemaInterface {
     // but `_id` other times.
     // toModel is going to expect an `_id` because normally docs have it.
     const response = await this.pouchDB.post(doc)
-    const _id = doc._id || response.id
-    return this.toModel(Object.assign({_id}, doc))
+    return this.get(response.id)
   }
 
   async update (id, updatedRow) {
