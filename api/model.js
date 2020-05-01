@@ -1,27 +1,21 @@
-const {SchemaInterface} = require('./schema-interface')
+const SchemaInterface = require('./schema-interface')
 
-class EntityApi extends SchemaInterface {
-  constructor ({
-    schema, adapter, user, relations = {}, description = ''
-  }) {
-    if (typeof user !== 'object' || !user.name) {
-      throw new Error('EntityApi usage: user object with name is requred')
-    }
-    if (!adapter) {
-      throw new Error('EntityApi usage: adapter is required')
-    }
-
+class Model extends SchemaInterface {
+  constructor (schema, adapter, user) {
     super(schema)
+
+    if (!adapter) {
+      throw new Error('Model usage: data adapter param is required')
+    }
 
     this.adapter = adapter
     this.name = schema.name
-    this.relations = relations
-    this.description = description
-    // done in schema interface
-    // this.schema = schema
     this.user = user
   }
 
+  // TODO: positional artuments
+  // TODO: validate entities returned by adapter & soft fail on schema problems.
+  // console.error them for monitoring tool
   async list (...params) {
     return this.adapter.list(...params)
   }
@@ -57,6 +51,10 @@ class EntityApi extends SchemaInterface {
   async findOne (...params) {
     return this.adapter.findOne(...params)
   }
+
+  async count () {
+    return this.adapter.count()
+  }
 }
 
-module.exports = {EntityApi}
+module.exports = Model

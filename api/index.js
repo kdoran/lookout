@@ -1,12 +1,11 @@
-const {RemoteCouchApi} = require('./remote-couch-api')
-const {PouchAdapter, IndexedDBPouchAdapter} = require('./pouch-adapter')
-const {EntityApi} = require('./entity-api')
-const {PouchDB} = require('./pouchdb')
+const RemoteCouchApi = require('./remote-couch-api')
+const PouchAdapter = require('./pouch-adapter')
+const ModelApi = require('./model')
+const PouchDB = require('./pouchdb')
 
 module.exports = {
-  EntityApi,
+  ModelApi,
   PouchDB,
   RemoteCouchApi,
-  PouchAdapter,
-  IndexedDBPouchAdapter
+  PouchAdapter
 }

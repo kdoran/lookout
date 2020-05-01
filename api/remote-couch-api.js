@@ -1,12 +1,12 @@
-const {getFetch} = require('./get-fetch')
-const {PouchDB} = require('./pouchdb')
+const getFetch = require('./get-fetch')
+const PouchDB = require('./pouchdb')
 
 class RemoteCouchApi {
   constructor (url) {
     url = url.endsWith('/') ? url : `${url}/`
 
     this.url = url
-    this.fetcher = getFetch({url})
+    this.fetcher = getFetch(url)
     // username/passwords setup needed for node
     this.PouchDBConstructor = PouchDB.defaults({prefix: url, skip_setup: true})
     this.GenericPouchDB = PouchDB
@@ -115,4 +115,4 @@ class RemoteCouchApi {
   }
 }
 
-module.exports = {RemoteCouchApi}
+module.exports = RemoteCouchApi

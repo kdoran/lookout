@@ -17,13 +17,9 @@ test('api get pouch test', async t => {
   const pouch = api.getPouchInstance(process.env.TEST_DATABASE_NAME)
   const response = await pouch.allDocs()
   t.ok(Array.isArray(response.rows), 'runs a pouch call')
-  await pouch.destroy()
+  return pouch.destroy()
 })
 
 test('api databases teardown / destroy', async t => {
-  try {
-    await api.destroyDatabase(process.env.TEST_DATABASE_NAME)
-  } catch (error) {
-
-  }
+  return api.destroyDatabase(process.env.TEST_DATABASE_NAME).catch(() => {})
 })

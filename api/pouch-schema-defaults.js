@@ -31,6 +31,4 @@ function addSchemaDefaults (schema) {
   return Object.assign({}, schema, {properties, required})
 }
 
-module.exports = {
-  addSchemaDefaults
-}
+module.exports = addSchemaDefaults

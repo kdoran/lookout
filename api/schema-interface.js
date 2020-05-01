@@ -49,4 +49,4 @@ class SchemaInterface {
   }
 }
 
-module.exports = {SchemaInterface}
+module.exports = SchemaInterface

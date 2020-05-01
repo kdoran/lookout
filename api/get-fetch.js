@@ -1,7 +1,7 @@
 /* global btoa */
-const isomorphicFetch = require('isomorphic-fetch')
+const fetch = require('isomorphic-fetch')
 
-function getFetch ({url, username, password, fetch = isomorphicFetch}) {
+function getFetch (url) {
   if (!url) {
     throw new Error(`getFetch URL required`)
   }
@@ -15,10 +15,10 @@ function getFetch ({url, username, password, fetch = isomorphicFetch}) {
       },
       ...params
     }
-    if (username && password) {
-      config.headers['Authorization'] = `Basic ${btoa(`${username}:${password}`)}`
-      delete config.credentials
-    }
+    // if (username && password) {
+    //   config.headers['Authorization'] = `Basic ${btoa(`${username}:${password}`)}`
+    //   delete config.credentials
+    // }
 
     const urlWithSlash = url.endsWith('/')
       ? url
@@ -42,4 +42,4 @@ function getFetch ({url, username, password, fetch = isomorphicFetch}) {
   return fetcher
 }
 
-module.exports = {getFetch}
+module.exports = getFetch

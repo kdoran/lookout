@@ -1,20 +1,20 @@
-EntityApi
+ModelApi
   - implements common methods
   - has a single data access adapter
   - has a schema that rejects on create/update
-  - extended for entity-specific domain logic (custom functions)
+  - extended for model-specific domain logic (custom functions)
   - can be used on default without modification
 
 AdapterApi
-  - this is an interface extended that has the same methods as EntityApi
-  - it defaults to the entity's schema but can have different schema (location)
+  - this is an interface extended that has the same methods as ModelApi
+  - it defaults to the model's schema but can have different schema (location)
 
-Why only one adapter in EntityApi? What about "smart" adapters that need two+ different data sources?
+Why only one adapter in ModelApi? What about "smart" adapters that need two+ different data sources?
 
 (strange that js-data had a "defaultAdapter" but no other way to change adapters externally...)
 
 I think for these (pretty common) use cases, instead of trying to have the default
-EntityApi + pouch Adapter Api, you'd create a custom adapter that can do stuff.
+ModelApi + pouch Adapter Api, you'd create a custom adapter that can do stuff.
 
 e.g. orders needs a single 'fetch' endpoint, so
 
@@ -39,5 +39,5 @@ to point out:
 
 
 # todos:
-- entity api has schema but not sure how to use it yet
-- common interface for Entity & Adapter
+- model api has schema but not sure how to use it yet
+- common interface for Model & Adapter
