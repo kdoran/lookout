@@ -3,7 +3,7 @@ const cloneDeep = require('lodash/cloneDeep')
 const get = require('lodash/get')
 const {PouchDB} = require('./pouchdb')
 const {SchemaInterface} = require('./schema-interface')
-const {addSchemaDefaults} = require('./pouch-schema-utils')
+const {addSchemaDefaults} = require('./pouch-schema-defaults')
 
 class PouchAdapter extends SchemaInterface {
   constructor ({

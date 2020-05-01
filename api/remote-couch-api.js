@@ -7,9 +7,8 @@ class RemoteCouchApi {
 
     this.url = url
     this.fetcher = getFetch({url})
-    // this will probably change to support node
-    // will have to deal with setDatabase & username/passwords
-    this.PouchDBConstructor = PouchDB.defaults({prefix: url})
+    // username/passwords setup needed for node
+    this.PouchDBConstructor = PouchDB.defaults({prefix: url, skip_setup: true})
     this.GenericPouchDB = PouchDB
     this.databases = {}
   }

@@ -18,7 +18,7 @@ test('api databases list', async t => {
   t.ok(databases.length, 'returns databases')
 })
 
-test('api databases list', async t => {
+test('api databases create', async t => {
   await api.createDatabase(process.env.TEST_DATABASE_NAME)
   const response = await api.getDatabase(process.env.TEST_DATABASE_NAME)
   t.ok(response, 'creates and returns a database')
