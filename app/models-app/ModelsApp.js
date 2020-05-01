@@ -1,60 +1,41 @@
 const React = require('react')
-const { Link } = require('react-router-dom')
 const { Loading } = require('./../components')
 const {Route, Switch} = require('react-router-dom')
 const DynamicModelsApi = require('./dynamic-models-api')
 
-const ListModelsComponent = require('./ListModelsComponent')
+const ListModelsContainer = require('./ListModelsContainer')
 const ViewModelContainer = require('./ViewModelContainer')
-
 const ListDocsContainer = require('./ListDocsContainer')
 const ViewDocContainer = require('./ViewDocContainer')
 
 class ModelsApp extends React.Component {
-  state = {loaded: false, models: []}
-
-  async componentDidMount () {
+  constructor () {
+    super()
     this.api = new DynamicModelsApi()
-    const models = await this.api.list()
-    this.setState({models, loaded: true})
   }
 
   render () {
-    const {couch, match: {params: {modelType}}} = this.props
-    const {models, loaded} = this.state
-    console.log(modelType)
-
-    if (!loaded) return <Loading message='models... ' />
-
-
-    const docRoute = window.location.href.includes('/docs/')
-    const routeProps = {
-      couch,
-      modelType,
-      api: (docRoute && modelType) ? this.api.getDynamicApi(modelType) : this.api
-    }
-
     return (
       <Switch>
         <Route
           exact
           path='/:couch/models/:id'
-          render={props => (<ViewModelContainer {...props} {...routeProps} />)}
+          render={props => (<ViewModelContainer {...props} api={this.api} />)}
         />
         <Route
           exact
           path='/:couch/models'
-          render={props => (<ListModelsComponent urlPrefix={`/${couch}/models`} models={models} />)}
+          render={props => (<ListModelsContainer {...props} api={this.api} />)}
         />
         <Route
           exact
           path='/:couch/models/:modelType/docs/'
-          render={props => (<ListDocsContainer {...props} {...routeProps} />)}
+          render={props => (<ListDocsContainer {...props} api={this.api} />)}
         />
         <Route
           exact
           path='/:couch/models/:modelType/docs/:docId'
-          render={props => (<ViewDocContainer {...props} {...routeProps} />)}
+          render={props => (<ViewDocContainer {...props}  api={this.api} />)}
         />
       </Switch>
     )

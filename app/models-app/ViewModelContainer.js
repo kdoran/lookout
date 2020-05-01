@@ -1,10 +1,10 @@
 const React = require('react')
+const {Link} = require('react-router-dom')
 const {
-  DeleteDocModal,
   Loading,
-  Editor
+  Editor,
+  ErrorDisplay
 } = require('../components')
-
 require('../containers/edit-doc-container.css')
 
 const defaultState = {
@@ -14,7 +14,6 @@ const defaultState = {
   changesMade: false,
   error: null,
   saving: false,
-  showDeleteModal: false,
   loaded: false
 }
 
@@ -25,15 +24,12 @@ class ViewModelContainer extends React.Component {
     this.load()
   }
 
-  // componentDidUpdate (prevProps) {
-  //   const {entityName, match: {params: {id}}} = this.props
-  //   if (prevProps.entityName !== entityName ||
-  //       prevProps.match.params.id !== id
-  //   ) {
-  //     console.log('wtf')
-  //     this.load()
-  //   }
-  // }
+  componentDidUpdate (prevProps) {
+    const {api, match: {params: {modelType, id}}} = this.props
+    if (prevProps.match.params.modelType !== modelType || prevProps.match.params.id !== id) {
+      this.load()
+    }
+  }
 
   load = async () => {
     const {api, match: {params: {id}}} = this.props
@@ -68,7 +64,7 @@ class ViewModelContainer extends React.Component {
   }
 
   onSubmit = async () => {
-    const {api, match: {params: {id}}} = this.props
+    const {api, match: {params: {couch, id}}} = this.props
     const { input } = this.state
     this.setState({saving: true})
 
@@ -76,78 +72,64 @@ class ViewModelContainer extends React.Component {
     // New documents will get ID from input
 
     try {
-      await (id === 'create') ? api.create(jsObjectInput) : api.update(jsObjectInput)
-      // this.props.history.push(`/${couch}/${dbName}/${id}`)
+      const resp = (id === 'create') ? await api.create(jsObjectInput) : await api.update(jsObjectInput)
+      this.props.history.push(`/${couch}/models/${resp.id}`)
     } catch (error) {
       console.error(error)
       this.setState({ error, saving: false })
     }
   }
 
-  onDelete = () => {
-    const { valid, input } = this.state
-    if (valid) {
-      const jsObjectInput = JSON.parse(input)
-      jsObjectInput._deleted = true
-      this.setState({ input: asString(jsObjectInput) }, () => {
-        this.onSubmit()
-      })
-    }
+  onDelete = async () => {
+    const {api, match: {params: {couch, id}}} = this.props
+    const {doc} = this.state
+    await api.remove(id)
+    window.alert(`Removed model ${doc.name} ${id}`)
+    this.props.history.push(`/${couch}/models/`)
   }
 
   render () {
-    const { couchUrl, dbName } = this.props
+    const { match: {params: {couch, id}}} = this.props
+    const isNew = (id === 'create')
     const {
       loaded,
       valid,
       input,
       changesMade,
       error,
-      saving,
-      isNew,
-      docId,
-      showDeleteModal
+      saving
     } = this.state
-    console.log(saving)
+
     const buttonText = getSubmitButtonText(valid, changesMade, saving)
     const canSave = changesMade && !saving
 
+    if (!loaded) return <Loading message='model definition' />
+
     return (
       <div>
-        {loaded ? (
-          <div>
-            <div className='right-controls'>
-              <button
-                disabled={!canSave}
-                className={canSave ? 'action-button' : ''}
-                onClick={canSave ? this.onSubmit : null}
-              >
-                {buttonText}
-              </button>
-              {!isNew && (
-                <button
-                  disabled={canSave}
-                  onClick={this.onDelete}
-                >
-                  delete entity
-                </button>
-              )}
-            </div>
-            {error && (<div className='error'>{JSON.stringify(error, null, 2)}</div>)}
-            <Editor
-              onChange={this.onEdit}
-              value={input}
-            />
-            <DeleteDocModal
-              show={showDeleteModal}
-              onClose={() => { this.setState({ showDeleteModal: false }) }}
-              couchUrl={couchUrl}
-              dbName={dbName}
-              docId={docId}
-              onSubmit={this.deleteDoc}
-            />
-          </div>
-        ) : <Loading />}
+        <Link to={`/${couch}/models`}>back</Link>
+        <div className='right-controls'>
+          <button
+            disabled={!canSave}
+            className={canSave ? 'action-button' : ''}
+            onClick={canSave ? this.onSubmit : null}
+          >
+            {buttonText}
+          </button>
+          {!isNew && (
+            <button
+              disabled={canSave}
+              onClick={this.onDelete}
+            >
+              delete entity
+            </button>
+          )}
+        </div>
+        {<ErrorDisplay back={`/${couch}/models`} error={error} />}
+        <Editor
+          onChange={this.onEdit}
+          value={input}
+        />
       </div>
     )
   }

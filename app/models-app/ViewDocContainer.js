@@ -22,21 +22,19 @@ class ViewDocContainer extends React.Component {
   state = defaultState
 
   componentDidMount () {
+    throw new Error('need to implement')
     this.load()
   }
 
   componentDidUpdate (prevProps) {
-    const {entityName, match: {params: {entityId}}} = this.props
-    if (prevProps.entityName !== entityName ||
-        prevProps.match.params.entityId !== entityId
-    ) {
-      console.log('wtf')
+    const {match: {params: {modelType}}} = this.props
+    if (modelType !== prevProps.match.params.modelType) {
       this.load()
     }
   }
 
   load = async () => {
-    const {api, match: {params: {entityId}}} = this.props
+    const {api, match: {params: {modelType}}} = this.props
     if (!entityId) {
       this.setState({...defaultState, input: asString(api.createTemplate()), loaded: true})
     }

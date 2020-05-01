@@ -3,6 +3,7 @@ const baseProperties = {
   // this is here but not required for the
   // option of having pouch/couch create the _id.
   _id: {type: 'string'},
+  _rev: {type: 'string'},
   createdAt: {
     type: 'string',
     format: 'date-time',

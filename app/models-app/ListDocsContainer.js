@@ -6,12 +6,9 @@ require('./list-models-container.css')
 const limit = 500
 
 class ListDocsContainer extends React.Component {
-  constructor () {
-    super()
-    this.state = {
-      rows: [],
-      loaded: false
-    }
+  state = {
+    rows: [],
+    loaded: false
   }
 
   componentDidMount () {
@@ -19,18 +16,19 @@ class ListDocsContainer extends React.Component {
   }
 
   componetWillUpdate (previousProps) {
-    if (previousProps.entityName !== this.props.entityName) {
+    if (prevProps.match.params.modelType !== this.props.match.params.modelType) {
       this.load()
     }
   }
 
   load = async () => {
-    const {api} = this.props
+    this.api = await this.props.api.getDynamicApi(this.props.match.params.modelType)
+
     try {
-      const rows = await api.list({limit})
+      const rows = await this.api.list({limit})
       const total = (rows.length < limit)
         ? rows.length
-        : await api.count()
+        : await this.api.count()
 
       this.setState({rows, total, loaded: true})
     } catch (error) {
@@ -40,8 +38,7 @@ class ListDocsContainer extends React.Component {
   }
 
   render () {
-    const {entityName, couch} = this.props
-    // const {searchParams: {offset = 0}, entityName} = this.props
+    const {couch, modelType} = this.props.match.params
     const {rows, error, loaded, total} = this.state
 
     if (error) {
@@ -58,12 +55,12 @@ class ListDocsContainer extends React.Component {
     )
 
     return !loaded
-      ? <Loading message={entityName} />
+      ? <Loading message={modelType} />
       : (
         <div>
           <div className='controls'>
             {PaginationComponent}
-            <Link to='create'>create {entityName}</Link>
+            <Link to='create'>create {modelType}</Link>
           </div>
           <table>
             <thead>
@@ -79,7 +76,7 @@ class ListDocsContainer extends React.Component {
             <tbody>
               {rows.map(row => (
                 <tr key={row.id}>
-                  <td><Link to={`/${couch}/${entityName}/view/${row.id}`}>{row.id}</Link></td>
+                  <td><Link to={`/${couch}/${modelType}/view/${row.id}`}>{row.id}</Link></td>
                   <td>{row.name}</td>
                   <td>{row.createdAt}</td>
                   <td>{row.createdBy}</td>

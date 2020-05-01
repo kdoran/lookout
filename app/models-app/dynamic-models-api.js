@@ -32,12 +32,18 @@ class DynamicModels extends Model {
     this.dynamicApis = {}
   }
 
-  async list (...props) {
-    const results = await super.list(...props)
-    results.forEach(result => {
-      this.addDynamicApi(result)
-    })
-    return results
+  async getDynamicApi (modelType) {
+    if (!this.dynamicApis[modelType]) {
+      const dynamicModel = await this.get(modelType)
+      this.dynamicApis[modelType] = this.createDynamicApi(dynamicModel)
+    }
+
+    return this.dynamicApis[modelType]
+  }
+
+  async create (row) {
+    const withId = {...row, id: row.name}
+    return super.create(withId)
   }
 
   createTemplate () {
@@ -67,17 +73,9 @@ class DynamicModels extends Model {
 // }`
 //   }
 
-  addDynamicApi ({name, schema}) {
+  createDynamicApi ({name, schema}) {
     const adapter = new PouchAdapter({...schema, name}, this.adapter.pouchDB)
-    this.dynamicApis[name] = new Model({...schema, name}, adapter)
-  }
-
-  getDynamicApi (modelType) {
-    if (!this.dynamicApis[modelType]) {
-      throw new Error(`dynamic api not found, ${modelType}`, this.dynamicApis)
-    }
-
-    return this.dynamicApis[modelType]
+    return new Model({...schema, name}, adapter)
   }
 }
 
