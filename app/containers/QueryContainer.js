@@ -81,7 +81,7 @@ class QueryContainer extends React.Component {
       fetchParams.body = JSON.stringify(fetchParams.body)
     }
     try {
-      const response = await this.props.api.fetcher(url, fetchParams)
+      const response = await this.props.api.couchServer.fetcher(url, fetchParams)
       const result = parse(response)
 
       const varName = `r${resultsLength}`
@@ -132,7 +132,7 @@ class QueryContainer extends React.Component {
     }
     const {dbName} = this.props
     const body = JSON.stringify({docs})
-    const deleteResponse = await this.props.api.fetcher(`${dbName}/_bulk_docs`, {method: 'POST', body})
+    const deleteResponse = await this.props.api.couchServer.fetcher(`${dbName}/_bulk_docs`, {method: 'POST', body})
     console.log(`deleted docs response`, deleteResponse)
     const errorsFound = deleteResponse.filter(r => !r.ok || r.error)
     if (errorsFound.length) {

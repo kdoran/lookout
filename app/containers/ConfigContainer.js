@@ -31,7 +31,7 @@ class ConfigContainer extends React.Component {
 
   load = async () => {
     try {
-      const resp = await this.props.api.getConfig()
+      const resp = await this.props.api.couchServer.getConfig()
       const sections = []
       let rows
       for (let prop in resp) {

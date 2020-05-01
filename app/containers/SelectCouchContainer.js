@@ -1,6 +1,5 @@
 const React = require('react')
 const sortBy = require('lodash/sortBy')
-const {RemoteCouchApi} = require('../../api/')
 const {parseUrl} = require('../utils')
 
 class SelectCouchContainer extends React.Component {
@@ -12,8 +11,7 @@ class SelectCouchContainer extends React.Component {
   }
 
   async componentDidMount () {
-    const {couchLinkApi} = this.props
-    const couchLinks = await couchLinkApi.list()
+    const couchLinks = await this.props.api.couchLink.list()
     this.setState({couchLinks: sortBy(couchLinks, 'url')})
   }
 
@@ -27,8 +25,8 @@ class SelectCouchContainer extends React.Component {
       // instantiating api here & in the main app
       // is weird, but trying to do it in the app
       // ran into problems in passing router props around
-      const api = new RemoteCouchApi(inputUrl)
-      await api.getCurrentUser()
+      this.props.api.setCouchServer(inputUrl)
+      await this.props.api.couchServer.getCurrentUser()
       this.props.history.push(inputUrl.split('//')[1])
     } catch (error) {
       this.setState({ error: error.toString(), loading: false })

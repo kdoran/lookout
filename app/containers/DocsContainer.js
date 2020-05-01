@@ -54,7 +54,7 @@ class DocsContainer extends React.Component {
 
   onConfirmDeleteDatabase = async () => {
     const {couch, dbName} = this.props
-    await this.props.api.destroyDatabase(dbName)
+    await this.props.api.couchServer.destroyDatabase(dbName)
     window.alert(`Database ${dbName} deleted.`)
     this.props.history.push(`/${couch}`)
   }

@@ -82,7 +82,8 @@ class EditDocContainer extends React.Component {
     } catch (error) {
       if (error.status === 400 && docId === '_security') {
         const body = JSON.stringify(jsObjectInput)
-        await this.props.api.fetcher(`${dbName}/_security`, {method: 'PUT', body})
+        // TODO: does this not work with a pouch adapter?
+        await this.props.api.couchServer.fetcher(`${dbName}/_security`, {method: 'PUT', body})
         this.props.history.push(`/${couch}/${dbName}/_security`)
         return
       }

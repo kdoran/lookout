@@ -3,7 +3,7 @@ const { Component } = require('react')
 const ReactDOM = require('react-dom')
 const {HashRouter, Route, Switch} = require('react-router-dom')
 
-const {RemoteCouchApi, PouchDB: PouchDBConstructor, couchLinkApi} = require('./api')
+const {LookoutApi, PouchDB: PouchDBConstructor} = require('./lookout-api')
 
 const {SelectCouchContainer} = require('./containers/SelectCouchContainer')
 const {DatabasesContainer} = require('./containers/DatabasesContainer')
@@ -44,7 +44,7 @@ class OnDatabaseRoutes extends Component {
   }
 
   setupDatabase = async (dbName) => {
-    this.pouchDB = this.props.api.getPouchInstance(dbName)
+    this.pouchDB = this.props.api.couchServer.getPouchInstance(dbName)
     window.db = this.pouchDB
     console.log(`Pouch for ${dbName} available in console as 'db'`)
     this.setState({loading: false})
@@ -123,7 +123,7 @@ class CouchRoutes extends Component {
   }
 
   login = (username, password) => {
-    return this.api.login(username, password).then(user => {
+    return this.props.api.couchServer.login(username, password).then(user => {
       this.setState({user})
 
       this.saveLink(parseUrl(this.props.match.params.couch))
@@ -132,21 +132,18 @@ class CouchRoutes extends Component {
 
   setupCouch = async (couch) => {
     const couchUrl = parseUrl(couch)
-    this.api = new RemoteCouchApi(couchUrl)
-    window.api = this.api
-
-    const user = await this.api.getCurrentUser()
+    this.props.api.setCouchServer(couchUrl)
+    const user = await this.props.api.couchServer.getCurrentUser()
     this.setState({loading: false, user})
 
     this.saveLink(couchUrl)
   }
 
   saveLink = async (couchUrl) => {
-    const {couchLinkApi} = this.props
     // save a local link doc for us to list in select couch container
-    const localLink = await couchLinkApi.findOne({url: {'$eq': couchUrl}})
+    const localLink = await this.props.api.couchLink.findOne({url: {'$eq': couchUrl}})
     if (!localLink) {
-      await couchLinkApi.create({name: couchUrl, url: couchUrl})
+      await this.props.api.couchLink.create({name: couchUrl, url: couchUrl})
     }
   }
 
@@ -173,7 +170,7 @@ class CouchRoutes extends Component {
       couchUrl,
       searchParams,
       user,
-      api: this.api
+      api: this.props.api
     }
 
     return (
@@ -220,6 +217,11 @@ class CouchRoutes extends Component {
 }
 
 class App extends Component {
+  constructor () {
+    super()
+    this.api = new LookoutApi()
+  }
+
   render () {
     return (
       <HashRouter>
@@ -227,11 +229,11 @@ class App extends Component {
           <Route
             exact
             path='/'
-            render={props => (<SelectCouchContainer {...props} couchLinkApi={couchLinkApi} />)}
+            render={props => (<SelectCouchContainer {...props} api={this.api} />)}
           />
           <Route
             path='/:couch/'
-            render={props => (<CouchRoutes {...props} couchLinkApi={couchLinkApi} />)}
+            render={props => (<CouchRoutes {...props} api={this.api} />)}
           />
         </Switch>
       </HashRouter>

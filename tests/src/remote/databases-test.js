@@ -1,7 +1,7 @@
 const test = require('../../smalltest')
-const {RemoteCouchApi} = require('../../../api')
+const {CouchServer} = require('../../../api')
 
-const api = new RemoteCouchApi(process.env.TEST_URL)
+const api = new CouchServer(process.env.TEST_URL)
 
 test('api databases setup', async t => {
   await api.login(process.env.TEST_ADMIN_USERNAME, process.env.TEST_ADMIN_PASSWORD)

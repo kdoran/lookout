@@ -33,11 +33,11 @@ class DatabasesContainer extends React.Component {
     // infos and dbs are split for couch < 2.2 that does not have
     // single infos call. lazy load dbs & display first
     // so you're not always waiting on the 100 individual info calls
-    const serverInfo = await this.props.api.getServer()
+    const serverInfo = await this.props.api.couchServer.getServer()
     const isThreeO = (serverInfo.version && serverInfo.version.startsWith('3'))
-    const dbs = await this.props.api.listDatabases()
+    const dbs = await this.props.api.couchServer.listDatabases()
     this.setState({dbs, serverInfo, isThreeO})
-    const infosResponse = await this.props.api.listInfos(dbs)
+    const infosResponse = await this.props.api.couchServer.listInfos(dbs)
     const infos = keyBy(infosResponse, 'key')
     this.setState({loaded: true, infos})
   }
@@ -45,7 +45,7 @@ class DatabasesContainer extends React.Component {
   createDatabase = async (dbName) => {
     const {api, history, couch} = this.props
     try {
-      await api.createDatabase(dbName)
+      await api.couchServer.createDatabase(dbName)
       window.alert(`Created database ${dbName}`)
       history.push(`/${couch}/${dbName}`)
     } catch (error) {

@@ -1,7 +1,7 @@
 const getFetch = require('./get-fetch')
 const PouchDB = require('./pouchdb')
 
-class RemoteCouchApi {
+class CouchServer {
   constructor (url) {
     url = url.endsWith('/') ? url : `${url}/`
 
@@ -115,4 +115,4 @@ class RemoteCouchApi {
   }
 }
 
-module.exports = RemoteCouchApi
+module.exports = CouchServer

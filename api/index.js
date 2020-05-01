@@ -1,11 +1,11 @@
-const RemoteCouchApi = require('./remote-couch-api')
+const CouchServer = require('./couch-server')
 const PouchAdapter = require('./pouch-adapter')
-const ModelApi = require('./model')
+const Model = require('./model')
 const PouchDB = require('./pouchdb')
 
 module.exports = {
-  ModelApi,
+  Model,
   PouchDB,
-  RemoteCouchApi,
+  CouchServer,
   PouchAdapter
 }
