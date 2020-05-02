@@ -16,8 +16,8 @@ const ModelsApp = require('./models-app/ModelsApp')
 const {Footer, Login, Loading} = require('./components')
 const {parseUrl, getParams} = require('./utils')
 
-require('./app-classes.css')
-require('./app-tags.css')
+// require('./app-classes.css')
+// require('./app-tags.css')
 
 // 1. App = if no couch in the URL, return SelectCouchContainer
 // 2. CouchRoutes = routes for "we have couch URL but not a specific database."

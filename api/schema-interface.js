@@ -51,7 +51,7 @@ class SchemaInterface {
     }
 
     if (type === 'boolean') {
-      return true
+      return false
     }
 
     if (type === 'string') {

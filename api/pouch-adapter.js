@@ -164,11 +164,15 @@ class PouchAdapter extends SchemaInterface {
     })
   }
 
-  async remove (id) {
+  async destroy (id) {
     if (typeof id !== 'string') throw new Error('remove expects id')
     const doc = await this.pouchDB.get(id)
     // doing this with pouch.remove(id) threw a 404
     return this.pouchDB.put({...doc, _deleted: true})
+  }
+
+  async destroyMany (models) {
+    return this.updateMany(models.map(model => ({...model, _deleted: true})))
   }
 
   async find (selector, limit = Number.MAX_SAFE_INTEGER) {

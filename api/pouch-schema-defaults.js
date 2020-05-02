@@ -6,6 +6,7 @@ const baseProperties = {
   // option of having pouch/couch create the _id.
   _id: {type: 'string'},
   _rev: {type: 'string'},
+  _deleted: {type: 'boolean'},
   createdAt: {
     type: 'string',
     format: 'date-time',
