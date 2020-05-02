@@ -6,26 +6,16 @@ const SchemaInterface = require('./schema-interface')
 const addSchemaDefaults = require('./pouch-schema-defaults')
 
 class PouchAdapter extends SchemaInterface {
-  constructor (schema, pouchDB, user, relations = {}) {
+  constructor (schema, pouchDB, user) {
     if (typeof schema !== 'object' || !schema.properties || !schema.name) {
       throw new Error('PouchAdapter usage: schema object with {properties: {}, name} is required')
     }
 
-    const withDefaults = addSchemaDefaults(schema, relations)
+    const withDefaults = addSchemaDefaults(schema)
     super(withDefaults)
     this.type = schema.name
     this.user = user
     this.pouchDB = pouchDB
-    this.relations = this.getRelationsWithAdapters(relations)
-  }
-
-  get relationKeys () {
-    return Object.keys(this.relations.hasOne || {})
-      // .concat(this.relations.hasMany || {})
-  }
-
-  get hasRelations () {
-    return !!this.relationKeys.length
   }
 
   toModel (doc) {
@@ -80,14 +70,8 @@ class PouchAdapter extends SchemaInterface {
   }
 
   async get (id, options) {
-    const withRelations = get(options, 'withRelations', false) && this.hasRelations
     const doc = await this.pouchDB.get(id)
-    const model = this.toModel(doc)
-    if (!withRelations) {
-      return model
-    }
-
-    return this.withRelations(model)
+    return this.toModel(doc)
   }
 
   createTemplate () {
@@ -184,9 +168,8 @@ class PouchAdapter extends SchemaInterface {
     return docs.map(doc => this.toModel(doc))
   }
 
-  async getByKeys (keys) {
+  async getByIds (keys) {
     const {rows} = await this.pouchDB.allDocs({keys, include_docs: true})
-
     return rows.map(row => this.toModel(row.doc))
   }
 
@@ -209,59 +192,6 @@ class PouchAdapter extends SchemaInterface {
 
   destroyDatabase () {
     return this.pouchDB.destroy()
-  }
-
-  getRelationsWithAdapters (relations) {
-    const hasOne = get(relations, 'hasOne', {})
-
-    const hasOneResults = Object.keys(hasOne)
-    .map(name => {
-      const adapter = hasOne[name].adapter || new PouchAdapter(hasOne[name].schema, this.pouchDB, this.user)
-      return {
-        ...hasOne[name],
-        adapter,
-        name
-      }
-    })
-    return {
-      hasOne: keyBy(hasOneResults, 'name')
-    }
-  }
-
-  async withRelations (inputModel) {
-    const model = cloneDeep(inputModel)
-    const {hasOne = {}, hasMany = {}} = this.relations
-    // key by type so we make only one call per model type
-    // e.g. a 'shipment' model relations: source:locaiton, destination:location
-    const keysByType = Object.values(hasOne)
-      .reduce((acc, relation) => {
-        const {name} = relation.schema
-        const adapter = relation.adapter
-        acc[name] = acc[name] || {name, adapter, keys: new Set()}
-        acc[name].keys.add(model[`${relation.name}Id`])
-        return acc
-      }, {})
-
-    const promises = Object.values(keysByType).map(row => {
-      return row.adapter.getByKeys(Array.from(row.keys))
-    })
-
-    // assumes unique identifiers across types....
-    const relations = await Promise.all(promises)
-    const relationsById = keyBy(flatten(relations), 'id')
-
-    Object.values(hasOne).forEach(relation => {
-      const {name} = relation.schema
-      if (!relationsById[model[`${relation.name}Id`]]) {
-        console.warn(`missing relation for ${relation.name}Id`)
-        // model.errors = true
-        // model.relationErrors = model.relationErrors || {}
-      }
-      model[`${relation.name}`] = relationsById[model[`${relation.name}Id`]]
-      delete model[`${relation.name}Id`]
-    })
-
-    return model
   }
 }
 
