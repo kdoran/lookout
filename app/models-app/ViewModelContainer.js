@@ -71,7 +71,7 @@ class ViewModelContainer extends React.Component {
         ? await api.create(jsObjectInput)
         : await api.update(jsObjectInput)
 
-      window.alert(`Model ${jsObjectInput.type} saved.`)
+      window.alert(`Model ${jsObjectInput.name} saved.`)
       this.props.history.push(`/${couch}/models/`)
     } catch (error) {
       console.error(error)
@@ -114,7 +114,6 @@ class ViewModelContainer extends React.Component {
           </button>
           {!isNew && (
             <button
-              disabled={canSave}
               onClick={this.onDelete}
             >
               delete model definition

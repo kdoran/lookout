@@ -33,15 +33,14 @@ test('pouch adapter: hasOne relations', async t => {
   const shipment = await api.shipment.create({
     date: new Date().toJSON(), sourceId: a.id, destinationId: b.id
   })
-  t.equals(shipment.source.name, 'a', 'sees relations populated on default')
+  const withRelations = await api.shipment.get(shipment.id, {withRelations: true})
+
+  t.ok(
+    withRelations.source.name === 'a' && withRelations.destination.name === 'b',
+    'sees relations populated'
+  )
   t.end()
 })
-
-// test('pouch adapter: list with hasOne relations', async t => {
-//   const notes = await api.list()
-//   t.ok(notes.length, 'lists some notes')
-//   t.end()
-// })
 
 test('pouch adapter: teardown', async t => {
   return api.location.destroyDatabase()
