@@ -9,14 +9,43 @@ const ListDocsContainer = require('./ListDocsContainer')
 const ViewDocContainer = require('./ViewDocContainer')
 
 class ModelsApp extends React.Component {
-  constructor () {
-    super()
-    this.api = new DynamicModelsApi()
+  state = {loaded: false}
+
+  componentDidMount () {
+    this.api = new DynamicModelsApi(this.props.user, this.props.models)
+    this.setState({loaded: true})
   }
 
   render () {
+    const {loaded} = this.state
+    const {couchUrl} = this.props
+
+    if (!loaded) return <Loading />
+
     return (
       <Switch>
+        <Route
+          exact
+          path='/:couch/models/on-db/:databaseName/:id'
+          render={props => (<ViewModelContainer {...props} couchUrl={couchUrl} api={this.api} />)}
+        />
+        <Route
+          exact
+          path='/:couch/models/on-db/:databaseName/'
+          render={props => (<ListModelsContainer {...props} couchUrl={couchUrl} api={this.api} />)}
+        />
+        <Route
+          exact
+          path='/:couch/models/on-db/:databaseName/:modelType/docs/'
+          render={props => (<ListDocsContainer {...props} couchUrl={couchUrl} api={this.api} />)}
+        />
+        <Route
+          exact
+          path='/:couch/models/on-db/:databaseName/:modelType/docs/:id'
+          render={props => (<ViewDocContainer {...props} couchUrl={couchUrl}  api={this.api} />)}
+        />
+
+
         <Route
           exact
           path='/:couch/models/:id'

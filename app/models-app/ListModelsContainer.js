@@ -16,8 +16,13 @@ class ListModelsContainer extends React.Component {
 
 
   render () {
-    const {couch} = this.props.match.params
+    const {couch, databaseName} = this.props.match.params
     const {models, loaded, error} = this.state
+
+    const maybeWithDB = databaseName
+      ? `models/on-db/${databaseName}`
+      : `models`
+    const baseUrl = `/${couch}/${maybeWithDB}/`
 
     if (!loaded) return <Loading message='models... ' />
 
@@ -26,7 +31,7 @@ class ListModelsContainer extends React.Component {
     return (
       <div>
         <div className='controls'>
-          <ButtonLink to={`/${couch}/models/create`}>create model definition</ButtonLink>
+          <ButtonLink to={`${baseUrl}create`}>create model definition</ButtonLink>
         </div>
         <table>
           <thead>
@@ -42,12 +47,12 @@ class ListModelsContainer extends React.Component {
           <tbody>
             {models.map(row => (
               <tr key={row.id}>
-                <td><Link to={`/${couch}/models/${row.name}/docs/`}>{row.name}</Link></td>
+                <td><Link to={`${baseUrl}${row.name}/docs/`}>{row.name}</Link></td>
                 <td>{row.createdAt}</td>
                 <td>{row.createdBy}</td>
                 <td>{row.updatedAt}</td>
                 <td>{row.updatedBy}</td>
-                <td><Link to={`/${couch}/models/${row.id}`}>edit definition</Link></td>
+                <td>{row.noEdit ? null : (<Link to={`${baseUrl}${row.id}`}>edit definition</Link>)}</td>
               </tr>
             ))}
           </tbody>

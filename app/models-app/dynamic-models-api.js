@@ -1,4 +1,4 @@
-const {Model, PouchAdapter} = require('../../api')
+const {Model, PouchDB, PouchAdapter} = require('../../api')
 
 const dynamicModelSchema = {
   name: 'dynamicModel',
@@ -23,26 +23,41 @@ const dynamicModelSchema = {
 }
 
 class DynamicModel extends Model {
-  constructor (user) {
+  constructor (user, models = []) {
     const db = new PouchDB('dynamicModel')
     // TODO: user
     const adapter = new PouchAdapter(dynamicModelSchema, db)
     super(dynamicModelSchema, adapter, user)
-    this.dynamicApis = {}
+    this.predefinedModels = models.map(model => ({name: model.name, noEdit: true, id: model.name}))
+    this.apis = models
+      .reduce((acc, model) => {
+        acc[model.name] = model
+        return acc
+      }, {})
   }
 
-  async getDynamicApi (modelType) {
-    if (!this.dynamicApis[modelType]) {
+  async getDynamicApi (modelType, databaseName) {
+    if (!this.apis[modelType]) {
       const dynamicModel = await this.get(modelType)
-      this.dynamicApis[modelType] = await this.createDynamicApi(dynamicModel)
+      this.apis[modelType] = await this.createDynamicApi(dynamicModel)
     }
 
-    return this.dynamicApis[modelType]
+    // TODO: this needs a re-work
+    if (databaseName) {
+      this.apis[modelType].adapter.pouchDB = new PouchDB(databaseName)
+    }
+
+    return this.apis[modelType]
   }
 
   async create (row) {
     const withId = {...row, id: row.name}
     return super.create(withId)
+  }
+
+  async list () {
+    const existing = await super.list()
+    return this.predefinedModels.concat(existing)
   }
 
   createTemplate () {

@@ -62,8 +62,14 @@ class ViewModelContainer extends React.Component {
   }
 
   onSubmit = async () => {
-    const {api, match: {params: {couch, id}}} = this.props
+    const {api, match: {params: {databaseName, couch, id}}} = this.props
     const { input } = this.state
+
+    const maybeWithDB = databaseName
+      ? `models/on-db/${databaseName}`
+      : `models`
+    const baseUrl = `/${couch}/${maybeWithDB}/`
+
 
     const jsObjectInput = JSON.parse(input)
     try {
@@ -72,7 +78,7 @@ class ViewModelContainer extends React.Component {
         : await api.update(jsObjectInput)
 
       window.alert(`Model ${jsObjectInput.name} saved.`)
-      this.props.history.push(`/${couch}/models/`)
+      this.props.history.push(`${baseUrl}`)
     } catch (error) {
       console.error(error)
       this.setState({ error, saving: false })
@@ -80,15 +86,20 @@ class ViewModelContainer extends React.Component {
   }
 
   onDelete = async () => {
-    const {api, match: {params: {couch, id}}} = this.props
+    const {api, match: {params: {databaseName, couch, id}}} = this.props
+    const maybeWithDB = databaseName
+      ? `models/on-db/${databaseName}`
+      : `models`
+    const baseUrl = `/${couch}/${maybeWithDB}/`
+
     const {doc} = this.state
     await api.remove(id)
     window.alert(`Removed model ${doc.name} ${id}`)
-    this.props.history.push(`/${couch}/models/`)
+    this.props.history.push(`${baseUrl}`)
   }
 
   render () {
-    const { match: {params: {couch, id}}} = this.props
+    const { match: {params: {databaseName, couch, id}}} = this.props
     const isNew = (id === 'create')
     const {
       loaded,
@@ -97,13 +108,18 @@ class ViewModelContainer extends React.Component {
       error
     } = this.state
 
+    const maybeWithDB = databaseName
+      ? `models/on-db/${databaseName}`
+      : `models`
+    const baseUrl = `/${couch}/${maybeWithDB}/`
+
     const canSave = valid
 
     if (!loaded) return <Loading message='model definition' />
 
     return (
       <div>
-        <Link to={`/${couch}/models`}>back</Link>
+        <Link to={`${baseUrl}`}>back</Link>
         <div className='right-controls'>
           <button
             disabled={!canSave}
@@ -120,7 +136,7 @@ class ViewModelContainer extends React.Component {
             </button>
           )}
         </div>
-        {<ErrorDisplay back={`/${couch}/models`} error={error} />}
+        {<ErrorDisplay back={`${baseUrl}`} error={error} />}
         <Editor
           onChange={this.onEdit}
           value={input}

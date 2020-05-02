@@ -31,9 +31,8 @@ class ViewDocContainer extends React.Component {
   }
 
   load = async () => {
-    const {match: {params: {id, modelType}}} = this.props
-    this.api = await this.props.api.getDynamicApi(modelType)
-    console.log(id)
+    const {couchUrl, match: {params: {databaseName, id, modelType}}} = this.props
+    this.api = await this.props.api.getDynamicApi(modelType, `${couchUrl}${databaseName}`)
 
     if (id === 'create') {
       const input = asString(this.api.createTemplate())
@@ -66,6 +65,10 @@ class ViewDocContainer extends React.Component {
   onSubmit = async () => {
     const {match: {params: {couch, modelType, id}}} = this.props
     const { input } = this.state
+    const maybeWithDB = databaseName
+      ? `models/on-db/${databaseName}`
+      : `models`
+    const baseUrl = `/${couch}/${maybeWithDB}/`
 
     const jsObjectInput = JSON.parse(input)
     try {
@@ -74,7 +77,7 @@ class ViewDocContainer extends React.Component {
         : await this.api.update(jsObjectInput)
 
       window.alert(`Model ${modelType} ${resp.id} saved.`)
-      this.props.history.push(`/${couch}/models/${modelType}/docs/`)
+      this.props.history.push(`${baseUrl}${modelType}/docs/`)
     } catch (error) {
       console.error(error)
       this.setState({ error, saving: false })
@@ -82,15 +85,20 @@ class ViewDocContainer extends React.Component {
   }
 
   onDelete = async () => {
-    const {match: {params: {couch, id}}} = this.props
+    const {match: {params: {couch, databaseName, id}}} = this.props
+    const maybeWithDB = databaseName
+      ? `models/on-db/${databaseName}`
+      : `models`
+    const baseUrl = `/${couch}/${maybeWithDB}/`
+
     const {doc} = this.state
     await this.api.remove(id)
     window.alert(`Removed model ${doc.name} ${id}`)
-    this.props.history.push(`/${couch}/models/${modelType}/docs`)
+    this.props.history.push(`${baseUrl}${modelType}/docs`)
   }
 
   render () {
-    const { match: {params: {couch, modelType, id}}} = this.props
+    const { match: {params: {couch, databaseName, modelType, id}}} = this.props
     const isNew = (id === 'create')
     const {
       loaded,
@@ -101,11 +109,16 @@ class ViewDocContainer extends React.Component {
 
     const canSave = valid
 
+    const maybeWithDB = databaseName
+      ? `models/on-db/${databaseName}`
+      : `models`
+    const baseUrl = `/${couch}/${maybeWithDB}/`
+
     if (!loaded) return <Loading message={`doc ${id}`} />
 
     return (
       <div>
-        <Link to={`/${couch}/models/${modelType}/docs`}>back</Link>
+        <Link to={`${baseUrl}${modelType}/docs`}>back</Link>
         <div className='right-controls'>
           <button
             disabled={!canSave}
@@ -123,7 +136,7 @@ class ViewDocContainer extends React.Component {
             </button>
           )}
         </div>
-        {<ErrorDisplay back={`/${couch}/models/${modelType}/docs`} error={error} />}
+        {<ErrorDisplay back={`/${baseUrl}${modelType}/docs`} error={error} />}
         <Editor
           onChange={this.onEdit}
           value={input}

@@ -197,7 +197,7 @@ class CouchRoutes extends React.Component {
             />
             <Route
               path='/:couch/models/:modelType?'
-              render={props => (<ModelsApp {...props} {...commonProps} />)}
+              render={props => (<ModelsApp {...props} {...commonProps} models={this.props.models} />)}
             />
             <Route
               path='/:couch/:dbName'
@@ -221,6 +221,8 @@ class App extends React.Component {
   }
 
   render () {
+    const {models} = this.props
+
     return (
       <div>
         <HashRouter>
@@ -232,7 +234,7 @@ class App extends React.Component {
             />
             <Route
               path='/:couch/'
-              render={props => (<CouchRoutes {...props} api={this.api} />)}
+              render={props => (<CouchRoutes {...props} api={this.api} models={models} />)}
             />
           </Switch>
         </HashRouter>

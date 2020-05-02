@@ -22,7 +22,10 @@ class ListDocsContainer extends React.Component {
   }
 
   load = async () => {
-    this.api = await this.props.api.getDynamicApi(this.props.match.params.modelType)
+    const {couchUrl} = this.props
+    const {databaseName, modelType} = this.props.match.params
+
+    this.api = await this.props.api.getDynamicApi(modelType, `${couchUrl}${databaseName}`)
 
     try {
       const rows = await this.api.list({limit})
@@ -38,8 +41,13 @@ class ListDocsContainer extends React.Component {
   }
 
   render () {
-    const {couch, modelType} = this.props.match.params
+    const {couch, modelType, databaseName} = this.props.match.params
     const {rows, error, loaded, total} = this.state
+
+    const maybeWithDB = databaseName
+      ? `models/on-db/${databaseName}`
+      : `models`
+    const baseUrl = `/${couch}/${maybeWithDB}/`
 
     if (error) {
       return <ErrorDisplay error={error} />
@@ -58,10 +66,10 @@ class ListDocsContainer extends React.Component {
       ? <Loading message={modelType} />
       : (
         <div>
-          <Link to={`/${couch}/models/`}>back</Link>
+          <Link to={`${baseUrl}`}>back</Link>
           {PaginationComponent}
           <div className='controls'>
-            <ButtonLink to={`/${couch}/models/${modelType}/docs/create`}>create {modelType}</ButtonLink>
+            <ButtonLink to={`${baseUrl}${modelType}/docs/create`}>create {modelType}</ButtonLink>
           </div>
           <table>
             <thead>
@@ -77,7 +85,7 @@ class ListDocsContainer extends React.Component {
             <tbody>
               {rows.map(row => (
                 <tr key={row.id}>
-                  <td><Link to={`/${couch}/models/${modelType}/docs/${row.id}`}>{row.id}</Link></td>
+                  <td><Link to={`${baseUrl}${modelType}/docs/${row.id}`}>{row.id}</Link></td>
                   <td>{row.name}</td>
                   <td>{row.createdAt}</td>
                   <td>{row.createdBy}</td>
