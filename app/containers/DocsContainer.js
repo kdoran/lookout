@@ -7,7 +7,7 @@ const {
   AllowEditButton,
   Breadcrumbs,
   DeleteDatabaseModal
-} = require('components')
+} = require('../components')
 
 require('./docs-container.css')
 

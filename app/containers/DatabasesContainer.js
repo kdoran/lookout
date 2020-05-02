@@ -7,7 +7,7 @@ const {
   ErrorDisplay,
   AllowEditButton,
   Breadcrumbs
-} = require('components')
+} = require('../components')
 const { showMBSize, withCommas } = require('../utils/utils')
 
 require('./databases-container.css')

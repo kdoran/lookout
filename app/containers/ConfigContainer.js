@@ -3,7 +3,7 @@ const {
   Loading,
   ErrorDisplay,
   Breadcrumbs
-} = require('components')
+} = require('../components')
 const { copyTextToClipboard } = require('../utils/utils')
 const { downloadJSON } = require('../utils/download')
 

@@ -222,19 +222,21 @@ class App extends React.Component {
 
   render () {
     return (
-      <HashRouter>
-        <Switch>
-          <Route
-            exact
-            path='/'
-            render={props => (<SelectCouchContainer {...props} api={this.api} />)}
-          />
-          <Route
-            path='/:couch/'
-            render={props => (<CouchRoutes {...props} api={this.api} />)}
-          />
-        </Switch>
-      </HashRouter>
+      <div>
+        <HashRouter>
+          <Switch>
+            <Route
+              exact
+              path='/'
+              render={props => (<SelectCouchContainer {...props} api={this.api} />)}
+            />
+            <Route
+              path='/:couch/'
+              render={props => (<CouchRoutes {...props} api={this.api} />)}
+            />
+          </Switch>
+        </HashRouter>
+      </div>
     )
   }
 }

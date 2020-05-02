@@ -4,7 +4,7 @@ const {
   ErrorDisplay,
   AllowEditButton,
   Breadcrumbs
-} = require('components')
+} = require('../components')
 const { Link } = require('react-router-dom')
 const { downloadJSON } = require('../utils/download')
 const { copyTextToClipboard } = require('../utils/utils')
