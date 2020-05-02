@@ -120,7 +120,7 @@ class CouchRoutes extends React.Component {
     }
   }
 
-  login (username, password) {
+  login = (username, password) => {
     return this.props.api.couchServer.login(username, password).then(user => {
       this.setState({user})
 
@@ -158,7 +158,7 @@ class CouchRoutes extends React.Component {
       return (
         <Login
           couchUrl={couchUrl}
-          login={this.login.bind(this)}
+          login={this.login}
         />
       )
     }

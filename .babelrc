@@ -1,7 +1,0 @@
-{
-  "presets": [
-    [
-      "@babel/preset-env", {"exclude": ["transform-regenerator"], "targets": {"chrome": "63"}}],
-      "@babel/preset-react"
-    ]
-}
