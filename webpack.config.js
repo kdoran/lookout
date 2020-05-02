@@ -2,7 +2,7 @@ const path = require('path')
 const webpack = require('webpack')
 
 module.exports = {
-  entry: './app/app.js',
+  entry: './app/render-app.js',
   output: {
     filename: 'lookout.js',
     path: path.resolve(__dirname, 'dist'),

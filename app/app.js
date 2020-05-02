@@ -1,6 +1,4 @@
 const React = require('react')
-const { Component } = require('react')
-const ReactDOM = require('react-dom')
 const {HashRouter, Route, Switch} = require('react-router-dom')
 
 const {LookoutApi, PouchDB: PouchDBConstructor} = require('./lookout-api')
@@ -18,14 +16,14 @@ const ModelsApp = require('./models-app/ModelsApp')
 const {Footer, Login, Loading} = require('./components')
 const {parseUrl, getParams} = require('./utils')
 
-require('app-classes.css')
-require('app-tags.css')
+require('./app-classes.css')
+require('./app-tags.css')
 
 // 1. App = if no couch in the URL, return SelectCouchContainer
 // 2. CouchRoutes = routes for "we have couch URL but not a specific database."
 // 3. OnDatabaseRoutes = we have a couch url and a specific datbase
 
-class OnDatabaseRoutes extends Component {
+class OnDatabaseRoutes extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -33,7 +31,7 @@ class OnDatabaseRoutes extends Component {
     }
   }
 
-  async componentDidMount () {
+  componentDidMount () {
     this.setupDatabase(this.props.match.params.dbName)
   }
 
@@ -43,7 +41,7 @@ class OnDatabaseRoutes extends Component {
     }
   }
 
-  setupDatabase = async (dbName) => {
+  async setupDatabase (dbName) {
     this.pouchDB = this.props.api.couchServer.getPouchInstance(dbName)
     window.db = this.pouchDB
     console.log(`Pouch for ${dbName} available in console as 'db'`)
@@ -102,7 +100,7 @@ class OnDatabaseRoutes extends Component {
   }
 }
 
-class CouchRoutes extends Component {
+class CouchRoutes extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -122,7 +120,7 @@ class CouchRoutes extends Component {
     }
   }
 
-  login = (username, password) => {
+  login (username, password) {
     return this.props.api.couchServer.login(username, password).then(user => {
       this.setState({user})
 
@@ -130,7 +128,7 @@ class CouchRoutes extends Component {
     })
   }
 
-  setupCouch = async (couch) => {
+  async setupCouch (couch) {
     const couchUrl = parseUrl(couch)
     this.props.api.setCouchServer(couchUrl)
     const user = await this.props.api.couchServer.getCurrentUser()
@@ -139,7 +137,7 @@ class CouchRoutes extends Component {
     this.saveLink(couchUrl)
   }
 
-  saveLink = async (couchUrl) => {
+  async saveLink (couchUrl) {
     // save a local link doc for us to list in select couch container
     const localLink = await this.props.api.couchLink.findOne({url: {'$eq': couchUrl}})
     if (!localLink) {
@@ -160,7 +158,7 @@ class CouchRoutes extends Component {
       return (
         <Login
           couchUrl={couchUrl}
-          login={this.login}
+          login={this.login.bind(this)}
         />
       )
     }
@@ -216,7 +214,7 @@ class CouchRoutes extends Component {
   }
 }
 
-class App extends Component {
+class App extends React.Component {
   constructor () {
     super()
     this.api = new LookoutApi()
@@ -241,7 +239,4 @@ class App extends Component {
   }
 }
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('app')
-)
+module.exports = App

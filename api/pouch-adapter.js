@@ -12,7 +12,6 @@ class PouchAdapter extends SchemaInterface {
     }
 
     const withDefaults = addSchemaDefaults(schema, relations)
-    console.log(withDefaults)
     super(withDefaults)
     this.type = schema.name
     this.user = user
