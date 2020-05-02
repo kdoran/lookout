@@ -173,7 +173,11 @@ class PouchAdapter extends SchemaInterface {
 
   async getByIds (keys) {
     const {rows} = await this.pouchDB.allDocs({keys, include_docs: true})
-    return rows.map(row => this.toModel(row.doc))
+    const missing = rows.filter(row => !row.doc)
+    if (missing.length) {
+      console.warn(`keys not found ${missing}`)
+    }
+    return rows.map(row => row.doc ? this.toModel(row.doc) : row)
   }
 
   // returns undefined if doesn't exist

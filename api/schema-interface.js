@@ -20,7 +20,7 @@ class SchemaInterface {
     if (validationErrors) {
       const err = new Error()
       Object.assign(err, validationErrors)
-      err.message = `Validation errors found ${row.id || row._id} ${JSON.stringify(validationErrors)}`
+      err.message = `Validation errors found ${row.type} ${row.id} ${JSON.stringify(validationErrors)}`
       throw err
     }
   }

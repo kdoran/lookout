@@ -53,8 +53,8 @@ class PouchRelationsAdapter extends PouchAdapter {
   }
 
   async withRelations (models) {
-    const relationsByModel = this.getRelationIds(models)
-    const relationModelsById = await this.getRelations(relationsByModel)
+    const relationIdsByModel = this.getRelationIds(models)
+    const relationModelsById = await this.getRelations(relationIdsByModel)
     return this.populateManyRelations(models, relationModelsById)
   }
 
@@ -62,23 +62,21 @@ class PouchRelationsAdapter extends PouchAdapter {
     const idsByModel = {}
     this.relationDefinitions.forEach(definition => {
       const {modelName, key, type} = definition
-      idsByModel[modelName] = idsByModel[modelName] || []
+      idsByModel[modelName] = idsByModel[modelName] || new Set()
 
       if (type === 'one') {
-        const ids = models.map(model => {
+        models.map(model => {
           const id = model[`${key}Id`]
           if (!id) {
             throw new Error(`relation ${key} not found on model ${model.id}`)
           }
 
-          return id
+          idsByModel[modelName].add(id)
         })
-        idsByModel[modelName] = idsByModel[modelName].concat(ids)
         return
       }
 
       if (type === 'arrayDecorator') {
-        const ids = idsByModel[modelName]
         models.forEach(model => {
           model[key].forEach(row => {
             const id = row[`${modelName}Id`]
@@ -88,30 +86,35 @@ class PouchRelationsAdapter extends PouchAdapter {
                 ${type}, ${property}, ${model.id}`
               )
             }
-            ids.push(id)
+            idsByModel[modelName].add(id)
           })
         })
         return
       }
 
       if (type === 'objectDecorator') {
-        const ids = idsByModel[modelName]
         models.forEach(model => {
           Object.keys(model[key]).forEach(modelId => {
-            ids.push(modelId)
+            idsByModel[modelName].add(modelId)
           })
         })
         return
       }
     })
-    return idsByModel
+    const idsByModelAsArray = {}
+    Object.keys(idsByModel)
+      .forEach(modelName => {
+        idsByModelAsArray[modelName] = Array.from(idsByModel[modelName])
+      })
+
+    return idsByModelAsArray
   }
 
-  async getRelations (relationsByModel) {
+  async getRelations (relationIdsByModel) {
     const results = await Promise.all(
-      Object.keys(relationsByModel)
+      Object.keys(relationIdsByModel)
         .map(modelType => {
-          const ids = relationsByModel[modelType]
+          const ids = relationIdsByModel[modelType]
           return this.parent[modelType].getByIds(ids)
         })
     )
