@@ -60,11 +60,14 @@ class PouchAdapter extends SchemaInterface {
   }
 
   async list (params = {}) {
-    const options = Object.assign(
-      {},
-      {selector: {type: this.type}, limit: Number.MAX_SAFE_INTEGER},
-      params
-    )
+    const {offset, skip, limit} = params
+    const options = {selector: {type: this.type}, limit: Number.MAX_SAFE_INTEGER}
+    if (offset || skip) {
+      options.skip = offset || skip
+    }
+    if (limit) {
+      options.limit = limit
+    }
     const {docs} = await this.pouchDB.find(options)
     return docs.map(this.toModel)
   }

@@ -43,6 +43,15 @@ class PouchRelationsAdapter extends PouchAdapter {
     return withRelations
   }
 
+  async list (options = {}) {
+    const models = await super.list(options)
+    if (!options.withRelations || !Object.keys(this.relationDefinitions).length) {
+      return models
+    }
+
+    return this.withRelations(models)
+  }
+
   async withRelations (models) {
     const relationsByModel = this.getRelationIds(models)
     const relationModelsById = await this.getRelations(relationsByModel)

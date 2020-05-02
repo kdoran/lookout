@@ -3,7 +3,8 @@ const {
   Model,
   PouchDB,
   CouchServer,
-  PouchAdapter
+  PouchAdapter,
+  PouchRelationsAdapter
 } = require('./api')
 
 module.exports = {
@@ -11,5 +12,6 @@ module.exports = {
   Model,
   PouchDB,
   CouchServer,
-  PouchAdapter
+  PouchAdapter,
+  PouchRelationsAdapter
 }
