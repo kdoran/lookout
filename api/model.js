@@ -60,6 +60,10 @@ class Model extends SchemaInterface {
     return this.adapter.destroyMany(...params)
   }
 
+  async destroy (...params) {
+    return this.adapter.destroy(...params)
+  }
+
   async getByIds (...params) {
     return this.adapter.getByIds(...params)
   }

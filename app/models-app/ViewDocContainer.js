@@ -92,7 +92,7 @@ class ViewDocContainer extends React.Component {
     const baseUrl = `/${couch}/${maybeWithDB}/`
 
     const {doc} = this.state
-    await this.api.remove(id)
+    await this.api.destroy(id)
     window.alert(`Removed model ${doc.name} ${id}`)
     this.props.history.push(`${baseUrl}${modelType}/docs`)
   }

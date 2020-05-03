@@ -93,7 +93,7 @@ class ViewModelContainer extends React.Component {
     const baseUrl = `/${couch}/${maybeWithDB}/`
 
     const {doc} = this.state
-    await api.remove(id)
+    await api.destroy(id)
     window.alert(`Removed model ${doc.name} ${id}`)
     this.props.history.push(`${baseUrl}`)
   }

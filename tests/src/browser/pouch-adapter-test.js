@@ -49,7 +49,7 @@ test('pouch adapter: update', async t => {
 
 test('pouch adapter: delete', async t => {
   const note = await api.create({text: 'some text'})
-  await api.remove(note.id)
+  await api.destroy(note.id)
   try {
     await api.get(note.id)
     t.fail()
