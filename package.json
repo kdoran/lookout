@@ -7,7 +7,8 @@
     "copy:index": "cp ./index.html dist/index.html && cp ./package.json dist/package.json",
     "build": "webpack && npm run copy:index",
     "test": "standard",
-    "test-api": "webpack-dev-server --config ./webpack.test.config.js --openPage tests.html",
+    "test:api": "webpack-dev-server --config ./webpack.test.config.js --openPage tests.html",
+    "test:exclude": "webpack-dev-server --config ./webpack.exclude.config.js --openPage tests.html",
     "travis-deploy-once": "travis-deploy-once",
     "deploy": "node ./scripts/deploy-to-couch",
     "semantic-release": "semantic-release"
