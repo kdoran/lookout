@@ -34,9 +34,6 @@
   background-color: red;
 }
 
-.config-container {
-
-}
 .config-container section {
   margin: 5px;
   margin-left: 5%;
@@ -62,4 +59,11 @@
 .server-info {
   font-size: .7em;
   margin-bottom: 20px;
+}
+
+.controls {
+  display: flex;
+  align-items: end;
+  justify-content: flex-end;
+  margin: 10px;
 }

@@ -1,9 +1,7 @@
 const React = require('react')
-const { Component } = require('react')
-const ReactDOM = require('react-dom')
 const {HashRouter, Route, Switch} = require('react-router-dom')
 
-const {RemoteCouchApi, PouchDB: PouchDBConstructor, couchLinkApi} = require('./api')
+const {LookoutApi, PouchDB: PouchDBConstructor} = require('./lookout-api')
 
 const {SelectCouchContainer} = require('./containers/SelectCouchContainer')
 const {DatabasesContainer} = require('./containers/DatabasesContainer')
@@ -13,19 +11,19 @@ const {ConfigContainer} = require('./containers/ConfigContainer')
 const {AdminContainer} = require('./containers/AdminContainer')
 const {EditDocContainer} = require('./containers/EditDocContainer')
 const {QueryContainer} = require('./containers/QueryContainer')
-const {ExampleEntities} = require('./example-entities/ExampleEntities')
+const ModelsApp = require('./models-app/ModelsApp')
 
 const {Footer, Login, Loading} = require('./components')
 const {parseUrl, getParams} = require('./utils')
 
-require('app-classes.css')
-require('app-tags.css')
+require('./app-classes.css')
+require('./app-tags.css')
 
 // 1. App = if no couch in the URL, return SelectCouchContainer
 // 2. CouchRoutes = routes for "we have couch URL but not a specific database."
 // 3. OnDatabaseRoutes = we have a couch url and a specific datbase
 
-class OnDatabaseRoutes extends Component {
+class OnDatabaseRoutes extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -33,18 +31,18 @@ class OnDatabaseRoutes extends Component {
     }
   }
 
-  async componentDidMount () {
+  componentDidMount () {
     this.setupDatabase(this.props.match.params.dbName)
   }
 
-  componentDidUpdate (prevProps) {
-    if (prevProps.match.params.dbName !== this.props.match.params.dbName) {
+  componentDidUpdate (previousProps) {
+    if (previousProps.match.params.dbName !== this.props.match.params.dbName) {
       this.setupDatabase(this.props.match.params.dbName)
     }
   }
 
-  setupDatabase = async (dbName) => {
-    this.pouchDB = this.props.api.getPouchInstance(dbName)
+  async setupDatabase (dbName) {
+    this.pouchDB = this.props.api.couchServer.getPouchInstance(dbName)
     window.db = this.pouchDB
     console.log(`Pouch for ${dbName} available in console as 'db'`)
     this.setState({loading: false})
@@ -102,7 +100,7 @@ class OnDatabaseRoutes extends Component {
   }
 }
 
-class CouchRoutes extends Component {
+class CouchRoutes extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -116,37 +114,34 @@ class CouchRoutes extends Component {
     window.PouchDB = PouchDBConstructor
   }
 
-  componentDidUpdate (prevProps) {
-    if (prevProps.match.params.couch !== this.props.match.params.couch) {
+  componentDidUpdate (previousProps) {
+    if (previousProps.match.params.couch !== this.props.match.params.couch) {
       this.setupCouch(this.props.match.params.couch)
     }
   }
 
   login = (username, password) => {
-    return this.api.login(username, password).then(user => {
-      this.setState({user})
-
-      this.saveLink(parseUrl(this.props.match.params.couch))
+    return this.props.api.couchServer.login(username, password).then(user => {
+      console.log(user)
+      this.setState({user}, () => this.saveLink(parseUrl(this.props.match.params.couch)))
     })
   }
 
-  setupCouch = async (couch) => {
+  async setupCouch (couch) {
     const couchUrl = parseUrl(couch)
-    this.api = new RemoteCouchApi(couchUrl)
-    window.api = this.api
-
-    const user = await this.api.getCurrentUser()
+    this.props.api.setCouchServer(couchUrl)
+    const user = await this.props.api.couchServer.getCurrentUser()
     this.setState({loading: false, user})
 
     this.saveLink(couchUrl)
   }
 
-  saveLink = async (couchUrl) => {
-    const {couchLinkApi} = this.props
+  async saveLink (couchUrl) {
+    if (!this.state.user) return
     // save a local link doc for us to list in select couch container
-    const localLink = await couchLinkApi.findOne({url: {'$eq': couchUrl}})
+    const localLink = await this.props.api.couchLink.findOne({url: {'$eq': couchUrl}})
     if (!localLink) {
-      await couchLinkApi.create({name: couchUrl, url: couchUrl})
+      await this.props.api.couchLink.create({name: couchUrl, url: couchUrl})
     }
   }
 
@@ -173,7 +168,7 @@ class CouchRoutes extends Component {
       couchUrl,
       searchParams,
       user,
-      api: this.api
+      api: this.props.api
     }
 
     return (
@@ -201,8 +196,8 @@ class CouchRoutes extends Component {
               render={props => (<DatabasesContainer {...props} {...commonProps} />)}
             />
             <Route
-              path='/:couch/example-entities/:entityName?/:method?'
-              render={props => (<ExampleEntities {...props} {...commonProps} />)}
+              path='/:couch/models/:modelType?'
+              render={props => (<ModelsApp {...props} {...commonProps} models={this.props.models} />)}
             />
             <Route
               path='/:couch/:dbName'
@@ -219,27 +214,33 @@ class CouchRoutes extends Component {
   }
 }
 
-class App extends Component {
+class App extends React.Component {
+  constructor () {
+    super()
+    this.api = new LookoutApi()
+  }
+
   render () {
+    const {models} = this.props
+
     return (
-      <HashRouter>
-        <Switch>
-          <Route
-            exact
-            path='/'
-            render={props => (<SelectCouchContainer {...props} couchLinkApi={couchLinkApi} />)}
-          />
-          <Route
-            path='/:couch/'
-            render={props => (<CouchRoutes {...props} couchLinkApi={couchLinkApi} />)}
-          />
-        </Switch>
-      </HashRouter>
+      <div>
+        <HashRouter>
+          <Switch>
+            <Route
+              exact
+              path='/'
+              render={props => (<SelectCouchContainer {...props} api={this.api} />)}
+            />
+            <Route
+              path='/:couch/'
+              render={props => (<CouchRoutes {...props} api={this.api} models={models} />)}
+            />
+          </Switch>
+        </HashRouter>
+      </div>
     )
   }
 }
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('app')
-)
+module.exports = App

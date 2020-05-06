@@ -1,22 +1,21 @@
 const test = require('../../smalltest')
-const {PouchAdapter} = require('../../../api')
+const {PouchAdapter, PouchDB} = require('../../../api')
 
 let api
 test('pouch adapter: constructor', async t => {
-  api = new PouchAdapter({
-    pouchDBName: 'some-global-legacy-database',
-    schema: {
-      name: 'note',
-      type: 'object',
-      properties: {
-        text: {
-          type: 'string',
-          minLength: 1
-        }
-      },
-      required: ['text']
-    }
-  })
+  const schema = {
+    name: 'note',
+    type: 'object',
+    properties: {
+      text: {
+        type: 'string',
+        minLength: 1
+      }
+    },
+    required: ['text']
+  }
+  const db = new PouchDB('integration-test-db-name')
+  api = new PouchAdapter(schema, db)
   t.equals(api.type, 'note', 'creates an pouch adapter with a type')
 })
 
@@ -50,7 +49,7 @@ test('pouch adapter: update', async t => {
 
 test('pouch adapter: delete', async t => {
   const note = await api.create({text: 'some text'})
-  await api.remove(note.id)
+  await api.destroy(note.id)
   try {
     await api.get(note.id)
     t.fail()

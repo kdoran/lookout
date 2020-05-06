@@ -7,7 +7,7 @@ const {
   AllowEditButton,
   Breadcrumbs,
   DeleteDatabaseModal
-} = require('components')
+} = require('../components')
 
 require('./docs-container.css')
 
@@ -25,9 +25,9 @@ class DocsContainer extends React.Component {
     this.load()
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate (previousProps) {
     const {dbUrl, searchParams: {offset}} = this.props
-    if (prevProps.dbUrl !== dbUrl || prevProps.searchParams.offset !== offset) {
+    if (previousProps.dbUrl !== dbUrl || previousProps.searchParams.offset !== offset) {
       this.load()
     }
   }
@@ -54,7 +54,7 @@ class DocsContainer extends React.Component {
 
   onConfirmDeleteDatabase = async () => {
     const {couch, dbName} = this.props
-    await this.props.api.destroyDatabase(dbName)
+    await this.props.api.couchServer.destroyDatabase(dbName)
     window.alert(`Database ${dbName} deleted.`)
     this.props.history.push(`/${couch}`)
   }

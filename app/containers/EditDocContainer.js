@@ -29,10 +29,10 @@ class EditDocContainer extends React.Component {
     this.load()
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate (previousProps) {
     const {dbUrl, match: {params: {docId}}} = this.props
-    if (prevProps.dbUrl !== dbUrl ||
-        prevProps.match.params.docId !== docId
+    if (previousProps.dbUrl !== dbUrl ||
+        previousProps.match.params.docId !== docId
     ) {
       this.load()
     }
@@ -82,7 +82,8 @@ class EditDocContainer extends React.Component {
     } catch (error) {
       if (error.status === 400 && docId === '_security') {
         const body = JSON.stringify(jsObjectInput)
-        await this.props.api.fetcher(`${dbName}/_security`, {method: 'PUT', body})
+        // TODO: does this not work with a pouch adapter?
+        await this.props.api.couchServer.fetcher(`${dbName}/_security`, {method: 'PUT', body})
         this.props.history.push(`/${couch}/${dbName}/_security`)
         return
       }

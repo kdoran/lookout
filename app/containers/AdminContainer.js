@@ -17,16 +17,16 @@ class AdminContainer extends React.Component {
     this.load()
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate (previousProps) {
     const {dbUrl, searchParams: {offset}} = this.props
-    if (prevProps.dbUrl !== dbUrl || prevProps.searchParams.offset !== offset) {
+    if (previousProps.dbUrl !== dbUrl || previousProps.searchParams.offset !== offset) {
       this.load()
     }
   }
 
   load = async () => {
     try {
-      const adminConfig = await this.props.api.getAdminConfig()
+      const adminConfig = await this.props.api.couchServer.getAdminConfig()
       this.setState({ adminConfig, loaded: true })
     } catch (error) {
       this.setState({ error, loaded: true })
@@ -42,7 +42,7 @@ class AdminContainer extends React.Component {
       return
     }
     try {
-      await this.props.api.updateAdmin(adminName, adminPassword)
+      await this.props.api.couchServer.updateAdmin(adminName, adminPassword)
       window.alert(`admin ${adminName} created/updated succesffully`)
       window.location.reload()
     } catch (error) {

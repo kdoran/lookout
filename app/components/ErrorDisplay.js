@@ -1,6 +1,7 @@
 const React = require('react')
+const {Link} = require('react-router-dom')
 
-function ErrorDisplay ({error, header}) {
+function ErrorDisplay ({error, back, header}) {
   if (!error) return null
 
   const url = window.location.href
@@ -20,6 +21,7 @@ function ErrorDisplay ({error, header}) {
         <br /><br />
         {errorDisplay}
       </pre>
+      {back && <Link to={back}>back</Link>}
     </div>
   )
 }

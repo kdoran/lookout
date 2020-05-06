@@ -4,7 +4,7 @@ const {
   ErrorDisplay,
   AllowEditButton,
   Breadcrumbs
-} = require('components')
+} = require('../components')
 const { Link } = require('react-router-dom')
 const { downloadJSON } = require('../utils/download')
 const { copyTextToClipboard } = require('../utils/utils')
@@ -25,12 +25,12 @@ class DocContainer extends React.Component {
     this.load()
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate (previousProps) {
     const {dbUrl, match: {params: {docId}}} = this.props
     const {match: {params: {rev}}} = this.props
-    if (prevProps.dbUrl !== dbUrl ||
-        prevProps.match.params.docId !== docId ||
-        prevProps.match.params.rev !== rev
+    if (previousProps.dbUrl !== dbUrl ||
+        previousProps.match.params.docId !== docId ||
+        previousProps.match.params.rev !== rev
     ) {
       this.load()
     }

@@ -22,4 +22,4 @@ function pickModule (mod) {
   return 'default' in mod ? mod.default : mod
 }
 
-module.exports = {PouchDB}
+module.exports = PouchDB

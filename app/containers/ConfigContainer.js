@@ -3,7 +3,7 @@ const {
   Loading,
   ErrorDisplay,
   Breadcrumbs
-} = require('components')
+} = require('../components')
 const { copyTextToClipboard } = require('../utils/utils')
 const { downloadJSON } = require('../utils/download')
 
@@ -22,16 +22,16 @@ class ConfigContainer extends React.Component {
     this.load()
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate (previousProps) {
     const {dbUrl, searchParams: {offset}} = this.props
-    if (prevProps.dbUrl !== dbUrl || prevProps.searchParams.offset !== offset) {
+    if (previousProps.dbUrl !== dbUrl || previousProps.searchParams.offset !== offset) {
       this.load()
     }
   }
 
   load = async () => {
     try {
-      const resp = await this.props.api.getConfig()
+      const resp = await this.props.api.couchServer.getConfig()
       const sections = []
       let rows
       for (let prop in resp) {

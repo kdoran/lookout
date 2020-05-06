@@ -2,7 +2,7 @@ const path = require('path')
 const webpack = require('webpack')
 
 module.exports = {
-  entry: './app/app.js',
+  entry: './app/render-app.js',
   output: {
     filename: 'lookout.js',
     path: path.resolve(__dirname, 'dist'),
@@ -22,11 +22,13 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['stage-0', 'react'],
-            plugins: ['transform-async-to-generator']
-          }
+          loader: 'babel-loader'
+          // options: {
+          //   presets: [
+          //     ['stage-0', {exclude: ['transform-regenerator']}],
+          //     'react'
+          //   ]
+          // }
         }
       },
       {

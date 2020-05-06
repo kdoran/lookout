@@ -22,7 +22,7 @@ class Footer extends React.Component {
 
   logout = async (event) => {
     event.preventDefault()
-    await this.props.api.logout()
+    await this.props.api.couchServer.logout()
     window.location.reload()
   }
 

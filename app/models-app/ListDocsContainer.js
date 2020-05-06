@@ -1,17 +1,14 @@
 const React = require('react')
 const { Link } = require('react-router-dom')
-const {ErrorDisplay, Pagination, Loading} = require('../components')
-require('./list-container.css')
+const {ErrorDisplay, ButtonLink, Pagination, Loading} = require('../components')
+require('./list-models-container.css')
 
 const limit = 500
 
-class ListContainer extends React.Component {
-  constructor () {
-    super()
-    this.state = {
-      rows: [],
-      loaded: false
-    }
+class ListDocsContainer extends React.Component {
+  state = {
+    rows: [],
+    loaded: false
   }
 
   componentDidMount () {
@@ -19,19 +16,22 @@ class ListContainer extends React.Component {
   }
 
   componetWillUpdate (previousProps) {
-    if (previousProps.entityName !== this.props.entityName) {
+    if (previousProps.match.params.modelType !== this.props.match.params.modelType) {
       this.load()
     }
   }
 
   load = async () => {
-    const {api} = this.props
+    const {couchUrl} = this.props
+    const {databaseName, modelType} = this.props.match.params
+
+    this.api = await this.props.api.getDynamicApi(modelType, `${couchUrl}${databaseName}`)
+
     try {
-      const rows = await api.list({limit})
-      // TODO: count
+      const rows = await this.api.list({limit})
       const total = (rows.length < limit)
         ? rows.length
-        : await api.count()
+        : await this.api.count()
 
       this.setState({rows, total, loaded: true})
     } catch (error) {
@@ -41,9 +41,13 @@ class ListContainer extends React.Component {
   }
 
   render () {
-    const {entityName, couch} = this.props
-    // const {searchParams: {offset = 0}, entityName} = this.props
+    const {couch, modelType, databaseName} = this.props.match.params
     const {rows, error, loaded, total} = this.state
+
+    const maybeWithDB = databaseName
+      ? `models/on-db/${databaseName}`
+      : `models`
+    const baseUrl = `/${couch}/${maybeWithDB}/`
 
     if (error) {
       return <ErrorDisplay error={error} />
@@ -59,12 +63,13 @@ class ListContainer extends React.Component {
     )
 
     return !loaded
-      ? <Loading message={entityName} />
+      ? <Loading message={modelType} />
       : (
         <div>
+          <Link to={`${baseUrl}`}>back</Link>
+          {PaginationComponent}
           <div className='controls'>
-            {PaginationComponent}
-            <Link to={`/${couch}/example-entities/${entityName}/create`}>add {entityName}</Link>
+            <ButtonLink to={`${baseUrl}${modelType}/docs/create`}>create {modelType}</ButtonLink>
           </div>
           <table>
             <thead>
@@ -80,7 +85,7 @@ class ListContainer extends React.Component {
             <tbody>
               {rows.map(row => (
                 <tr key={row.id}>
-                  <td><Link to={`/${couch}/${entityName}/view/${row.id}`}>{row.id}</Link></td>
+                  <td><Link to={`${baseUrl}${modelType}/docs/${row.id}`}>{row.id}</Link></td>
                   <td>{row.name}</td>
                   <td>{row.createdAt}</td>
                   <td>{row.createdBy}</td>
@@ -96,4 +101,4 @@ class ListContainer extends React.Component {
   }
 }
 
-module.exports = {ListContainer}
+module.exports = ListDocsContainer
