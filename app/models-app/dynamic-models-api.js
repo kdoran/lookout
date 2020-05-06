@@ -1,4 +1,4 @@
-const {Model, PouchDB, PouchAdapter} = require('../../api')
+const {Model, PouchDB, PouchRelationsAdapter} = require('../../api')
 
 const dynamicModelSchema = {
   name: 'dynamicModel',
@@ -14,6 +14,14 @@ const dynamicModelSchema = {
     schema: {
       type: 'object'
     },
+    // json schema: can i have any property name, but define the property's values?
+    // manyPropNamesOfAnyKind: {hardCodedProperty: anyValue}
+    //   "relations": {
+    //   "category": {
+    //     "modelName": "category",
+    //     "type": "one"
+    //   }
+    // },
     relations: {
       type: 'object'
     }
@@ -26,7 +34,7 @@ class DynamicModel extends Model {
   constructor (user, models = []) {
     const db = new PouchDB('dynamicModel')
     // TODO: user
-    const adapter = new PouchAdapter(dynamicModelSchema, db)
+    const adapter = new PouchRelationsAdapter(dynamicModelSchema, db, user)
     super(dynamicModelSchema, adapter, user)
     this.predefinedModels = models.map(model => ({name: model.name, noEdit: true, id: model.name}))
     this.apis = models
@@ -36,10 +44,19 @@ class DynamicModel extends Model {
       }, {})
   }
 
+  async setup () {
+    const models = await this.list()
+    await Promise.all(
+      models.map(async model => {
+        const dynamicModel = await this.get(model.name)
+        this.apis[model.name] = this.createDynamicApi(dynamicModel)
+      })
+    )
+  }
+
   async getDynamicApi (modelType, databaseName) {
     if (!this.apis[modelType]) {
-      const dynamicModel = await this.get(modelType)
-      this.apis[modelType] = await this.createDynamicApi(dynamicModel)
+      throw new Error('api not found')
     }
 
     // TODO: this needs a re-work
@@ -66,7 +83,11 @@ class DynamicModel extends Model {
   createTemplate () {
     return {
       name: '',
-      relations: {},
+      relations: [
+        // {relationPropName: {modelName, type: '{one,arrayDecorator,objectDecorator}'}},
+        // e.g. {address: {modelName: 'address', type: 'one'}}
+        // means this model now has addressID on default, and withRelations: true gets `address: {...}`
+      ],
       schema: {
         type: 'object',
         properties: {
@@ -95,15 +116,14 @@ class DynamicModel extends Model {
   // }`
   //   }
 
-  async createDynamicApi ({name, schema, relations}) {
-    await Promise.all(
-      Object.keys(relations.hasOne || {}).map(async key => {
-        const name = relations.hasOne[key].type
-        const relationDefinition = await this.get(name)
-        relations.hasOne[key].schema = {...relationDefinition.schema, name}
-      })
+  createDynamicApi ({name, schema, relations}) {
+    const adapter = new PouchRelationsAdapter(
+      {...schema, name},
+      this.adapter.pouchDB,
+      this.user,
+      relations
     )
-    const adapter = new PouchAdapter({...schema, name}, this.adapter.pouchDB, this.user, relations)
+    adapter.parent = this.apis
     return new Model({...schema, name}, adapter, this.user)
   }
 }

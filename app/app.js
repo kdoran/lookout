@@ -122,9 +122,8 @@ class CouchRoutes extends React.Component {
 
   login = (username, password) => {
     return this.props.api.couchServer.login(username, password).then(user => {
-      this.setState({user})
-
-      this.saveLink(parseUrl(this.props.match.params.couch))
+      console.log(user)
+      this.setState({user}, () => this.saveLink(parseUrl(this.props.match.params.couch)))
     })
   }
 
@@ -138,6 +137,7 @@ class CouchRoutes extends React.Component {
   }
 
   async saveLink (couchUrl) {
+    if (!this.state.user) return
     // save a local link doc for us to list in select couch container
     const localLink = await this.props.api.couchLink.findOne({url: {'$eq': couchUrl}})
     if (!localLink) {

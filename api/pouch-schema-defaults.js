@@ -13,7 +13,8 @@ const baseProperties = {
     default: () => new Date().toJSON()
   },
   createdBy: {
-    type: 'string'
+    type: 'string',
+    default: (adapter) => adapter.user.name
   },
   updatedAt: {
     type: 'string',
@@ -21,7 +22,8 @@ const baseProperties = {
     default: () => new Date().toJSON()
   },
   updatedBy: {
-    type: 'string'
+    type: 'string',
+    default: (adapter) => adapter.user.name
   }
 }
 
@@ -30,8 +32,8 @@ const baseRequired = ['type', 'createdAt', 'createdBy']
 function addSchemaDefaults (schema) {
   const properties = cloneDeep(Object.assign(
     {},
-    baseProperties,
-    schema.properties
+    schema.properties,
+    baseProperties
   ))
   properties.type.default = schema.name
 

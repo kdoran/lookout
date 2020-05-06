@@ -26,9 +26,10 @@ class SchemaInterface {
   }
 
   getSchemaDefaults () {
+    const ignoreList = ['_id', '_rev', '_deleted']
     return Object.keys(this.schema.properties)
       .reduce((acc, propName) => {
-        if (propName === '_id' || propName === '_rev') return acc
+        if (ignoreList.includes(propName)) return acc
         acc[propName] = this.getFieldDefault(propName)
         return acc
       }, {})

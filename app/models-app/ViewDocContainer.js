@@ -12,7 +12,8 @@ const defaultState = {
   original: '',
   input: '',
   error: null,
-  loaded: false
+  loaded: false,
+  editing: false
 }
 
 class ViewDocContainer extends React.Component {
@@ -41,10 +42,11 @@ class ViewDocContainer extends React.Component {
     }
 
     try {
+      const docWithRelations = await this.api.get(id, {withRelations: true})
       const doc = await this.api.get(id)
       const original = asString(doc)
       const input = original
-      this.setState({ doc, input, original, loaded: true })
+      this.setState({ doc, docWithRelations, input, original, loaded: true })
     } catch (error) {
       this.setState({ error, loaded: true })
       console.error(error)
@@ -103,7 +105,9 @@ class ViewDocContainer extends React.Component {
       loaded,
       valid,
       input,
-      error
+      error,
+      docWithRelations,
+      isEditing
     } = this.state
 
     const canSave = valid
@@ -114,6 +118,19 @@ class ViewDocContainer extends React.Component {
     const baseUrl = `/${couch}/${maybeWithDB}/`
 
     if (!loaded) return <Loading message={`doc ${id}`} />
+
+    if (!isEditing) {
+      return (
+        <div>
+          <Link to={`${baseUrl}${modelType}/docs`}>back</Link>
+          <div className='right-controls'>
+            <button onClick={() => this.setState({isEditing: true})}>edit</button>
+          </div>
+          <ErrorDisplay back={`/${baseUrl}${modelType}/docs`} error={error} />
+          <pre>{asString(docWithRelations)}</pre>
+        </div>
+      )
+    }
 
     return (
       <div>
@@ -139,6 +156,7 @@ class ViewDocContainer extends React.Component {
         <Editor
           onChange={this.onEdit}
           value={input}
+          mode={'javascript'}
         />
       </div>
     )

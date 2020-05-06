@@ -20,6 +20,14 @@ const couchLinkSchema = {
   additionalProperties: false
 }
 
+class MorianaCouchServer extends CouchServer {
+  async getUserFromSession (session) {
+    const user = await super.getUserFromSession(session)
+    this.parent.currentUser = user
+    return user
+  }
+}
+
 class LookoutApi {
   constructor () {
     const couchLinkDB = new PouchDB('couchLink')
@@ -27,8 +35,16 @@ class LookoutApi {
     this.couchLink = new Model(couchLinkSchema, adapter)
   }
 
+  // TODO: tidy this up
+  set currentUser (user) {
+    this.user = user
+    this.couchLink.user = user
+    this.couchLink.adapter.user = user
+  }
+
   setCouchServer (url) {
-    this.couchServer = new CouchServer(url)
+    this.couchServer = new MorianaCouchServer(url)
+    this.couchServer.parent = this
   }
 }
 

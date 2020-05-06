@@ -138,6 +138,7 @@ class ViewModelContainer extends React.Component {
         <Editor
           onChange={this.onEdit}
           value={input}
+          mode={'javascript'}
         />
       </div>
     )
