@@ -1,20 +1,18 @@
 const keyBy = require('lodash/keyBy')
 const flatten = require('lodash/flatten')
 const cloneDeep = require('lodash/cloneDeep')
-const get = require('lodash/get')
 const PouchAdapter = require('./pouch-adapter')
 
 const RELATIONSHIP_TYPES = [
   'one', 'arrayDecorator', 'objectDecorator'
 ]
 
-
 /* relations = {
   'destination': {modelName: 'location', type: 'one'},
   'source': {modelName: 'location', type: 'one'},
   'transactions': {modelName: 'item', type: 'arrayDecorator'},
   'items': {modelName: 'item', type: 'objectDecorator'}
-}*/
+} */
 class PouchRelationsAdapter extends PouchAdapter {
   constructor (schema, pouchDB, user, relationDefinitions = []) {
     super(schema, pouchDB, user)
@@ -83,7 +81,7 @@ class PouchRelationsAdapter extends PouchAdapter {
             if (!id) {
               throw new Error(
                 `Missing relation lookup in arrayDecorator,
-                ${type}, ${property}, ${model.id}`
+                ${type}, ${modelName}, ${model.id}`
               )
             }
             idsByModel[modelName].add(id)
@@ -98,7 +96,6 @@ class PouchRelationsAdapter extends PouchAdapter {
             idsByModel[modelName].add(modelId)
           })
         })
-        return
       }
     })
     const idsByModelAsArray = {}
@@ -129,7 +126,7 @@ class PouchRelationsAdapter extends PouchAdapter {
   populateRelations (model, relationModelsById) {
     const result = cloneDeep(model)
     this.relationDefinitions.forEach(definition => {
-    const {type, modelName, key} = definition
+      const {type, modelName, key} = definition
       if (type === 'one') {
         const relationModel = relationModelsById[model[`${key}Id`]]
         if (!relationModel) {
@@ -158,7 +155,6 @@ class PouchRelationsAdapter extends PouchAdapter {
           }
           result[key][modelId][modelName] = relationModel
         })
-        return
       }
     })
     return result

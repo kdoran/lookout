@@ -22,9 +22,9 @@ class ViewModelContainer extends React.Component {
     this.load()
   }
 
-  componentDidUpdate (prevProps) {
-    const {api, match: {params: {modelType, id}}} = this.props
-    if (prevProps.match.params.modelType !== modelType || prevProps.match.params.id !== id) {
+  componentDidUpdate (previousProps) {
+    const {match: {params: {modelType, id}}} = this.props
+    if (previousProps.match.params.modelType !== modelType || previousProps.match.params.id !== id) {
       this.load()
     }
   }
@@ -51,7 +51,6 @@ class ViewModelContainer extends React.Component {
   }
 
   onEdit = input => {
-    const { original } = this.state
     let valid = true
     try {
       JSON.parse(input)
@@ -70,10 +69,9 @@ class ViewModelContainer extends React.Component {
       : `models`
     const baseUrl = `/${couch}/${maybeWithDB}/`
 
-
     const jsObjectInput = JSON.parse(input)
     try {
-      const resp = (id === 'create')
+      (id === 'create')
         ? await api.create(jsObjectInput)
         : await api.update(jsObjectInput)
 
@@ -99,7 +97,7 @@ class ViewModelContainer extends React.Component {
   }
 
   render () {
-    const { match: {params: {databaseName, couch, id}}} = this.props
+    const {match: {params: {databaseName, couch, id}}} = this.props
     const isNew = (id === 'create')
     const {
       loaded,

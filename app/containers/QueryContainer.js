@@ -35,10 +35,10 @@ class QueryContainer extends React.Component {
     this.setupQuery()
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate (previousProps) {
     const {queryId, queryString} = this.props.match.params
     // console.log(queryId, queryString)
-    if (queryId !== prevProps.match.params.queryId || queryString !== prevProps.match.params.queryString) {
+    if (queryId !== previousProps.match.params.queryId || queryString !== previousProps.match.params.queryString) {
       this.setupQuery()
     }
   }

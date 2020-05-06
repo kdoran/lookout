@@ -44,7 +44,10 @@ class DynamicModel extends Model {
 
     // TODO: this needs a re-work
     if (databaseName) {
-      this.apis[modelType].adapter.pouchDB = new PouchDB(databaseName)
+      const db = new PouchDB(databaseName)
+      Object.values(this.apis).forEach(model => {
+        model.adapter.pouchDB = db
+      })
     }
 
     return this.apis[modelType]
@@ -68,29 +71,29 @@ class DynamicModel extends Model {
         type: 'object',
         properties: {
           name: {
-            type: 'string',
+            type: 'string'
           }
         }
       }
     }
   }
   // TODO: ace editor javascript mode wasn't working try upgrade
-//   createTemplateAsString () {
-//     return `{
-//   databaseName: '',
-//   name: '',
-//   schema: {
-//     name: '',
-//     type: 'object',
-//     properties: {
-//       // name: {
-//         // type: 'string',
-//         // minLength: 1
-//       //}
-//     }
-//   }
-// }`
-//   }
+  //   createTemplateAsString () {
+  //     return `{
+  //   databaseName: '',
+  //   name: '',
+  //   schema: {
+  //     name: '',
+  //     type: 'object',
+  //     properties: {
+  //       // name: {
+  //         // type: 'string',
+  //         // minLength: 1
+  //       //}
+  //     }
+  //   }
+  // }`
+  //   }
 
   async createDynamicApi ({name, schema, relations}) {
     await Promise.all(

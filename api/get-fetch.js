@@ -1,4 +1,3 @@
-/* global btoa */
 const fetch = require('isomorphic-fetch')
 
 function getFetch (url) {

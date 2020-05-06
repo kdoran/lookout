@@ -29,10 +29,10 @@ class EditDocContainer extends React.Component {
     this.load()
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate (previousProps) {
     const {dbUrl, match: {params: {docId}}} = this.props
-    if (prevProps.dbUrl !== dbUrl ||
-        prevProps.match.params.docId !== docId
+    if (previousProps.dbUrl !== dbUrl ||
+        previousProps.match.params.docId !== docId
     ) {
       this.load()
     }

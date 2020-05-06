@@ -16,7 +16,7 @@ class ListDocsContainer extends React.Component {
   }
 
   componetWillUpdate (previousProps) {
-    if (prevProps.match.params.modelType !== this.props.match.params.modelType) {
+    if (previousProps.match.params.modelType !== this.props.match.params.modelType) {
       this.load()
     }
   }

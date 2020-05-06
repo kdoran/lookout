@@ -69,9 +69,12 @@ test('pouch adapter: many to many decorator: array', async t => {
   const itemA = await api.item.create({name: 'a'})
   const itemB = await api.item.create({name: 'b'})
   const shipment = await api.shipment.create({
-    date: new Date().toJSON(), sourceId: a.id, destinationId: b.id, transactions: [
+    date: new Date().toJSON(),
+    sourceId: a.id,
+    destinationId: b.id,
+    transactions: [
       {itemId: itemA.id, quantity: 100},
-      {itemId: itemB.id, quantity: 10},
+      {itemId: itemB.id, quantity: 10}
     ]
   })
   const withRelations = await api.shipment.get(shipment.id, {withRelations: true})
@@ -86,7 +89,10 @@ test('pouch adapter: many to many decorator: object', async t => {
   const itemA = await api.item.create({name: 'a'})
   const itemB = await api.item.create({name: 'b'})
   const shipment = await api.shipment.create({
-    date: new Date().toJSON(), sourceId: a.id, destinationId: b.id, items: {
+    date: new Date().toJSON(),
+    sourceId: a.id,
+    destinationId: b.id,
+    items: {
       [itemA.id]: {quantity: 1},
       [itemB.id]: {quantity: 50}
     }

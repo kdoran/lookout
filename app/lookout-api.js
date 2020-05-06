@@ -32,5 +32,4 @@ class LookoutApi {
   }
 }
 
-
 module.exports = {LookoutApi, PouchDB}

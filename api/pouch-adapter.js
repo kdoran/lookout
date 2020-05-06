@@ -1,5 +1,4 @@
 const keyBy = require('lodash/keyBy')
-const flatten = require('lodash/flatten')
 const cloneDeep = require('lodash/cloneDeep')
 const get = require('lodash/get')
 const SchemaInterface = require('./schema-interface')
@@ -42,6 +41,8 @@ class PouchAdapter extends SchemaInterface {
       delete doc.id
     }
 
+    doc.createdBy = this.user.name
+
     this.throwIfInvalid(doc)
     return doc
   }
@@ -54,6 +55,7 @@ class PouchAdapter extends SchemaInterface {
     doc._rev = _rev
     doc._id = model.id
     delete doc.id
+    doc.updatedBy = this.user.name
 
     this.throwIfInvalid(doc)
     return doc

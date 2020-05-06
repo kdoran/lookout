@@ -23,8 +23,8 @@ class ViewDocContainer extends React.Component {
   }
 
   componetWillUpdate (previousProps) {
-    if (prevProps.match.params.modelType !== this.props.match.params.modelType ||
-      prevProps.match.params.id !== prevProps.match.params.id
+    if (previousProps.match.params.modelType !== this.props.match.params.modelType ||
+      previousProps.match.params.id !== this.props.match.params.id
     ) {
       this.load()
     }
@@ -52,7 +52,6 @@ class ViewDocContainer extends React.Component {
   }
 
   onEdit = input => {
-    const { original } = this.state
     let valid = true
     try {
       JSON.parse(input)
@@ -63,7 +62,7 @@ class ViewDocContainer extends React.Component {
   }
 
   onSubmit = async () => {
-    const {match: {params: {couch, modelType, id}}} = this.props
+    const {match: {params: {couch, databaseName, modelType, id}}} = this.props
     const { input } = this.state
     const maybeWithDB = databaseName
       ? `models/on-db/${databaseName}`
@@ -85,7 +84,7 @@ class ViewDocContainer extends React.Component {
   }
 
   onDelete = async () => {
-    const {match: {params: {couch, databaseName, id}}} = this.props
+    const {match: {params: {couch, modelType, databaseName, id}}} = this.props
     const maybeWithDB = databaseName
       ? `models/on-db/${databaseName}`
       : `models`
@@ -98,7 +97,7 @@ class ViewDocContainer extends React.Component {
   }
 
   render () {
-    const { match: {params: {couch, databaseName, modelType, id}}} = this.props
+    const {match: {params: {couch, databaseName, modelType, id}}} = this.props
     const isNew = (id === 'create')
     const {
       loaded,

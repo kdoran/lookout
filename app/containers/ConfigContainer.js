@@ -22,9 +22,9 @@ class ConfigContainer extends React.Component {
     this.load()
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate (previousProps) {
     const {dbUrl, searchParams: {offset}} = this.props
-    if (prevProps.dbUrl !== dbUrl || prevProps.searchParams.offset !== offset) {
+    if (previousProps.dbUrl !== dbUrl || previousProps.searchParams.offset !== offset) {
       this.load()
     }
   }

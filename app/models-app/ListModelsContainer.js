@@ -14,7 +14,6 @@ class ListModelsContainer extends React.Component {
     this.setState({models, loaded: true})
   }
 
-
   render () {
     const {couch, databaseName} = this.props.match.params
     const {models, loaded, error} = this.state

@@ -25,8 +25,8 @@ class DatabasesContainer extends React.Component {
     this.fetchInfos().catch(error => this.setState({error}))
   }
 
-  componentDidUpdate (prevProps) {
-    if (prevProps.couchUrl !== this.props.couchUrl) { this.fetchInfos() }
+  componentDidUpdate (previousProps) {
+    if (previousProps.couchUrl !== this.props.couchUrl) { this.fetchInfos() }
   }
 
   fetchInfos = async () => {

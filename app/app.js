@@ -16,8 +16,8 @@ const ModelsApp = require('./models-app/ModelsApp')
 const {Footer, Login, Loading} = require('./components')
 const {parseUrl, getParams} = require('./utils')
 
-// require('./app-classes.css')
-// require('./app-tags.css')
+require('./app-classes.css')
+require('./app-tags.css')
 
 // 1. App = if no couch in the URL, return SelectCouchContainer
 // 2. CouchRoutes = routes for "we have couch URL but not a specific database."
@@ -35,8 +35,8 @@ class OnDatabaseRoutes extends React.Component {
     this.setupDatabase(this.props.match.params.dbName)
   }
 
-  componentDidUpdate (prevProps) {
-    if (prevProps.match.params.dbName !== this.props.match.params.dbName) {
+  componentDidUpdate (previousProps) {
+    if (previousProps.match.params.dbName !== this.props.match.params.dbName) {
       this.setupDatabase(this.props.match.params.dbName)
     }
   }
@@ -114,8 +114,8 @@ class CouchRoutes extends React.Component {
     window.PouchDB = PouchDBConstructor
   }
 
-  componentDidUpdate (prevProps) {
-    if (prevProps.match.params.couch !== this.props.match.params.couch) {
+  componentDidUpdate (previousProps) {
+    if (previousProps.match.params.couch !== this.props.match.params.couch) {
       this.setupCouch(this.props.match.params.couch)
     }
   }

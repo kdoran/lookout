@@ -42,9 +42,8 @@ class ModelsApp extends React.Component {
         <Route
           exact
           path='/:couch/models/on-db/:databaseName/:modelType/docs/:id'
-          render={props => (<ViewDocContainer {...props} couchUrl={couchUrl}  api={this.api} />)}
+          render={props => (<ViewDocContainer {...props} couchUrl={couchUrl} api={this.api} />)}
         />
-
 
         <Route
           exact
@@ -64,7 +63,7 @@ class ModelsApp extends React.Component {
         <Route
           exact
           path='/:couch/models/:modelType/docs/:id'
-          render={props => (<ViewDocContainer {...props}  api={this.api} />)}
+          render={props => (<ViewDocContainer {...props} api={this.api} />)}
         />
       </Switch>
     )
