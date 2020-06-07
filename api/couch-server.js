@@ -107,7 +107,7 @@ class CouchServer {
   }
 
   async getServer () {
-    return this.fetcher('/')
+    return this.fetcher()
   }
 
   async destroyDatabase (databaseName) {
