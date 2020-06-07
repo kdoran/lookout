@@ -30,13 +30,23 @@ class DatabasesContainer extends React.Component {
   }
 
   fetchInfos = async () => {
-    // infos and dbs are split for couch < 2.2 that does not have
-    // single infos call. lazy load dbs & display first
-    // so you're not always waiting on the 100 individual info calls
-    const serverInfo = await this.props.api.couchServer.getServer()
-    const isThreeO = (serverInfo.version && serverInfo.version.startsWith('3'))
+    try {
+      // infos and dbs are split for couch < 2.2 that does not have
+      // single infos call. lazy load dbs & display first
+      // so you're not always waiting on the 100 individual info calls
+      const serverInfo = await this.props.api.couchServer.getServer()
+      const isThreeO = (serverInfo.version && serverInfo.version.startsWith('3'))
+      this.setState({isThreeO, serverInfo})
+    } catch (error) {
+      console.error('error fetching db info')
+      this.setState({
+        serverInfo: 'could not get couch / response',
+        // assume not 3.0 when really we don't know
+        isThreeO: false
+      })
+    }
     const dbs = await this.props.api.couchServer.listDatabases()
-    this.setState({dbs, serverInfo, isThreeO})
+    this.setState({dbs})
     const infosResponse = await this.props.api.couchServer.listInfos(dbs)
     const infos = keyBy(infosResponse, 'key')
     this.setState({loaded: true, infos})

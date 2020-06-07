@@ -5,7 +5,7 @@ function getFetch (url) {
     throw new Error(`getFetch URL required`)
   }
 
-  async function fetcher (endpoint, params) {
+  async function fetcher (endpoint = '', params = {}) {
     const config = {
       credentials: 'include',
       headers: {
