@@ -24,7 +24,7 @@ class Pagination extends React.Component {
             {showPrevious ? (
               <Link to={previousPath}>previous</Link>
             ) : 'previous'}
-            <span> </span>
+            <span />
             {showNext ? (
               <Link to={path + '?offset=' + nextNumber}>next</Link>
             ) : 'next'}
