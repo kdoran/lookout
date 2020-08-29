@@ -1,0 +1,67 @@
+{
+  "name": "couchlookout",
+  "version": "0.0.0-development",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server",
+    "copy:index": "cp ./index.html dist/index.html && cp ./package.json dist/package.json",
+    "build": "webpack && npm run copy:index",
+    "test": "standard",
+    "test:api": "webpack-dev-server --config ./webpack.test.config.js --openPage tests.html",
+    "test:exclude": "webpack-dev-server --config ./webpack.exclude.config.js --openPage tests.html",
+    "travis-deploy-once": "travis-deploy-once",
+    "deploy": "node ./scripts/deploy-to-couch",
+    "semantic-release": "semantic-release"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "babel-eslint": "^10.1.0",
+    "isomorphic-fetch": "^2.2.1",
+    "jjv": "^1.0.2",
+    "lodash": "^4.17.15",
+    "pouchdb-adapter-http": "^7.2.1",
+    "pouchdb-adapter-idb": "^7.2.1",
+    "pouchdb-adapter-memory": "^7.2.1",
+    "pouchdb-checkpointer": "^7.2.1",
+    "pouchdb-core": "^7.2.1",
+    "pouchdb-find": "^7.2.1",
+    "pouchdb-generate-replication-id": "^7.2.1",
+    "pouchdb-mapreduce": "^7.2.1",
+    "pouchdb-replication": "^7.2.1",
+    "pouchdb-utils": "^7.2.1",
+    "protobufjs": "^6.8.8",
+    "react": "^16.13.1",
+    "react-ace": "^6.6.0",
+    "react-dom": "^16.13.1",
+    "react-onclickout": "^2.0.8",
+    "react-router-dom": "^5.1.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "@babel/preset-react": "^7.9.4",
+    "babel-loader": "^8.1.0",
+    "css-loader": "^3.5.3",
+    "semantic-release": "^15.10.5",
+    "standard": "^11.0.1",
+    "style-loader": "^0.20.3",
+    "travis-deploy-once": "^5.0.9",
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-server": "^3.3.1"
+  },
+  "standard": {
+    "parser": "babel-eslint",
+    "ignore": [
+      "/dist/"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kdoran/lookout.git"
+  },
+  "release": {
+    "pkgRoot": "dist"
+  }
+}
