@@ -6,7 +6,8 @@ const {
   NewDatabaseModal,
   ErrorDisplay,
   AllowEditButton,
-  Breadcrumbs
+  Breadcrumbs,
+  Pagination
 } = require('../components')
 const { showMBSize, withCommas } = require('../utils/utils')
 
@@ -18,18 +19,32 @@ class DatabasesContainer extends React.Component {
     error: null,
     infos: {},
     showNewDBModal: false,
-    dbs: []
+    offset: 0,
+    dbs: [],
+    total: 0
   }
 
-  componentDidMount () {
+  async componentDidMount () {
+    // Hack to get the total count of dbs, maybe remove if we work with 100k+ dbs
+
+    const allDBs = await this.props.api.couchServer.listAllDatabases()
+    this.setState({total: allDBs.length})
     this.fetchInfos().catch(error => this.setState({error}))
   }
 
   componentDidUpdate (previousProps) {
-    if (previousProps.couchUrl !== this.props.couchUrl) { this.fetchInfos() }
+    const {searchParams: {offset}} = previousProps
+    const offsetChanged = (offset !== this.props.searchParams.offset)
+    const couchChanged = previousProps.couchUrl !== this.props.couchUrl
+    if (offsetChanged || couchChanged) {
+      this.fetchInfos()
+    }
   }
 
   fetchInfos = async () => {
+    const {searchParams: {offset = 0}} = this.props
+    this.setState({loaded: false})
+
     try {
       // infos and dbs are split for couch < 2.2 that does not have
       // single infos call. lazy load dbs & display first
@@ -45,7 +60,7 @@ class DatabasesContainer extends React.Component {
         isThreeO: false
       })
     }
-    const dbs = await this.props.api.couchServer.listDatabases()
+    const dbs = await this.props.api.couchServer.listDatabases(offset)
     this.setState({dbs})
     const infosResponse = await this.props.api.couchServer.listInfos(dbs)
     const infos = keyBy(infosResponse, 'key')
@@ -64,8 +79,18 @@ class DatabasesContainer extends React.Component {
   }
 
   render () {
-    const { couchUrl, couch } = this.props
-    const { loaded, error, serverInfo, isThreeO, infos, dbs, showNewDBModal } = this.state
+    const { couchUrl, couch, searchParams: {offset = 0} } = this.props
+    const { loaded, error, serverInfo, isThreeO, infos, dbs, showNewDBModal, total } = this.state
+
+    const PaginationComponent = () => (
+      <Pagination
+        total={total}
+        displayed={dbs.length}
+        path={`/${couch}/`}
+        limit={100}
+        offset={offset}
+      />
+    )
 
     const table = isThreeO
       ? (
@@ -137,7 +162,11 @@ class DatabasesContainer extends React.Component {
         {loaded ? error ? <ErrorDisplay error={error} /> : (
           <div>
             <div className='server-info'>{JSON.stringify(serverInfo)}</div>
+            <PaginationComponent />
+            <br /><br />
             {table}
+            <br /><br />
+            <PaginationComponent />
             <br /><br />
             <table>
               <thead>

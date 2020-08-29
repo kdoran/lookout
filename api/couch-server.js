@@ -80,7 +80,12 @@ class CouchServer {
     return this.databases[databaseName]
   }
 
-  async listDatabases () {
+  async listDatabases (skip = 0) {
+    const url = `_all_dbs?limit=100&skip=${skip}`
+    return this.fetcher(url)
+  }
+
+  async listAllDatabases () {
     return this.fetcher('_all_dbs')
   }
 
